@@ -1,0 +1,111 @@
+/* ==========================================================================
+   Hoodie Sign In / Sign Up / Sign out stylings
+   ========================================================================== */
+
+/*
+ *body {
+ *  margin:0
+ *
+ *  [>background: url('../img/pattern_130.gif');<]
+ *}
+ *
+ *header { height:4em }
+ *
+ *.content {
+ *  height:calc(100% - 2em )
+ *}
+ *
+ ** { box-sizing:border-box }
+ *
+ *h1 { 
+ *  font-size: 2em !important;
+ *  margin:15px;
+ *  display:inline-block;
+ *}
+ */
+
+#save, #save2 {
+  display:inline-block
+}
+
+#load, #load2 {
+  margin-left:3em;
+  display:inline-block
+}
+/*
+ *.container {
+ *  position: relative;
+ *  background: #fff;
+ *  padding: 0;
+ *  box-shadow: 0 0 10px rgba(0,0,0,.5);
+ *  height:1000px !important;
+ *  display:block
+ *}
+ */
+
+/* hide contents until we know if user is signed in or not */
+body .hoodie-account-signedin,
+body .hoodie-account-signedout,
+body .hoodie-account-error {
+  display: none;
+}
+body .hoodie-account-signedin .btn-group {
+  margin-left: 3em;
+}
+
+html[data-hoodie-account-status=signedin]  .hoodie-account-signedin,
+html[data-hoodie-account-status=error]     .hoodie-account-error,
+html[data-hoodie-account-status=signedout] .hoodie-account-signedout {
+  display: block;
+}
+
+.hoodie-accountbar {
+  background: #eee;
+  height:3em;
+  width:100%;
+}
+.account-bar-container {
+  right:10px; 
+  float:right
+}
+/*.content {*/
+/*  padding: 10px;*/
+/*  float: left;*/
+/*  [>width: 380px;<]*/
+/*}*/
+/*.code {*/
+/*  margin: 0 0 0 400px;*/
+/*  position: relative;*/
+/*}*/
+/*.code:before {*/
+/*  content: 'main.js';*/
+/*  display: block;*/
+/*  position: absolute;*/
+/*  top: 20px;*/
+/*  right: 20px;*/
+/*  font-size: 48px;*/
+/*  font-family: "Arial Black", sans-serif;*/
+/*  color: rgba(255, 255, 255, 0.1);*/
+/*}*/
+
+/*.code pre {*/
+/*  border-radius: 0;*/
+/*  border-width: 0 0 0 1px;*/
+/*  margin: 0;*/
+/*  padding-left: 20px;*/
+/*}*/
+
+/*.copy {*/
+/*  padding: 10px;*/
+/*  margin: 30px 0 0;*/
+/*  border-radius: 5px;*/
+/*}*/
+/*.jumbotron,*/
+/*.copy {*/
+/*  background: #EBE7DA;*/
+/*  margin: 0;*/
+/*  border-radius: 0;*/
+/*}*/
+/*.copy p {*/
+/*  margin: 0;*/
+/*}*/
