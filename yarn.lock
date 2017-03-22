@@ -475,7 +475,7 @@ babel-preset-es2015-rollup@^3.0.0:
     babel-preset-es2015 "^6.3.13"
     require-relative "^0.8.7"
 
-babel-preset-es2015@^6.22.0, babel-preset-es2015@^6.3.13:
+babel-preset-es2015@^6.3.13:
   version "6.24.0"
   resolved "https://registry.yarnpkg.com/babel-preset-es2015/-/babel-preset-es2015-6.24.0.tgz#c162d68b1932696e036cd3110dc1ccd303d2673a"
   dependencies:
@@ -1047,6 +1047,20 @@ http-signature@~1.1.0:
     assert-plus "^0.2.0"
     jsprim "^1.2.2"
     sshpk "^1.7.0"
+
+hyperapp@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/hyperapp/-/hyperapp-0.7.1.tgz#932acc82c132c4998908562e6b04a325b65321a9"
+
+hyperscript-attribute-to-property@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/hyperscript-attribute-to-property/-/hyperscript-attribute-to-property-1.0.0.tgz#825308d49bb8e2957923f731981bcc811cad7aff"
+
+hyperx@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/hyperx/-/hyperx-2.3.0.tgz#70f473d66d4ad550ddd1c83e4be2651276bbf1e2"
+  dependencies:
+    hyperscript-attribute-to-property "^1.0.0"
 
 iconv-lite@0.4.13:
   version "0.4.13"

@@ -1,3 +1,5 @@
 node_modules/
 tmp/
 docs/workshop_nime_2017/
+coverage/
+coverage/

@@ -28,31 +28,6 @@
 <!-- script src="js/lect.js"></script -->
 <script src="ScheddVM.js"></script>
 
-<script>
-
-const scheduler = ScheddVM.init()
-console.log('scheduler', scheduler)
-
-function demoPlayElementText (element) {
-  // Play element's text:
-  scheduler.define(scheduler.uid(), JSON.parse(element.innerText))
-  // Stop the click from selecting the text:
-  if (document.selection && document.selection.empty) {
-    document.selection.empty()
-  }
-}
-
-function demoPlayElementValue (element) {
-  scheduler.define(scheduler.uid(), JSON.parse(element.value))
-}
-
-function demoStopAll () {
-  scheduler.clear()
-}
-
-</script>
-
-
 <style>
 /* see http://getskeleton.com/ */
 html { font-size: 50%; }
@@ -77,7 +52,7 @@ For the purposes of this workshop we have designed a target language that captur
 ["@loop", ["@pluck", [1, "@wait"]]]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 <div id="toc"></div>
 
@@ -168,7 +143,7 @@ Here's how to do something forever:
 	"@loop", [ "@pluck", 0.25, "@wait" ]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 Note that @loop will run the pattern that follows it *in parallel*, which means that you can keep on triggering more things after it. So it's easy to set up a bunch of parallel processes:
 
@@ -181,7 +156,7 @@ Note that @loop will run the pattern that follows it *in parallel*, which means 
 	"@loop", [ 110, 1, "@pluck-note", 12, "@wait" ]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 
 And to run something in parallel without looping it, just use @fork []:
@@ -200,7 +175,7 @@ And to run something in parallel without looping it, just use @fork []:
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 
 This is also handy for setting up loops with different start times:
@@ -213,7 +188,7 @@ This is also handy for setting up loops with different start times:
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 
 ## Expressions
@@ -233,7 +208,7 @@ Here's picking a value at random from a list, instead of giving the freq and amp
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 Here's alternating between a set of values in a list, one at a time:
 
@@ -247,7 +222,7 @@ Here's alternating between a set of values in a list, one at a time:
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 Here's way to set the probability of something happening. Note that two lists have to be given after the "@chance"; either the first is run (if the chance happens), else the other one will be run.
 
@@ -264,7 +239,7 @@ Here's way to set the probability of something happening. Note that two lists ha
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 
 If you don't care about the 'else' case, just put an empty list ```[]``` or ```null```. But you must put something, or else the virtual machine will get corrupted, and who knows what might happen.
@@ -282,7 +257,7 @@ If you don't care about the 'else' case, just put an empty list ```[]``` or ```n
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 Another way of getting some randomness is to use the @rand (which generates a number between 0 and 1), @srand (which generates a number between -1 and 1), and n,@randi (which generates a number between 0 and n-1):
 
@@ -303,7 +278,7 @@ Another way of getting some randomness is to use the @rand (which generates a nu
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 There are several basic math functions that can be used to map numbers into useful ranges. Note that most math functions require the arguments first, e.g. use ```[a,b,@+]``` to add a and b:
 
@@ -325,7 +300,7 @@ There are several basic math functions that can be used to map numbers into usef
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 ## Get, set, and let
 
@@ -342,7 +317,7 @@ The @set-freq etc. are really just examples of creating named values ("variables
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 By default @set-*anything* will apply globally, so you can modulate a parameter from one loop while using it in another:
 
@@ -360,7 +335,7 @@ By default @set-*anything* will apply globally, so you can modulate a parameter 
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 If globalism isn't what you care for, you can make a name "local" to a particular loop by using @let-*anything*. Once you have @let- a variable in a particular @loop (or @fork) pattern, it will remain local to that pattern. Generally, use @let if you want some value that is only used within a pattern, and @set if you want something global.
 
@@ -381,7 +356,7 @@ If globalism isn't what you care for, you can make a name "local" to a particula
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 One use for this is to repeatedly modify a value, such as for a counter, or a decay:
 
@@ -398,7 +373,7 @@ One use for this is to repeatedly modify a value, such as for a counter, or a de
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 The only thing special about @set-freq is that the name "freq" is used by @pluck. That is, @pluck is equivalent to: ```["@get-freq", "@get-amp", "@pluck-note"]```. Similarly for @set-amp etc.
 
@@ -441,7 +416,7 @@ Say you want to be able to launch a loop, then let it keep running while you lau
 
 
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 ```javascript
 [
@@ -464,7 +439,7 @@ Say you want to be able to launch a loop, then let it keep running while you lau
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 ---
 
@@ -570,8 +545,8 @@ Send n arguments over websocket	| ```arg1, arg2..., "@ws-n"```
 
 Type any pattern into the text box below and click to run it.
 
-<textarea class="CodeMirror" onclick="demoPlayElementValue(this)">["@pluck"]</textarea>
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<textarea class="CodeMirror" onclick="ScheddVM.seq.play_element_value(this)">["@pluck"]</textarea>
+<button class="button-primary" onclick="ScheddVM.seq.clear()">Stop</button>
 
 ---
 
@@ -597,7 +572,7 @@ console.log('ScheddVM', ScheddVM)
 
 $(".lang-javascript").each(function() {
 	$(this).click(function() {
-    demoPlayElementText(this);
+    ScheddVM.seq.play_element_text(this);
   });
 });
 

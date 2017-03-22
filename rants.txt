@@ -1,0 +1,123 @@
+
+// ////////////////////////////////////////////////////////////////////////////////////////
+/*
+  Pattern sequencer
+
+  interprets a list of events, like a byte code but with pauses
+
+  Important to distinguish between operations and simple lists.
+  [a, b, c] can means perform a, b, c in sequence
+  or it can be perform a(b,c), e.g. note(60, 100)
+  we could make the former explicit by ["seq", a, b, c] but it would be nice not to have to
+  we might be able to infer seq or expr by context? E.g. the root of a score must always be seq.
+  or just make instructions have special names, e.g. "@pluck"
+
+  any argument can be another bytecode to interpret
+  [note, a, [b, c], d]; in this case [b, c] must be an expression, right?
+  Important to distinguish [note a b c] from [note [a b] c]... can't just flatten arrays
+
+  -- simple numeric arguments, for note N N N, loop N, rotate N, etc.
+  (loop (rnd 1 4) pattern)
+  (loop (rnd 1 (rnd 1 4)) pattern)
+  (loop (add 3 (rnd 1 4)) pattern)
+  (note (pick 60 40 30))
+  (note (alt 60 50 40))
+  (note (chance 0.5 60)) makes sense only if there is a contextual freq-state to default to
+  + filters
+
+  shuffle, reverse, rotate return lists, don't make sense here. unless we give it semantics.
+  loop, fork, rate, wait don't make sense because no return, and temporal semantics don't make sense in an expression. They only make sense in an event sequence.
+  every N?
+
+  list/pattern arguments, for loop P, rotate/reverse/shuffle/alt P, pick P, rate P, fork P...
+  add: could apply to all elements in the P, but that might not make sense
+
+  fun example:
+
+  ((alt (pick seq)) (A B C)) The trick is that the operator itself is dynamically chosen. Could lead to patterns like ABCAABCBABCAABCCABCCABCBACBAABCBABCB ETC.
+
+  Challenge: some things need to be calculated before applying the operation,
+  while some things need to wait for the operation to know whether/how to calculate
+
+  E.g. (add a b) needs a & b to be evaluated first, but (chance 0.5 a) has to determine the chance first before evaluating a. This is essentially the $vau special form argument; or put another way, the difference between function calls and other control flow types.
+
+  Each operator already knows whether an argument should be evaluated first.
+  E.g. encountering (@add a b) on the queue, one could requeue as (a b @add-values) to ensure a & b are evaluated first. Then the question is how to map the values of a & b to @add-values, e.g. via a simple value stack. That makes it a stack-based machine, also like a concat language...
+    4 wait
+    dur amp freq note, ... path osc, etc.
+    1 2 add, etc.
+
+  Whereas encountering (@pick a b) we can do the pick immediately, as this only modifies the queue, pushing either a or b onto it. This is more like a macro language.
+    alt A B
+    pick list,
+    loop A, fork A,
+    reverse A, shuffle A, rotate A => A (but also modifies A in-place)
+
+  That's how 'wait pick (2, 3)' becomes 'wait 2' or 'wait 3': the pick(2, 3) is pushed on the stack first, then evaluated to get 2 or 3, then this needs to move to a stack, then be used (popped) by the @wait.
+
+  Some instructions may generate both forms:
+
+    N chance A
+    N rate A  (eval the rate argument and apply only around the pattern A) => set-rate A unset-rate
+    N loop A (iterations arg will be evaluated once then counted down) => A N-1 loop A
+    N rotate A => A rotate A'
+
+    N after A (add A only after N visits)
+      has to modify the (N after A) whole to decrement N. Only when N === 0 will A be added.
+    N every A like above, but needs to re-add N every A when A is run.
+      not sure if this is even possible... though maybe (alt (nop, nop, nop, A)) works.
+
+  Can stuff like this work? I.e. reverse A 50% of the time:
+
+  ((0.1 chance reverse) A)
+  -> 0.1 | chance reverse A
+  -> | reverse A        or       | A
+
+  -- definitely need parens:
+  loop ((0.1 chance (pick (reverse shuffle))) A)
+  can produce any of:
+  -> | reverse A
+  -> | shuffle A
+  -> | A
+
+  -- but without parens, it's pretty ambiguous:
+  loop 0.1 chance pick reverse shuffle A
+
+  In a way, maybe what we need is a conditional transform; a bit like a filter.
+  Things like reverse/shuffle/rotate are not often likely to be desired on every loop.
+  Conditions could be e.g. periodic, stochastic, or more complex
+  In any case, the notion of a conditional transform implies that the 'else' is the untransformed pattern
+  i.e. pattern plays unchanged.
+  So, we may have a sequence of "(transform-if (0.5 prob) rotate (transform reverse patt))"
+
+  Really, when would you use rotate etc. without some condition?
+  So, why not call them rotate-if?
+
+  cond reverse-if patt => patt or patt'
+  can't chain though:
+  cond reverse-if cond shuffle-if patt Fails, because we can't pull patt for the reverse-if.
+
+  This could all be a ton easier if we allowed users to name patterns...
+  Maybe that's something we can support if there's a uid() function available to the parser actions...
+
+  ----------------------
+
+  Each active sequencer is a PQ
+  Each PQ can contain several Q's of instructions (this allows polyrhythm)
+  PQ's are stored in named slots for easy replacement/removal
+
+  CONSIDER USING A BIGNUM LIBRARY TO MEASURE TIME
+*/
+// ////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+  Question -- what happens when we trigger stuff?
+
+  Case 0: any bit of code should be able to spawn a *named* player, so that this can later be stopped/replaced. [name "@spawn" patt] => seq_define(name, patt)
+
+  Case 1: just grabbed a random bit of text and triggered it. It should run independently.
+
+  Case 2: run any bit of code, it should replace everything? Like replacing the 'default' player. Maybe, or maybe just have a key combo for 'stop everything first, then run this'?
+
+  Case 3: have named patterns, which don't play by default (but can be used by other processes). Then have named players, that can use them.
+*/

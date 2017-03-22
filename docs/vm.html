@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>ScheddVM</title>
+<title>Live Code a Language as Instrument</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/normalize.css">
@@ -16,46 +16,20 @@
 <script src="js/highlight.min.js"></script>
 <script src="js/hljs/javascript.min.js"></script>
 
-<!-- script src="js/peg.min.js"></script -->
-<!-- script src="js/pegjs.pegjs.js"></script -->
+<script src="js/peg.min.js"></script>
+<script src="js/pegjs.pegjs.js"></script>
 
-<!-- script src="js/codemirror.min.js"></script -->
-<!-- script src="js/mode/pegjs.min.js"></script -->
+<script src="js/codemirror.min.js"></script>
+<script src="js/mode/pegjs.min.js"></script>
 
 <script src="js/big.min.js"></script>
 <script src="js/gibberish.min.js"></script>
 <script src='js/midi.js'></script>
-<!-- script src="js/lect.js"></script -->
-<script src="ScheddVM.js"></script>
-
-<script>
-
-const scheduler = ScheddVM.init()
-console.log('scheduler', scheduler)
-
-function demoPlayElementText (element) {
-  // Play element's text:
-  scheduler.define(scheduler.uid(), JSON.parse(element.innerText))
-  // Stop the click from selecting the text:
-  if (document.selection && document.selection.empty) {
-    document.selection.empty()
-  }
-}
-
-function demoPlayElementValue (element) {
-  scheduler.define(scheduler.uid(), JSON.parse(element.value))
-}
-
-function demoStopAll () {
-  scheduler.clear()
-}
-
-</script>
-
+<script src="js/lect.js"></script>
 
 <style>
 /* see http://getskeleton.com/ */
-html { font-size: 50%; }
+html { font-size: 50%; } 
 table { width:100%; }
 </style>
 </head>
@@ -63,10 +37,13 @@ table { width:100%; }
 
 <script type="bogus" id="sourcetext">
 
-# ScheddVM
+# Live Code a Language as Instrument
 
 
+<button onclick="window.location.href='index.html'">Introduction</button>
+<button onclick="window.location.href='tutorial.html'">Parsing tutorial</button>
 <button class="button-primary" onclick="window.location.href='vm.html'">Target language</button>
+<button onclick="window.location.href='editor.html'">Editor</button>
 
 
 For the purposes of this workshop we have designed a target language that captures some essential concepts for a musical live coding context, such as playing notes and looping patterns. It is intentionally limited to make it fairly easy to learn, yet also intentionally designed to make it possible to express a wide variety of ideas. It is *not* designed to be succinct -- that's the job of the user-facing language you create! The target language is a bit like the instruction sequences real compilers use, in that it is a list of commands. However ours can also have nested structures as lists of lists. A simple example is a pattern that plays a note every beat:
@@ -77,7 +54,7 @@ For the purposes of this workshop we have designed a target language that captur
 ["@loop", ["@pluck", [1, "@wait"]]]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 <div id="toc"></div>
 
@@ -124,7 +101,7 @@ There are also some percussion sounds, which either grab amplitude from the cont
 ```
 ```javascript
 [4, "@repeat", [
-	[["@iter", [0.3, 1]], "@set-amp"],
+	[["@iter", [0.3, 1]], "@set-amp"], 
 	8, "@repeat", ["@hat", 0.125, "@wait"]
 ]]
 ```
@@ -134,7 +111,7 @@ A list with several events normally happens at the same time:
 
 ```javascript
 [
-	[220, "@set-freq"], "@pluck",
+	[220, "@set-freq"], "@pluck", 
 	[330, "@set-freq"], "@pluck"
 ]
 ```
@@ -143,7 +120,7 @@ Unless you add a n,@wait:
 
 ```javascript
 [
-	[220, "@set-freq"], "@pluck",
+	[220, "@set-freq"], "@pluck", 
 	1, "@wait",
 	[330, "@set-freq"], "@pluck"
 ]
@@ -168,7 +145,7 @@ Here's how to do something forever:
 	"@loop", [ "@pluck", 0.25, "@wait" ]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 Note that @loop will run the pattern that follows it *in parallel*, which means that you can keep on triggering more things after it. So it's easy to set up a bunch of parallel processes:
 
@@ -181,26 +158,26 @@ Note that @loop will run the pattern that follows it *in parallel*, which means 
 	"@loop", [ 110, 1, "@pluck-note", 12, "@wait" ]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 
 And to run something in parallel without looping it, just use @fork []:
 
 ```javascript
 [
-	"@loop", [
-		"@kick",
+	"@loop", [ 
+		"@kick", 
 		"@fork", [
-			0.25, "@wait",
+			0.25, "@wait", 
 			550, 1, "@pluck-note",
-			0.33, "@wait",
+			0.33, "@wait", 
 			660, 1, "@pluck-note"
 		],
 		1, "@wait"
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 
 This is also handy for setting up loops with different start times:
@@ -208,12 +185,12 @@ This is also handy for setting up loops with different start times:
 ```javascript
 [
 	"@loop", ["@kick", 1, "@wait"],
-	"@fork", [0.5, "@wait",
+	"@fork", [0.5, "@wait", 
 		"@loop", ["@hat", 1, "@wait"]
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 
 ## Expressions
@@ -225,21 +202,21 @@ Here's picking a value at random from a list, instead of giving the freq and amp
 
 ```javascript
 [
-	"@loop", [
-		["@pick", [330, 440, 550, 660]],
+	"@loop", [ 
+		["@pick", [330, 440, 550, 660]], 
 		["@pick", [1, 0.7, 0.4]],
 		"@pluck-note",
 		0.25, "@wait"
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 Here's alternating between a set of values in a list, one at a time:
 
 ```javascript
 [
-	"@loop", [
+	"@loop", [ 
 		["@iter", [330, 440, 550, 660]],
 		["@iter", [1, 0.7, 0.4]],
 		"@pluck-note",
@@ -247,15 +224,15 @@ Here's alternating between a set of values in a list, one at a time:
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
-Here's way to set the probability of something happening. Note that two lists have to be given after the "@chance"; either the first is run (if the chance happens), else the other one will be run.
+Here's way to set the probability of something happening. Note that two lists have to be given after the "@chance"; either the first is run (if the chance happens), else the other one will be run. 
 
 ```javascript
 [
 	"@loop", [
-		"@fork", [
-			0.1,
+		"@fork", [ 
+			0.1, 
 			"@chance",
 			["@snare"],
 			["@kick"]
@@ -264,7 +241,7 @@ Here's way to set the probability of something happening. Note that two lists ha
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 
 If you don't care about the 'else' case, just put an empty list ```[]``` or ```null```. But you must put something, or else the virtual machine will get corrupted, and who knows what might happen.
@@ -272,8 +249,8 @@ If you don't care about the 'else' case, just put an empty list ```[]``` or ```n
 ```javascript
 [
 	"@loop", [
-		"@fork", [
-			0.1,
+		"@fork", [ 
+			0.1, 
 			"@chance",
 			["@snare"],
 			[]
@@ -282,13 +259,13 @@ If you don't care about the 'else' case, just put an empty list ```[]``` or ```n
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 Another way of getting some randomness is to use the @rand (which generates a number between 0 and 1), @srand (which generates a number between -1 and 1), and n,@randi (which generates a number between 0 and n-1):
 
 ```javascript
 [
-	"@loop", [
+	"@loop", [ 
 		"@rand", "@set-amp",
 		"@pluck",
 		0.25, "@wait"
@@ -297,19 +274,19 @@ Another way of getting some randomness is to use the @rand (which generates a nu
 ```
 ```javascript
 [
-	"@loop", [
+	"@loop", [ 
 		"@pluck",
 		[3, "@randi"], "@wait"
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 There are several basic math functions that can be used to map numbers into useful ranges. Note that most math functions require the arguments first, e.g. use ```[a,b,@+]``` to add a and b:
 
 ```javascript
 [
-	"@loop", [
+	"@loop", [ 
 		[[[4, "@randi"], 1, "@+"], 110, "@*"], "@set-freq",
 		"@pluck",
 		0.25, "@wait"
@@ -318,14 +295,14 @@ There are several basic math functions that can be used to map numbers into usef
 ```
 ```javascript
 [
-	"@loop", [
+	"@loop", [ 
 		[["@srand", 10, "@*"], 110, "@+"], "@set-freq",
 		"@pluck",
 		0.25, "@wait"
 	]
 ]
 ```
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 ## Get, set, and let
 
@@ -333,7 +310,7 @@ The @set-freq etc. are really just examples of creating named values ("variables
 
 ```javascript
 [
-	"@loop", [
+	"@loop", [ 
 		[[[4, "@randi"], 2, "@+"], 110, "@*"], "@set-f",
 		"@get-f", 0.6, "@pluck-note",
 		["@get-f", 1.5, "@mul"], 0.6, "@pluck-note",
@@ -342,7 +319,7 @@ The @set-freq etc. are really just examples of creating named values ("variables
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 By default @set-*anything* will apply globally, so you can modulate a parameter from one loop while using it in another:
 
@@ -352,7 +329,7 @@ By default @set-*anything* will apply globally, so you can modulate a parameter 
 		[[[4, "@randi"], 2, "@+"], 110, "@*"], "@set-f",
 		1, "@wait"
 	],
-	"@loop", [
+	"@loop", [ 
 		"@get-f", 0.6, "@pluck-note",
 		["@get-f", 1.5, "@mul"], 0.6, "@pluck-note",
 		0.25, "@wait"
@@ -360,9 +337,9 @@ By default @set-*anything* will apply globally, so you can modulate a parameter 
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
-If globalism isn't what you care for, you can make a name "local" to a particular loop by using @let-*anything*. Once you have @let- a variable in a particular @loop (or @fork) pattern, it will remain local to that pattern. Generally, use @let if you want some value that is only used within a pattern, and @set if you want something global.
+If globalism isn't what you care for, you can make a name "local" to a particular loop by using @let-*anything*. Once you have @let- a variable in a particular @loop (or @fork) pattern, it will remain local to that pattern. Generally, use @let if you want some value that is only used within a pattern, and @set if you want something global. 
 
 ```javascript
 [
@@ -381,7 +358,7 @@ If globalism isn't what you care for, you can make a name "local" to a particula
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 One use for this is to repeatedly modify a value, such as for a counter, or a decay:
 
@@ -398,7 +375,7 @@ One use for this is to repeatedly modify a value, such as for a counter, or a de
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 The only thing special about @set-freq is that the name "freq" is used by @pluck. That is, @pluck is equivalent to: ```["@get-freq", "@get-amp", "@pluck-note"]```. Similarly for @set-amp etc.
 
@@ -441,7 +418,7 @@ Say you want to be able to launch a loop, then let it keep running while you lau
 
 
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 ```javascript
 [
@@ -464,7 +441,7 @@ Say you want to be able to launch a loop, then let it keep running while you lau
 ]
 ```
 
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 ---
 
@@ -491,7 +468,7 @@ There is also a command for sending data out over a websocket. By default the br
 
 Here are all the important concepts supported and how to format them in the target code:
 
-Concept 						| Format
+Concept 						| Format 
 :--- 							| :---
 Do nothing						| ```null```
 A pattern to do three things	| ```[first, second, third]```
@@ -517,7 +494,7 @@ Some named values have special meaning; "freq" and "amp" are used by the sound i
 
 "@rate"
 
-Math / logic concept 			| Format
+Math / logic concept 			| Format 
 :--- 							| :---
 random integer from 0 to n-1	| ```n, "@randi"```
 random number from 0 to 1		| ```n, "@rand"```
@@ -530,21 +507,21 @@ a % b	 (Euclidean)			| ```a, b, "@wrap"``` or ```a, b, "@%"```
 a % b	 (Floored)				| ```a, b, "@mod"```
 -a								| ```a, "@neg"```
 map n from (x,y) to (u,v)		| ```n, x, y, u, v, "@map"```
-a > b							| ```a, b, "@>"```
+a > b							| ```a, b, "@>"``` 
 a >= b							| ```a, b, "@>="```
-a < b							| ```a, b, "@<"```
+a < b							| ```a, b, "@<"``` 
 a <= b							| ```a, b, "@<="```
-a == b							| ```a, b, "@=="```
+a == b							| ```a, b, "@=="``` 
 a != b							| ```a, b, "@!="```
-a and b							| ```a, b, "@and"```
-a or b							| ```a, b, "@or"```
-not a							| ```a, "@not"```
+a and b							| ```a, b, "@and"``` 
+a or b							| ```a, b, "@or"``` 
+not a							| ```a, "@not"``` 
 
 Note: division, modulo or wrap by zero will return zero.
 
 There are only a limited number of built-in sounds, for convenience:
 
-Sound				 			| Format
+Sound				 			| Format 
 :--- 							| :---
 string							| ```freq, amp, @pluck-note``` or ```@pluck```
 bass							| ```freq, amp, @bass-note``` or ```@bass```
@@ -568,10 +545,10 @@ Send n arguments over websocket	| ```arg1, arg2..., "@ws-n"```
 
 ## Test area
 
-Type any pattern into the text box below and click to run it.
+Type any pattern into the text box below and click to run it.  
 
-<textarea class="CodeMirror" onclick="demoPlayElementValue(this)">["@pluck"]</textarea>
-<button class="button-primary" onclick="demoStopAll()">Stop</button>
+<textarea class="CodeMirror" onclick="seq.play_element_value(this)">["@pluck"]</textarea>
+<button class="button-primary" onclick="seq.clear()">Stop</button>
 
 ---
 
@@ -589,16 +566,14 @@ Type any pattern into the text box below and click to run it.
 
 var body = document.getElementById('sourcetext').innerText;
 document.getElementById('main_body').innerHTML = marked(body);
-console.log('ScheddVM', ScheddVM)
+document.getElementById('toc').innerHTML = marked(toc.join("\n"));
 
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 $(".lang-javascript").each(function() {
-	$(this).click(function() {
-    demoPlayElementText(this);
-  });
+	$(this).click(function() { window.seq.play_element_text(this); });
 });
 
 </script>

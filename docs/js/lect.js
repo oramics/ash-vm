@@ -9,7 +9,7 @@ function random(n) {
 // a modulo operation that handles negative n more appropriately
 // e.g. wrap(-1, 3) returns 2
 // see http://en.wikipedia.org/wiki/Modulo_operation
-// see also http://jsperf.com/modulo-for-negative-numbers 
+// see also http://jsperf.com/modulo-for-negative-numbers
 wrap = function (n, m) {
 	return ((n%m)+m)%m;
 };
@@ -37,7 +37,7 @@ function array_shuffle(a) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// Marked 
+// Marked
 // https://github.com/chjj/marked
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,7 +48,7 @@ renderer.heading = function(text, level, raw) {
     var anchor = this.options.headerPrefix + raw.toLowerCase().replace(/[^\w]+/g, '-');
     if (level > 1) {
 		toc.push(
-			"\t".repeat(level-2) 
+			"\t".repeat(level-2)
 			+ "- [" + text + "](#" + anchor + ")"
 		);
 	}
@@ -98,7 +98,7 @@ highlight = function (code, lang) {
 				}
 			}
 			return a.join("");
-		
+
 		} catch(e) {
 			console.log("ERROR", e.message);
 			console.log(code);
@@ -115,17 +115,17 @@ marked.setOptions({
 	sanitize: false,
 	smartLists: true,
 	smartypants: false,
-	
+
 	/*
 		Sigh. The API for defining a language for hljs is horrific.
 		I tried writing a mode definition for PEG.js, but gave up.
 		I'm tempted instead to write a peg.js parser for peg.js
 		And then defer to hljs to take care of the javascript portions.
-		
+
 		I now have a parser that can handle peg.js pretty well
-		
-		
-		
+
+
+
     var s = "";
     for (var i=0; i<a.length; i++) {
     	var item = a[i];
@@ -135,7 +135,7 @@ marked.setOptions({
         	s += "<span class='hljs-" + item.type + "'>" + item.text + "</span>";
         }
     }
-		
+
 	*/
 	highlight: highlight,
 });
@@ -174,7 +174,7 @@ CodeMirror.defaults.mode = "local";
 // http://charlie-roberts.com/gibberish/
 //////////////////////////////////////////////////////////////////////////////////////////
 MIDI.init()
-Gibberish.init();  
+Gibberish.init();
 Gibberish.Time.export();
 Gibberish.Binops.export();
 
@@ -193,11 +193,11 @@ hat = new Gibberish.Hat({ amp: 1.5 }).connect();
 conga = new Gibberish.Conga({ amp:.25, freq:400 }).connect();
 tom = new Gibberish.Tom({ amp:.25, freq:400 }).connect();
 strings = new Gibberish.PolyKarplusStrong({maxVoices: 32}).connect();
-bass = new Gibberish.MonoSynth({ 
-  attack:44, 
+bass = new Gibberish.MonoSynth({
+  attack:44,
   decay:Gibberish.Time.beats( .25 ),
   filterMult:.25,
-  octave2:0, 
+  octave2:0,
   octave3:0
 }).connect()
 
@@ -206,7 +206,7 @@ bass = new Gibberish.MonoSynth({
 // Websocket
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var wsocket; 
+var wsocket;
 var connectTask;
 
 var qstr = window.location.search,
@@ -225,7 +225,7 @@ function ws_connect() {
   if ('WebSocket' in window) {
     var address = "ws://" + host + ":" + port + "/";
     var ws = new WebSocket(address);
-    ws.onopen = function(ev) {     
+    ws.onopen = function(ev) {
 
       wsocket = ws;
 
@@ -277,7 +277,7 @@ function ws_connect() {
               window.seq.external_resume();
             }
           }
-        } else {    		
+        } else {
           console.log("received msg:" + ev.data.length + ": " + ev.data.substr(0, 50));
         }
       }
@@ -293,7 +293,7 @@ function ws_send(msg) {
 		wsocket.send(msg);
 	} else {
 		console.log("websocket send:", msg);
-	}    	
+	}
 }
 
 ws_connect();
@@ -301,111 +301,111 @@ ws_connect();
 //////////////////////////////////////////////////////////////////////////////////////////
 /*
 	Pattern sequencer
-	
+
 	interprets a list of events, like a byte code but with pauses
-	
-	Important to distinguish between operations and simple lists. 
+
+	Important to distinguish between operations and simple lists.
 	[a, b, c] can means perform a, b, c in sequence
 	or it can be perform a(b,c), e.g. note(60, 100)
 	we could make the former explicit by ["seq", a, b, c] but it would be nice not to have to
 	we might be able to infer seq or expr by context? E.g. the root of a score must always be seq.
 	or just make instructions have special names, e.g. "@pluck"
-	
+
 	any argument can be another bytecode to interpret
 	[note, a, [b, c], d]; in this case [b, c] must be an expression, right?
 	Important to distinguish [note a b c] from [note [a b] c]... can't just flatten arrays
-	
+
 	-- simple numeric arguments, for note N N N, loop N, rotate N, etc.
-	(loop (rnd 1 4) pattern) 
-	(loop (rnd 1 (rnd 1 4)) pattern) 
-	(loop (add 3 (rnd 1 4)) pattern) 
+	(loop (rnd 1 4) pattern)
+	(loop (rnd 1 (rnd 1 4)) pattern)
+	(loop (add 3 (rnd 1 4)) pattern)
 	(note (pick 60 40 30))
 	(note (alt 60 50 40))
 	(note (chance 0.5 60)) makes sense only if there is a contextual freq-state to default to
 	+ filters
-	
+
 	shuffle, reverse, rotate return lists, don't make sense here. unless we give it semantics.
-	loop, fork, rate, wait don't make sense because no return, and temporal semantics don't make sense in an expression. They only make sense in an event sequence. 
+	loop, fork, rate, wait don't make sense because no return, and temporal semantics don't make sense in an expression. They only make sense in an event sequence.
 	every N?
-	
+
 	list/pattern arguments, for loop P, rotate/reverse/shuffle/alt P, pick P, rate P, fork P...
 	add: could apply to all elements in the P, but that might not make sense
-	
+
 	fun example:
-	
+
 	((alt (pick seq)) (A B C)) The trick is that the operator itself is dynamically chosen. Could lead to patterns like ABCAABCBABCAABCCABCCABCBACBAABCBABCB ETC.
-	
-	
-	Challenge: some things need to be calculated before applying the operation, 
+
+
+	Challenge: some things need to be calculated before applying the operation,
 	while some things need to wait for the operation to know whether/how to calculate
-	
+
 	E.g. (add a b) needs a & b to be evaluated first, but (chance 0.5 a) has to determine the chance first before evaluating a. This is essentially the $vau special form argument; or put another way, the difference between function calls and other control flow types.
-	
-	Each operator already knows whether an argument should be evaluated first. 
-	E.g. encountering (@add a b) on the queue, one could requeue as (a b @add-values) to ensure a & b are evaluated first. Then the question is how to map the values of a & b to @add-values, e.g. via a simple value stack. That makes it a stack-based machine, also like a concat language... 
+
+	Each operator already knows whether an argument should be evaluated first.
+	E.g. encountering (@add a b) on the queue, one could requeue as (a b @add-values) to ensure a & b are evaluated first. Then the question is how to map the values of a & b to @add-values, e.g. via a simple value stack. That makes it a stack-based machine, also like a concat language...
 		4 wait
 		dur amp freq note, ... path osc, etc.
 		1 2 add, etc.
-		
+
 	Whereas encountering (@pick a b) we can do the pick immediately, as this only modifies the queue, pushing either a or b onto it. This is more like a macro language.
 		alt A B
-		pick list, 
-		loop A, fork A, 
+		pick list,
+		loop A, fork A,
 		reverse A, shuffle A, rotate A => A (but also modifies A in-place)
-	
+
 	That's how 'wait pick (2, 3)' becomes 'wait 2' or 'wait 3': the pick(2, 3) is pushed on the stack first, then evaluated to get 2 or 3, then this needs to move to a stack, then be used (popped) by the @wait.
-	
-	
+
+
 	Some instructions may generate both forms:
-	
+
 		N chance A
 		N rate A  (eval the rate argument and apply only around the pattern A) => set-rate A unset-rate
 		N loop A (iterations arg will be evaluated once then counted down) => A N-1 loop A
-		N rotate A => A rotate A'  
-		
-	
-		N after A (add A only after N visits) 
+		N rotate A => A rotate A'
+
+
+		N after A (add A only after N visits)
 			has to modify the (N after A) whole to decrement N. Only when N == 0 will A be added.
-		N every A like above, but needs to re-add N every A when A is run. 
-			not sure if this is even possible... though maybe (alt (nop, nop, nop, A)) works. 
-	
+		N every A like above, but needs to re-add N every A when A is run.
+			not sure if this is even possible... though maybe (alt (nop, nop, nop, A)) works.
+
 	Can stuff like this work? I.e. reverse A 50% of the time:
-	
+
 	((0.1 chance reverse) A)
 	-> 0.1 | chance reverse A
 	-> | reverse A				or 			| A
-	
+
 	-- definitely need parens:
 	loop ((0.1 chance (pick (reverse shuffle))) A)
 	can produce any of:
-	-> | reverse A	
+	-> | reverse A
 	-> | shuffle A
 	-> | A
-	
+
 	-- but without parens, it's pretty ambiguous:
 	loop 0.1 chance pick reverse shuffle A
-	
-	
+
+
 	In a way, maybe what we need is a conditional transform; a bit like a filter.
 	Things like reverse/shuffle/rotate are not often likely to be desired on every loop.
 	Conditions could be e.g. periodic, stochastic, or more complex
 	In any case, the notion of a conditional transform implies that the 'else' is the untransformed pattern
 	i.e. pattern plays unchanged.
 	So, we may have a sequence of "(transform-if (0.5 prob) rotate (transform reverse patt))"
-	
+
 	Really, when would you use rotate etc. without some condition?
 	So, why not call them rotate-if?
-	
+
 	cond reverse-if patt => patt or patt'
 	can't chain though:
-	cond reverse-if cond shuffle-if patt Fails, because we can't pull patt for the reverse-if. 
-	
-	This could all be a ton easier if we allowed users to name patterns... 
-	Maybe that's something we can support if there's a uid() function available to the parser actions... 
-	
-	
+	cond reverse-if cond shuffle-if patt Fails, because we can't pull patt for the reverse-if.
+
+	This could all be a ton easier if we allowed users to name patterns...
+	Maybe that's something we can support if there's a uid() function available to the parser actions...
+
+
 	----------------------
-	
+
 	Each active sequencer is a PQ
 	Each PQ can contain several Q's of instructions (this allows polyrhythm)
 	PQ's are stored in named slots for easy replacement/removal
@@ -439,7 +439,7 @@ cq.resume = function(t) {
 	var t0 = Math.floor(t);
 	if (t0 > this.beat) {
 		this.beat = t0;
-		
+
 		// flush commands:
 		while (this.cmds.length) {
 			var cmd = this.cmds.shift();
@@ -451,7 +451,7 @@ cq.resume = function(t) {
 }
 
 Gibberish.sequencers.push(cq);
-	
+
 // clear all sequencers (e.g. STOP button) -- immediate
 window.seq.clear = function() {
 	for (k in sequencers) {
@@ -459,7 +459,7 @@ window.seq.clear = function() {
 		delete sequencers[k];
 	}
 	spawns = {};
-	
+
 	if (MIDI) MIDI.send([0x7B, 0], 0);
 }
 
@@ -486,11 +486,11 @@ window.seq.play_element_text = function(element) {
     }
 }
 
-// define a sequencer. 
+// define a sequencer.
 // if name didn't exist, create a new one.
 // if name already exists, replace score. If no score, terminate the sequencer.
 window.seq.define = function(name, score) {
-	
+
 	// sync this:
 	cq.cmds.push(function() {
 		if (!typeof name == "string") {
@@ -520,12 +520,12 @@ window.seq.external_resume = function() {
 	cq.resume(t1);
 	for (k in sequencers) {
 		sequencers[k].resume(t1);
-	} 
+	}
 }
 
 // we could also call this an agent, or player, or scheduler, etc.
 // it can contain multiple command queues (type Q), and executes them in an interleaved way
-// to ensure proper timing -- a bit like coroutines. 
+// to ensure proper timing -- a bit like coroutines.
 function PQ(score, name) {
 	this.t = external.t;
 	this.heap = []; // the list of active command queues (next to resume is at the top)
@@ -534,9 +534,9 @@ function PQ(score, name) {
 		freq: 440,
 		amp: 1,
 	};
-	
+
 	if (score) { this.fork(score, this.t, this); }
-	
+
 	// replace?
 	var s = sequencers[this.name];
 	if (s !== undefined) {
@@ -544,7 +544,7 @@ function PQ(score, name) {
 		s.disconnect();
 	}
 	sequencers[this.name] = this; // auto-connect()?
-	
+
 	//console.log('creating sequencer', this.name);
 }
 
@@ -560,9 +560,9 @@ PQ.prototype.disconnect = function() {
 	var idx = Gibberish.sequencers.indexOf( this );
 	if (idx >= 0) Gibberish.sequencers.splice( idx, 1 );
 	delete sequencers[this.name];
-	
+
 	//console.log('stopping sequencer', this.name);
-	
+
 	return this;
 }
 
@@ -593,7 +593,7 @@ PQ.prototype.push = function(q) {
 		}
 		// insert:
 		this.heap.splice(i, 0, q);
-		
+
 		//for (var i=0; i<this.heap.length; i++) console.log("pq", i, this.heap[i]);
 	}
 	return this;
@@ -616,9 +616,9 @@ PQ.prototype.resume = function(t) {
 	runaway_limit = 10000; // prevent infinite loops
 	while (!this.empty() && t >= this.at() && --runaway_limit > 0) {
 		// resume a queue:
-		//console.log("PQ.tick", this.t, this.at());
+		// console.log("PQ.tick", this.t, this.at());
 		var q = this.heap.pop();
-		//console.log("PQ.tick", q, this.t, q.at);
+		console.log("PQ.tick", q, this.t, q.at);
 		if (q.resume(t)) {
 			this.push(q);	// re-schedule it
 		}
@@ -635,7 +635,7 @@ function Q(score, t, pq, parentQ) {
 	this.t = t || 0;
 	this.pq = pq;
 	this.rate = 1;
-	this.todo = []; 
+	this.todo = [];
 	this.stack = [];
 	this.parentQ = parentQ;
 	if (parentQ) {
@@ -680,13 +680,13 @@ Q.prototype.step = function() {
 			for (i=item.length-1; i>=0; i--) {
 				this.todo.push(item[i]);
 			}
-		
+
 		} else if (typeof item == "string" && item.charAt(0) == "@") {
 			var op = item;
 			//console.log(op);
-			
+
 			// special cases:
-			
+
 			if (op.substring(0, 4) == "@ws-") {
 				var n = +op.substring(4);
 				var args = this.stack.splice(this.stack.length-n, n);
@@ -694,7 +694,7 @@ Q.prototype.step = function() {
 				var msg = args.join(" ");
 				ws_send(this.t + " " + msg);
 				return;
-			
+
 			} else if (op.substring(0, 4) == "@gb-") {
 				var n = +op.substring(4);
 				var args = this.stack.splice(this.stack.length-n, n);
@@ -702,13 +702,13 @@ Q.prototype.step = function() {
 				var msg = args.join(" ");
 				ws_send(msg);
 				return;
-			
+
 			} else if (op.substring(0, 5) == "@let-") {
 				// let is always local:
 				var name = op.substring(5);
 				this.context[name] = this.stack.pop();
 				return;
-				
+
 			} else if (op.substring(0, 5) == "@set-") {
 				var name = op.substring(5);
 				var value = this.stack.pop();
@@ -719,7 +719,7 @@ Q.prototype.step = function() {
 					this.context[name] = value;
 					return;
 				}
-				
+
 				// else we are child, so the @set might be directed here or upper:
 				var q = this;
 				var ctx;
@@ -731,26 +731,26 @@ Q.prototype.step = function() {
 					// keep moving up:
 					q = q.parentQ
 				}
-				
+
 				ctx[name] = value;
 				return;
-				
+
 			} else if (op.substring(0, 5) == "@get-") {
 				var name = op.substring(5);
 				this.stack.push( this.get(name) );
 				return;
 			}
-			
-		
+
+
 			switch (op) {
-			
+
 			case "@dup":
 				// duplicate whatever is on the stack
 				this.stack.push(
 					this.stack[this.stack.length-1]
 				);
 				break;
-				
+
 			case "@bpm":
 				// set bpm:
 				var t1 = this.stack.pop();
@@ -758,8 +758,8 @@ Q.prototype.step = function() {
 				t1 = (t1 == t1) ? t1 : 100;
 				bpm = t1;
 				break;
-				
-			case "@wait": 
+
+			case "@wait":
 				// TODO: verify stack top is a valid number...
 				// pop wait time off the stack:
 				var t1 = this.stack.pop();
@@ -770,11 +770,11 @@ Q.prototype.step = function() {
 				//if (this.pq) this.pq.push(this);
 				//console.log("\tq.t =", this.t);
 				break;
-			
-			case "@set-rate": 
+
+			case "@set-rate":
 				var a1 = this.stack.pop();
 				if (a1 !== undefined && typeof a1 == "number" && a1 > 0.) {
-					
+
 					this.rate = a1;
 					/*
 					TODO: later, push/pop rate around a pattern
@@ -789,10 +789,10 @@ Q.prototype.step = function() {
 					*/
 				} else {
 					console.error("missing or invalid argument to @rate");
-				}	
+				}
 				break;
-				
-			case "@with-rate": 
+
+			case "@with-rate":
 				var a1 = this.stack.pop();
 				if (a1 !== undefined && typeof a1 == "number" && a1 > 0.) {
 					var patt = this.todo.pop();
@@ -819,9 +819,9 @@ Q.prototype.step = function() {
 					*/
 				} else {
 					console.error("missing or invalid argument to @rate");
-				}	
+				}
 				break;
-				
+
 			case "@spawn":
 				// find the name:
 				var name = this.stack.pop();
@@ -840,8 +840,8 @@ Q.prototype.step = function() {
 				if (s == undefined) {
 					console.error("can't spawn, can't find sequencer", this.pq);
 					break;
-				}	
-				
+				}
+
 				// does it already exist?
 				var loop = spawns[name];
 				if (loop == undefined) {
@@ -852,7 +852,7 @@ Q.prototype.step = function() {
 					// fork it:
 					s.fork(loop, this.t, this);
 				} else {
-				
+
 					//console.log("replace", name, loop);
 					// nothing yet
 					var dst = loop[1];
@@ -860,18 +860,18 @@ Q.prototype.step = function() {
 					dst.push.apply(dst, patt);
 					//console.log("replace", name, loop);
 				}
-				
+
 				// do it:
 				//seq.define(name, ["@loop", patt]);
 				break;
-			
+
 			case "@stop":
 				// find the name:
 				var name = this.stack.pop();
 				// does it already exist?
 				var loop = spawns[name];
 				if (loop !== undefined) {
-				
+
 					console.log("stop", name);
 					// nothing yet
 					loop[1].length = 0;
@@ -880,7 +880,7 @@ Q.prototype.step = function() {
 					//loop.push.apply(loop);
 				}
 				break;
-				
+
 			case "@fork":
 				// find the score:
 				var patt = this.todo.pop();
@@ -897,8 +897,8 @@ Q.prototype.step = function() {
 					console.error("can't fork without a scheduler, couldn't find scheduler", this.pq);
 				}
 				break;
-				
-			case "@loop": 
+
+			case "@loop":
 				// find the score:
 				var patt = this.todo.pop();
 				// argument *must* be a pattern
@@ -914,9 +914,9 @@ Q.prototype.step = function() {
 				} else {
 					console.error("can't fork without a scheduler, couldn't find scheduler", this.pq);
 				}
-			
+
 				break;
-		
+
 			case "@forever":
 				// infinite loop
 				var patt = this.todo[this.todo.length-1];
@@ -926,14 +926,14 @@ Q.prototype.step = function() {
 					break;
 				}
 				if (patt.length) {
-			
+
 					// push instruction again (the loop flow)
 					this.todo.push(item);
 					// push content of instruction (the loop body)
 					this.todo.push(patt);
-				}		
+				}
 				break;
-			
+
 			case "@repeat":
 				var rpts = this.stack.pop();
 				// TODO: verify number, integer, >= 0, < 10000 etc.
@@ -943,21 +943,21 @@ Q.prototype.step = function() {
 					console.error("loop body must be a pattern (an array)");
 					break;
 				}
-			
+
 				for (i=1; i<rpts; i++) {
 					this.todo.push(patt);
 				}
 				break;
-		
+
 			case "@print":
 				// TODO: handle item.argc > 1
 				console.log("PRINT!", this.stack.pop());
 				break;
-		
-			case "@pick": 
+
+			case "@pick":
 				// pick a random element to enqueue:
 				if (Array.isArray(this.todo[this.todo.length-1])) {
-					var list = this.todo.pop(); 
+					var list = this.todo.pop();
 					var i = random(list.length);
 					if (i >= 0) {
 						this.todo.push(list[i]);
@@ -966,24 +966,24 @@ Q.prototype.step = function() {
 					console.error("pick requires a list (array) argument to select from");
 				}
 				break;
-			
+
 			case "@iter":
-		
+
 				var patt = this.todo.pop();
 				if (Array.isArray(patt) && patt.length) {
-			
+
 					// rotates the pattern and plays the first item only each time
 					// remove '1st' item, schedule, then push to back:
 					var first = patt.splice(0, 1);
 					this.todo.push(first);
 					patt.push(first);
-				
+
 				} else {
 					console.error("rotate instruction requires a pattern (array)");
 					break;
 				}
 				break;
-		
+
 			case "@chance":
 				var prob = this.stack.pop();
 				var pt = this.todo.pop();
@@ -994,7 +994,7 @@ Q.prototype.step = function() {
 					this.todo.push(pt);
 				}
 				break;
-		
+
 			case "@reverse":
 				// schedule the argument, then reverse it:
 				// TODO: is this the right order? or reverse then schedule?
@@ -1002,7 +1002,7 @@ Q.prototype.step = function() {
 					console.error("reverse instruction requires a pattern (array)");
 					break;
 				}
-			
+
 				// get the pattern:
 				var arg = this.todo.pop();
 				// case pre: arg.reverse(); // reverse the pattern in-place
@@ -1010,9 +1010,9 @@ Q.prototype.step = function() {
 				this.todo.push(arg.slice());
 				// case post:
 				arg.reverse(); // reverse the pattern in-place
-		
+
 				break;
-			
+
 			case "@shuffle":
 				// schedule the argument, then reverse it:
 				// TODO: is this the right order? or reverse then schedule?
@@ -1020,7 +1020,7 @@ Q.prototype.step = function() {
 					console.error("shuffle instruction requires a pattern (array)");
 					break;
 				}
-			
+
 				// get the pattern:
 				var patt = this.todo.pop();
 				// case pre: array_shuffle(patt); // reverse the pattern in-place
@@ -1029,52 +1029,52 @@ Q.prototype.step = function() {
 				// case post:
 				// transform the pattern in-place
 				array_shuffle(patt);
-			
+
 				break;
-		
-			case "@rotate": 
-		
+
+			case "@rotate":
+
 				var patt = this.todo.pop();
-				var rot = this.stack.pop(); 
+				var rot = this.stack.pop();
 				if (Array.isArray(patt) && patt.length) {
-				
+
 					// ensure rot is valid between -args.length to +args.length
 					rot = rot % patt.length;
-				
+
 					var copy = patt.splice(0);
 					// rotate in-place
 					patt.push.apply(patt, copy.slice(rot));
 					patt.push.apply(patt, copy.slice(0, rot));
 					// schedule a shallow copy:
 					this.todo.push(copy);
-			
+
 				} else {
 					console.error("rotate instruction requires a pattern (array)");
 					break;
 				}
 				break;
-			
-			case "@pre-rotate": 
-		
+
+			case "@pre-rotate":
+
 				var patt = this.todo.pop();
-				var rot = this.stack.pop(); 
+				var rot = this.stack.pop();
 				if (Array.isArray(patt) && patt.length) {
-				
+
 					// ensure rot is valid between -args.length to +args.length
 					rot = rot % patt.length;
 					var copy = patt.splice(0);
 					// rotate in-place
 					patt.push.apply(patt, copy.slice(rot));
 					patt.push.apply(patt, copy.slice(0, rot));
-				
+
 					this.todo.push(patt);
-			
+
 				} else {
 					console.error("rotate instruction requires a pattern (array)");
 					break;
 				}
 				break;
-		
+
 			case "@":
 			case "@execute":
 				var instr = this.stack.pop();
@@ -1084,7 +1084,7 @@ Q.prototype.step = function() {
 				}
 				this.todo.push("@"+instr);
 				break;
-			
+
 			case "@cond":
 				var test = this.stack.pop();
 				var pt = this.todo.pop();
@@ -1095,43 +1095,43 @@ Q.prototype.step = function() {
 					this.todo.push(pt);
 				}
 				break;
-		
+
 			case "@random":
 			case "@rand":
 				this.stack.push(Math.random());
 				break;
-				
+
 			case "@srandom":
 			case "@srand":
 				this.stack.push(Math.random()*2-1);
 				break;
-			
+
 			case "@randi":
 				var n = this.stack.pop();
 				this.stack.push(random(n));
 				break;
-		
+
 			case "@+":
 			case "@add":
 				var b = this.stack.pop();
 				var a = this.stack.pop();
 				this.stack.push(a+b);
 				break;
-			
+
 			case "@-":
 			case "@sub":
 				var b = this.stack.pop();
 				var a = this.stack.pop();
 				this.stack.push(a-b);
 				break;
-			
+
 			case "@*":
 			case "@mul":
 				var b = this.stack.pop();
 				var a = this.stack.pop();
 				this.stack.push(a*b);
 				break;
-			
+
 			case "@/":
 			case "@div":
 				var b = this.stack.pop();
@@ -1139,7 +1139,7 @@ Q.prototype.step = function() {
 				if (b == 0) this.stack.push(0);
 				else  		this.stack.push(a/b);
 				break;
-			
+
 			case "@%":
 			case "@wrap":
 				var b = this.stack.pop();
@@ -1147,19 +1147,19 @@ Q.prototype.step = function() {
 				if (b == 0) this.stack.push(0);
 				else  		this.stack.push(wrap(a, b));
 				break;
-			
+
 			case "@mod":
 				var b = this.stack.pop();
 				var a = this.stack.pop();
 				if (b == 0) this.stack.push(0);
 				else  		this.stack.push(a%b);
 				break;
-			
+
 			case "@neg":
 				var a = this.stack.pop();
 				this.stack.push(-a);
 				break;
-			
+
 			// conditionals
 			// should they return 1 and 0 instead of bools?
 			case "@>":
@@ -1209,9 +1209,9 @@ Q.prototype.step = function() {
 				var a = this.stack.pop();
 				this.stack.push(a || b);
 				break;
-			
-			
-			
+
+
+
 			// v ilo ihi olo ohi @map
 			case "@map":
 				var ohi = this.stack.pop();
@@ -1219,14 +1219,14 @@ Q.prototype.step = function() {
 				var ihi = this.stack.pop();
 				var ilo = this.stack.pop();
 				var v = this.stack.pop();
-				
+
 				if (ihi == ilo) {
 					this.stack.push(olo);
 				} else {
-					this.stack.push(olo + (ohi-olo) * ((v-ilo) / (ihi-ilo)));				
+					this.stack.push(olo + (ohi-olo) * ((v-ilo) / (ihi-ilo)));
 				}
 				break;
-			
+
 			// MIDI
 			/*
 			MIDI note						| ```pitch, velocity, channel, duration, @note```
@@ -1236,101 +1236,101 @@ MIDI controller					| ```controller, value, channel, @cc```
 Send n arguments over websocket	| ```arg1, arg2..., "@ws-n"```
 
 */
-			
-			
+
+
 			// [pitch, velocity, channel, "@note-on"]
 			case "@note-on": {
 				var chan = +this.stack.pop();
 				var vel = +this.stack.pop();
 				var pitch = +this.stack.pop();
-				
+
 				// send noteon pitch vel chan
 				if (MIDI) {
 					MIDI.send( [0x90+chan,pitch,vel], 0 );
 				}
-			}	
+			}
 			break;
-				
+
 			// [pitch, velocity, channel, "@note-off"]
 			case "@note-off": {
 				var chan = +this.stack.pop();
 				var vel = +this.stack.pop();
 				var pitch = +this.stack.pop();
-				
+
 				// send noteoff pitch vel chan
 				if (MIDI) {
 					MIDI.send( [0x80+chan,pitch,vel], 0 );
 				}
 			}
 			break;
-			
+
 			// [pitch, velocity, channel, duration, "@note"]
 			case "@note": {
 				var dur = +this.stack.pop();
 				var chan = +this.stack.pop();
 				var vel = +this.stack.pop();
 				var pitch = +this.stack.pop();
-				
+
 				// send noteon pitch vel chan
 				if (MIDI) {
 					MIDI.send( [0x90+chan,pitch,vel], 0 );
-				
+
 					// schedule noteoff later:
 					var s = sequencers[this.pq];
 					if (s == undefined) {
 						break;
-					}	
+					}
 					s.fork([pitch, 0, chan, "@note-off"], this.t + dur * this.rate, this);
-				}				
+				}
 			}
 			break;
-					
+
 			// [controller, value, channel, "@cc"]
 			case "@cc": {
 				var chan = +this.stack.pop();
 				var value = +this.stack.pop();
 				var controller = +this.stack.pop();
-				
+
 				// send cc controller value chan
 				if (MIDI) {
 					MIDI.send( [0xB0+chan,controller,value], 0 );
 				}
-				
-				
-				
+
+
+
 			}
 			break;
-			
+
 			// Built-in sounds
-			
+
 			case "@pluck":
 				var amp = this.get("amp");
 				var freq = this.get("freq");
-				
+
 				if (freq <= 0) break;
 				// this is not in any way accurate, just a hack to make @set-dur do something semi-meaningful
 				strings.damping = 1 - (-6 / Math.log(freq / sr));
 				// strings by default seem too quiet:
 				strings.note(freq, amp * amp * 2);
 				break;
-			
-			
+
+
 			// [amp, freq, "@pluck"]
 			case "@pluck-note":
 				var amp = this.stack.pop();
 				var freq = this.stack.pop();
-				
+
 				if (freq <= 0) break;
 				// this is not in any way accurate, just a hack to make @set-dur do something semi-meaningful
 				strings.damping = 1 - (-6 / Math.log(freq / sr));
 				// strings by default seem too quiet:
 				strings.note(freq, amp * amp * 2);
 				break;
-			
+
       case "@bass":
 				var velocity = this.get("amp");
 				var freq = this.get("freq");
-				
+
 				if (freq <= 0) break;
 				bass.note(freq, velocity);
 
@@ -1338,63 +1338,63 @@ Send n arguments over websocket	| ```arg1, arg2..., "@ws-n"```
      case "@bass-note":
 				var velocity = this.stack.pop();
 				var freq = this.stack.pop();
-				
-				
+
+
 				if (freq <= 0) break;
 				bass.note(freq, velocity);
 
 				break;
-      case "@kick-note": 
+      case "@kick-note":
 				kick.amp = 0.5 * this.stack.pop(); // pitch, decay, tone, amp
-				kick.note(); 
+				kick.note();
 				break;
-			case "@snare-note": 
+			case "@snare-note":
 				snare.amp = 0.25 * this.stack.pop(); // cutoff:1000, decay:11025, tune:0, snappy:.5, amp:1
 				snare.note();
 				break;
-			case "@hat-note": 
-				hat.amp = this.stack.pop(); 
+			case "@hat-note":
+				hat.amp = this.stack.pop();
 				hat.note(); // amp: 1, pitch: 325, bpfFreq:7000, bpfRez:2, hpfFreq:.975, hpfRez:0, decay:3500, decay2:3000
 				break;
-			case "@conga-note": 
+			case "@conga-note":
 				conga.amp = 0.25 * this.stack.pop();
 				conga.pitch = this.stack.pop();
 				conga.note(); // amp: 1, pitch: 325, bpfFreq:7000, bpfRez:2, hpfFreq:.975, hpfRez:0, decay:3500, decay2:3000
 				break;
-			case "@tom-note": 
+			case "@tom-note":
 				tom.amp = 0.25 * this.stack.pop();
 				tom.pitch = this.stack.pop();
 				tom.note(); // amp: 1, pitch: 325, bpfFreq:7000, bpfRez:2, hpfFreq:.975, hpfRez:0, decay:3500, decay2:3000
 				break;
-				
-			case "@kick": 
+
+			case "@kick":
 				kick.amp = 0.5 * this.get("amp"); // pitch, decay, tone, amp
-				kick.note(); 
+				kick.note();
 				break;
-			case "@snare": 
+			case "@snare":
 				snare.amp = 0.25 * this.get("amp"); // cutoff:1000, decay:11025, tune:0, snappy:.5, amp:1
 				snare.note();
 				break;
-			case "@hat": 
-				hat.amp = this.get("amp"); 
+			case "@hat":
+				hat.amp = this.get("amp");
 				hat.note(); // amp: 1, pitch: 325, bpfFreq:7000, bpfRez:2, hpfFreq:.975, hpfRez:0, decay:3500, decay2:3000
 				break;
-				
-			case "@conga": 
-				conga.amp = this.get("amp") * 0.25; 
+
+			case "@conga":
+				conga.amp = this.get("amp") * 0.25;
 				conga.pitch = this.get("freq");
-				conga.note(); 
+				conga.note();
 				break;
-			case "@tom": 
-				tom.amp = this.get("amp") * 0.25; 
+			case "@tom":
+				tom.amp = this.get("amp") * 0.25;
 				tom.pitch = this.get("freq");
-				tom.note(); 
+				tom.note();
 				break;
-			
+
 			case "@time": this.stack.push(this.t); break;
 			case "@rate": this.stack.push(this.rate); break;
-				
-				
+
+
 			default:
 				console.error("unknown instruction operator:", op);
 				return;
@@ -1409,14 +1409,14 @@ Send n arguments over websocket	| ```arg1, arg2..., "@ws-n"```
 
 Q.prototype.resume = function(t) {
 	while (--runaway_limit > 0 && this.todo.length && this.t < t) {
-		this.step();	
+		this.step();
 	}
 	return this.todo.length > 0; // returns false if Q has no more events
 }
 
 Q.prototype.flush = function() {
 	while (--runaway_limit > 0 && this.todo.length) {
-		this.step();	
+		this.step();
 	}
 	if (runaway_limit == 0) {
 		console.error("Q flush unbounded loop detected");
@@ -1440,7 +1440,7 @@ function wait(n) {
 	if (n != undefined) n = 1;
 	return [n, "@wait"];
 }
-function loop(p, n) { 
+function loop(p, n) {
 	if (n != undefined) {
 		return [n, "@repeat", p];
 	} else {
@@ -1456,21 +1456,21 @@ function cond(f, pt, pf) { return [f, "@cond", pt, pf]; }
 function sub(a, b) { return [a, b, "@sub"]; }
 function pick(l) { return [ "@pick", l ]; }
 function alt(l) { return [ "@iter", l ]; }
-function execute(l, args) { 
-	if (args != undefined) return [l, "@execute", args]; 
+function execute(l, args) {
+	if (args != undefined) return [l, "@execute", args];
 	else return [l, "@execute"];
-} 
+}
 
 // just a convenience
 // every(3, p) actually creates cond(alt([0,0,1]),p)
 // neat eh?
 function every(n, p) {
 	// TODO assert n must be integer
-	var l = []; 
+	var l = [];
 	for (var i=0; i<n-1; i++) l.push(0);
 	l.push(1);
 	return cond(alt(l), p);
-	
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1481,9 +1481,9 @@ function every(n, p) {
 
 /*
 score = loop([
-	//[reverse([print("A"), chance( 1, print(sub(3, 2)) )])], 
-	
-		//chance(0.5, execute([2, "rotate"])), // will sometimes transform the pattern that follows: 
+	//[reverse([print("A"), chance( 1, print(sub(3, 2)) )])],
+
+		//chance(0.5, execute([2, "rotate"])), // will sometimes transform the pattern that follows:
 		//every(3, execute("shuffle")),
 		cond(alt([0, 0, 1]), execute([1, "pre-rotate"])),
 		[print("A"), print("B"), print("C")],
@@ -1493,7 +1493,7 @@ score = loop([
 		["@iter",[0,1,0]],"@cond",["YES","@print"],["NO","@print"],
 		"@iter", [440, 550, 660], "@freq",
 		"@pluck",
-	
+
 	print("___________")
 ];
 */
@@ -1535,12 +1535,12 @@ console.log(JSON.stringify(pq));
 
 /*
 	Question -- what happens when we trigger stuff?
-	
+
 	Case 0: any bit of code should be able to spawn a *named* player, so that this can later be stopped/replaced. [name "@spawn" patt] => seq_define(name, patt)
-	
+
 	Case 1: just grabbed a random bit of text and triggered it. It should run independently.
-	
+
 	Case 2: run any bit of code, it should replace everything? Like replacing the 'default' player. Maybe, or maybe just have a key combo for 'stop everything first, then run this'?
-	
+
 	Case 3: have named patterns, which don't play by default (but can be used by other processes). Then have named players, that can use them.
 */

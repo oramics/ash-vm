@@ -3,7 +3,7 @@
   "description": "Schedule VM",
   "version": "0.0.0",
   "private": true,
-  "main": "dist/ScheddVM.js",
+  "main": "src/index.js",
   "jsnext:main": "src/index.js",
   "module": "src/index.js",
   "license": "MIT",
@@ -18,13 +18,16 @@
     "test": "jest --coverage --no-cache",
     "build": "rollup -cm -n ScheddVM -f iife -i src/index.js -o dist/ScheddVM.js && cp dist/*.js docs/",
     "prepublish": "npm run build",
-    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
+    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
+    "docs": "docco src/* src/**/* -o docs/literate"
   },
   "babel": {
     "presets": "es2015"
   },
   "devDependencies": {
     "babel-preset-es2015-rollup": "^3.0.0",
+    "hyperapp": "^0.7.1",
+    "hyperx": "^2.3.0",
     "jest": "^19.0.2",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
