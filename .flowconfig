@@ -1,0 +1,10 @@
+[ignore]
+doc
+test
+
+[include]
+src
+
+[libs]
+
+[options]

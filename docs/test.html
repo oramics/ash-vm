@@ -7,51 +7,88 @@
 <script src="js/jquery.min.js"></script>
 
 <script src="js/gibberish.min.js"></script>
-<script src="ScheddVM.js"></script>
+<script src="TimeVM.js"></script>
 </head>
 <body>
 
-	<h1>ScheddVM test1</h1>
+	<h1>TimeVM test1</h1>
 
-  <h2>Implemented commands:</h2>
-  <pre id="commands"></pre>
+  <p>We have designed a target language that captures some essential concepts
+  for a musical live coding context, such as playing notes and looping patterns.
+  It is intentionally limited to make it fairly easy to learn, yet also
+  intentionally designed to make it possible to express a wide variety of ideas.
+  It is not designed to be succinct -- that's the job of the user-facing
+  language you create! The target language is a bit like the instruction
+  sequences real compilers use, in that it is a list of commands. However ours
+  can also have nested structures as lists of lists. A simple example is a
+  pattern that plays a note every beat:</p>
 
-	<h2>Test script</h2>
-
-	<pre id="test1">
-[4, "@repeat", ["@kick", "@fork", [0.5, "@wait", "@snare"], 1, "@wait"]]
+	<pre class="runnable">
+    ["@loop", ["@pluck", [1, "@wait"]]]
 	</pre>
-	<button class="init" id="test1-btn" data-test="test1">Run</button>
+
+  <h2>Sounds</h2>
+
+  <p>The VM comes with a small number of instruments to get things going. Here's
+  a plucked string instrument. There are two ways to trigger it. You can use
+  @pluck-note to set the frequency and amplitude for each note like this:</p>
+
+	<pre class="runnable">
+    [440, 1, "@pluck-note"]
+	</pre>
+	<pre class="runnable">
+    [880, 0.25, "@pluck-note"]
+	</pre>
+
+  <p>Or you can set the frequency and amplitude as contextual variables, and
+  just use @pluck to trigger using these values. This can allow a bit more
+  flexibility in how these values are calculated: </p>
+
+	<pre class="runnable">
+    ["@pluck"]
+	</pre>
+	<pre class="runnable">
+    [[330, "freq", "@set"], [0.5, "amp", "@set"], "@pluck"]
+	</pre>
+
+  <p>There are also some percussion sounds, which either grab amplitude from the
+  context (set using @set-amp), or specify it using the -note variants: </p>
+
+	<pre class="runnable">
+  [1, "@hat-note"]
+	</pre>
+	<pre class="runnable">
+  [1, "@kick-note"]
+	</pre>
+	<pre class="runnable">
+  [1, "@snare-note"]
+	</pre>
+	<pre class="runnable">
+  [[1, "amp", "@set"], "@hat"]
+	</pre>
+	<pre class="runnable">
+  [[1, "amp", "@set"], "@kick"]
+	</pre>
+	<pre class="runnable">
+  [[1, "amp", "@set"], "@snare"]
+	</pre>
+	<pre class="runnable">
+  [4, "@repeat", [
+      [["@iter", [0.3, 1]], "amp", "@set"],
+      8, "@repeat", ["@hat", 0.125, "@wait"]
+  ]]
+	</pre>
+
+
 <script>
 
-const audio = new ScheddVM.Audio(Gibberish)
+const run = TimeVM.init(Gibberish)
 
-$('#commands').text(JSON.stringify(Object.keys(ScheddVM.defaultOperator.commands)))
-
-$('button').click(() => {
-	const data = JSON.parse($('#test1').text().trim())
-	audio.start(data)
+$('.runnable').click((e) => {
+	const program = JSON.parse(e.target.innerHTML)
+  console.log('RUN', program)
+	run(program)
 })
-
-
-const PROG1 = [4, '@repeat', [
-  'one', '@print', 1, '@wait',
-  'two', '@print', 1, '@wait'
-]]
-
-const PROG2 = [
-  4, '@repeat', [
-    'kick', '@print',
-    '@kick',
-    '@fork', [
-      0.5, '@wait',
-      'snare', '@print',
-      '@snare'
-    ],
-    1, '@wait'
-  ]
-]
-
 
 </script>
 

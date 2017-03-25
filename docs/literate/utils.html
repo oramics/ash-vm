@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>scope.js</title>
+  <title>AudioVM utilities</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -20,23 +20,18 @@
             <div id="jump_page">
               
                 
-                <a class="source" href="audio.html">
-                  audio.js
-                </a>
-              
-                
                 <a class="source" href="commands.html">
                   commands.js
                 </a>
               
                 
-                <a class="source" href="index.html">
-                  index.js
+                <a class="source" href="gibberish.html">
+                  gibberish.js
                 </a>
               
                 
-                <a class="source" href="operator.html">
-                  operator.js
+                <a class="source" href="index.html">
+                  index.js
                 </a>
               
                 
@@ -50,8 +45,13 @@
                 </a>
               
                 
-                <a class="source" href="scope.html">
-                  scope.js
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="vm.html">
+                  vm.js
                 </a>
               
             </div>
@@ -61,12 +61,6 @@
     
     <ul class="sections">
         
-          <li id="title">
-              <div class="annotation">
-                  <h1>scope.js</h1>
-              </div>
-          </li>
-        
         
         
         <li id="section-1">
@@ -75,12 +69,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h2 id="the-scope">The scope</h2>
+              <h1 id="audiovm-utilities">AudioVM utilities</h1>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Scope</span> </span>{</pre></div></div>
             
         </li>
         
@@ -91,14 +82,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Create a scope</p>
+              <h2 id="array-utilities">Array utilities</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">constructor</span> (parent) {
-    <span class="hljs-keyword">this</span>.parent = parent
-    <span class="hljs-keyword">this</span>.data = <span class="hljs-literal">undefined</span>
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isArray = <span class="hljs-built_in">Array</span>.isArray;</pre></div></div>
             
         </li>
         
@@ -109,14 +98,13 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>set a key in the local scope</p>
+              <p>get last element from an array</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">let</span> (key, value) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.data) <span class="hljs-keyword">this</span>.data = {}
-    <span class="hljs-keyword">this</span>.data[key] = value
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">last</span>(<span class="hljs-params">array</span>) </span>{
+  <span class="hljs-keyword">return</span> array[array.length - <span class="hljs-number">1</span>];
+}</pre></div></div>
             
         </li>
         
@@ -127,13 +115,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>test if a key is in the local scope</p>
+              <h2 id="stack-utilities">Stack utilities</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  ownsKey (key) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.data &amp;&amp; <span class="hljs-keyword">this</span>.data[key] !== <span class="hljs-literal">undefined</span>
-  }</pre></div></div>
             
         </li>
         
@@ -144,15 +128,13 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>get a key from all the scope hierarchy</p>
+              <p>push a value into a stack</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  get (key) {
-    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>
-    <span class="hljs-keyword">while</span> (target &amp;&amp; !target.ownsKey(key)) target = target.parent
-    <span class="hljs-keyword">return</span> target &amp;&amp; target.data ? target.data[key] : <span class="hljs-literal">undefined</span>
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">push</span>(<span class="hljs-params">stack, value</span>) </span>{
+  stack.push(value);
+}</pre></div></div>
             
         </li>
         
@@ -163,16 +145,29 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>set a key in al the scope hierarchy
-it sets the first key found or the root scope</p>
+              <p>pop a value from the stack</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  set (key, value) {
-    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>
-    <span class="hljs-keyword">while</span> (!target.ownsKey(key) &amp;&amp; target.parent) target = target.parent
-    target.let(key, value)
-  }
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pop</span>(<span class="hljs-params">stack</span>) </span>{
+  <span class="hljs-keyword">return</span> stack.pop();
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>get the next value of the stack without remove it</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">peek</span>(<span class="hljs-params">stack</span>) </span>{
+  <span class="hljs-keyword">return</span> stack[stack.length - <span class="hljs-number">1</span>];
 }</pre></div></div>
             
         </li>

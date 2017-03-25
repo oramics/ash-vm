@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Audio Virtual Machine</title>
+  <title>Virtual Machine</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -69,9 +69,20 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h1 id="audio-virtual-machine">Audio Virtual Machine</h1>
+              <h1 id="virtual-machine">Virtual Machine</h1>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">import</span> { all } <span class="hljs-keyword">from</span> <span class="hljs-string">"./commands"</span>;
+<span class="hljs-keyword">import</span> { Scheduler } <span class="hljs-keyword">from</span> <span class="hljs-string">"./scheduler"</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> defaultActions = {
+  <span class="hljs-attr">log</span>: <span class="hljs-built_in">console</span>.log.bind(<span class="hljs-built_in">console</span>),
+  <span class="hljs-attr">error</span>: <span class="hljs-built_in">console</span>.error.bind(<span class="hljs-built_in">console</span>)
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VM</span> </span>{</pre></div></div>
             
         </li>
         
@@ -82,9 +93,13 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>The main purpose of the virtual machine is to run processes concurrently</p>
+              <p>plugins is an array of plugins: objects with <code>{ commands, actions }</code></p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(plugins = []) {
+    <span class="hljs-keyword">this</span>.scheduler = <span class="hljs-keyword">new</span> Scheduler();
+    <span class="hljs-keyword">this</span>.initialContext = { <span class="hljs-attr">amp</span>: <span class="hljs-number">0.8</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">440</span> };</pre></div></div>
             
         </li>
         
@@ -95,9 +110,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h2 id="architecture-overview">Architecture Overview</h2>
+              <p>commands are a map of instructions to commands with the form:
+<code>{ &#39;@instruction&#39;: (proc, actions) =&gt; ... }</code></p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.commands = {};</pre></div></div>
             
         </li>
         
@@ -108,15 +126,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>A <strong>scheduler</strong> is a collection of processes. Each <strong>process</strong> mantains
-an internal time value that can be modified.</p>
+              <p>actions are available to the commands</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">import</span> { VM } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vm'</span>
-<span class="hljs-keyword">import</span> { all } <span class="hljs-keyword">from</span> <span class="hljs-string">'./commands'</span>
-<span class="hljs-keyword">import</span> { gibberish } <span class="hljs-keyword">from</span> <span class="hljs-string">'./gibberish'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.actions = <span class="hljs-built_in">Object</span>.assign({}, defaultActions);</pre></div></div>
             
         </li>
         
@@ -127,13 +141,17 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h2 id="api">API</h2>
+              <p>the scheduler itself is a plugin (has commands and actions)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">Gibberish, ...plugins</span>) </span>{
-  plugins = [{ <span class="hljs-attr">commands</span>: all }].concat(plugins)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.usePlugin(<span class="hljs-keyword">this</span>.scheduler);
+    plugins.forEach(<span class="hljs-function"><span class="hljs-params">plugin</span> =&gt;</span> <span class="hljs-keyword">this</span>.usePlugin(plugin));
+  }
+
+  run(program, delay, rate) {
+    <span class="hljs-keyword">this</span>.scheduler.schedule(<span class="hljs-keyword">this</span>.initialContext, program, delay, rate);
+  }</pre></div></div>
             
         </li>
         
@@ -144,11 +162,13 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Create the virtual machine</p>
+              <p>advance the virtual machine by a time ammount</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM(plugins)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  tick(duration) {
+    <span class="hljs-keyword">this</span>.scheduler.resume(<span class="hljs-keyword">this</span>.commands, <span class="hljs-keyword">this</span>.actions, duration);
+  }</pre></div></div>
             
         </li>
         
@@ -159,26 +179,18 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Init the audio driver</p>
+              <p>A plugin is an object with two properties:</p>
+<ul>
+<li>commands: a map of instructions to commands</li>
+<li>actions: a map of actions names to actions</li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  gibberish(Gibberish, vm)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>Return vm’s run function</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> vm.run.bind(vm)
+            <div class="content"><div class='highlight'><pre>  usePlugin(plugin) {
+    <span class="hljs-built_in">Object</span>.assign(<span class="hljs-keyword">this</span>.commands, plugin.commands);
+    <span class="hljs-built_in">Object</span>.assign(<span class="hljs-keyword">this</span>.actions, plugin.actions);
+  }
 }</pre></div></div>
             
         </li>

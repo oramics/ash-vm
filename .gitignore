@@ -3,3 +3,4 @@ tmp/
 docs/workshop_nime_2017/
 coverage/
 coverage/
+npm-debug.log

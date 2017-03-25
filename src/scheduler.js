@@ -1,69 +1,76 @@
-import { Scope } from './scope'
-import { Process } from './process'
+// # Scheduler
+import { Process, Context } from './process'
 
-// The scheduler is capable of run several processes at the same time
 export class Scheduler {
-  constructor (operator, name = 'default') {
-    this.name = name
-    this.nextId = 0
-    this.scope = new Scope()
-    this.operator = operator
-    // procs are stored inverse ordered by time
-    // where the next element (smaller time) is always the last
-    this.procs = []
-    this.time = 0
+  constructor() {
+    this.procs = []; // the procs are inverse ordered by time
+    this.time = 0;
+    // the action are exposed to be used in commands
+    this.actions = {
+      schedule: this.schedule.bind(this),
+      fork: this.fork.bind(this),
+      stop: this.stop.bind(this)
+    }
   }
 
-  tick (length) {
-    this.resume(this.time + length)
+  schedule(ctxData, program, delay = 0, rate = 1) {
+    const time = this.time + delay;
+    // Create a context with the given data
+    const context = new Context(null, ctxData)
+    this.add(new Process(program, context, time, rate));
   }
 
-  // will run the processes interleaved until the given time
-  resume (time = Infinity, limit = 1000) {
+  fork(proc, program, delay = 0, rate) {
+    const time = this.time + delay;
+    if (!rate) rate = proc.rate;
+    // Create a child context
+    const context = new Context(proc.context)
+    return this.add(new Process(program, proc.context, time, rate));
+  }
+
+  // run the scheduler for the given time (Infinity if not specified)
+  resume(commands, actions, dur = Infinity, limit = 10000) {
     const { procs } = this
-    while (--limit > 0 && this.at() < time) {
-      const proc = procs.pop()
-      if (proc.resume(this.operator, time)) {
+    if (procs.length === 0) return false
+    const time = this.time + dur
+    while (--limit > 0 && this.nextTime() < time) {
+      const proc = procs.pop();
+      if (proc.resume(commands, actions, time)) {
         // the proc has more operations, re-schedule
-        this.schedule(proc)
+        this.add(proc);
       }
     }
-    this.time = time
+    this.time = time;
+    return procs.length > 0;
   }
 
-  // return the time of the next proc
-  at () {
-    const len = this.procs.length
-    return len ? this.procs[len - 1].time : Infinity
+  stop () {
+    this.procs.clear()
   }
 
-  // this creates a new process with the given program
-  run (program, time) {
-    return this.schedule(new Process(this.scope, program, time, 1))
-  }
-  // create a child process with the given program
-  fork (parent, program, delay = 0) {
-    return this.schedule(new Process(parent.scope, program, parent.time + delay, 1))
-  }
-  // schedule a process
-  schedule (process) {
-    // Add the scheduler to the process
-    process.scheduler = this
-    if (!process.id) process.id = this.name + '-' + this.nextId++
+  // add a process to the scheduler
+  add(proc) {
+    const { procs } = this
 
-    if (this.procs.length === 0) {
+    if (procs.length === 0) {
       // no need to sort: just push it
-      this.procs.push(process)
+      procs.push(proc);
     } else {
       // procs are sorted on insertion
-      let i = this.procs.length - 1
-      let p = this.procs[i]
-      while (p && p.time <= process.time) {
-        i--
-        p = this.procs[i]
+      let i = procs.length - 1;
+      let p = procs[i];
+      while (p && p.time <= proc.time) {
+        i--;
+        p = procs[i];
       }
-      this.procs.splice(i + 1, 0, process)
+      procs.splice(i + 1, 0, proc);
     }
-    return process
+    return proc;
+  }
+
+  // get time of the next process
+  nextTime() {
+    const len = this.procs.length
+    return len ? this.procs[len - 1].time : Infinity;
   }
 }
