@@ -89,7 +89,6 @@ const trBass = (bass, amp, freq) => {
 };
 // trigger the pluck requires adjust dump and compensate volume
 const trPluck = (strings, amp, freq) => {
-  console.log("PLUCK", amp, freq, sampleRate);
   if (freq > 0) {
     // This is not in any way accurate, just a hack to make @set-dur do something semi-meaningful
     strings.damping = 1 - -6 / Math.log(freq / sampleRate);

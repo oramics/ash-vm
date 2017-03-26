@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="builders.html">
+                  builders.js
+                </a>
+              
+                
                 <a class="source" href="commands.html">
                   commands.js
                 </a>
@@ -114,9 +119,10 @@ an internal time value that can be modified.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">import</span> { VM } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vm'</span>
-<span class="hljs-keyword">import</span> { all } <span class="hljs-keyword">from</span> <span class="hljs-string">'./commands'</span>
-<span class="hljs-keyword">import</span> { gibberish } <span class="hljs-keyword">from</span> <span class="hljs-string">'./gibberish'</span></pre></div></div>
+<span class="hljs-keyword">import</span> { VM } <span class="hljs-keyword">from</span> <span class="hljs-string">"./vm"</span>;
+<span class="hljs-keyword">import</span> { all } <span class="hljs-keyword">from</span> <span class="hljs-string">"./commands"</span>;
+<span class="hljs-keyword">import</span> { gibberish } <span class="hljs-keyword">from</span> <span class="hljs-string">"./gibberish"</span>;
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> builders <span class="hljs-keyword">from</span> <span class="hljs-string">"./builders"</span>;</pre></div></div>
             
         </li>
         
@@ -132,8 +138,8 @@ an internal time value that can be modified.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">Gibberish, ...plugins</span>) </span>{
-  plugins = [{ <span class="hljs-attr">commands</span>: all }].concat(plugins)</pre></div></div>
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span>(<span class="hljs-params">Gibberish, ...plugins</span>) </span>{
+  plugins = [{ <span class="hljs-attr">commands</span>: all }].concat(plugins);</pre></div></div>
             
         </li>
         
@@ -148,7 +154,7 @@ an internal time value that can be modified.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM(plugins)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM(plugins);</pre></div></div>
             
         </li>
         
@@ -163,7 +169,7 @@ an internal time value that can be modified.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  gibberish(Gibberish, vm)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  gibberish(Gibberish, vm);</pre></div></div>
             
         </li>
         
@@ -178,7 +184,17 @@ an internal time value that can be modified.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> vm.run.bind(vm)
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">prog, sync = <span class="hljs-literal">true</span></span>) =&gt;</span> {
+    vm.run(sync ? [<span class="hljs-string">'@sync'</span>, prog] : prog)
+  }
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">live</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">const</span> fns = <span class="hljs-built_in">Object</span>.keys(builders);
+  fns.forEach(<span class="hljs-function"><span class="hljs-params">fn</span> =&gt;</span> {
+    <span class="hljs-built_in">window</span>[fn] = builders[fn];
+  });
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'LIVE!'</span>, fns)
 }</pre></div></div>
             
         </li>

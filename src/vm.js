@@ -12,7 +12,7 @@ export class VM {
   // plugins is an array of plugins: objects with `{ commands, actions }`
   constructor(plugins = []) {
     this.scheduler = new Scheduler();
-    this.initialContext = { amp: 0.8, freq: 440 };
+    this.initialContext = { amp: 0.5, freq: 440 };
 
     // commands are a map of instructions to commands with the form:
     // `{ '@instruction': (proc, actions) => ... }`
@@ -25,7 +25,7 @@ export class VM {
   }
 
   run(program, delay, rate) {
-    this.scheduler.schedule(this.initialContext, program, delay, rate);
+    this.scheduler.fork(null, this.initialContext, program, delay, rate);
   }
 
   // advance the virtual machine by a time ammount

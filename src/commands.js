@@ -1,16 +1,25 @@
 // # Commands
-const isPattern = Array.isArray
-const peek = (stack) => stack[stack.length - 1]
 
+// **Utilities**
+const isArray = Array.isArray;
+const isString = o => typeof o === "string";
+
+// get last element of the stack
+const peek = stack => stack[stack.length - 1];
+// midi to frequency
+const mtof = pitch => 440 * Math.pow(2, (+pitch - 69) / 12);
 // Given a commands object, expand the aliases
-export function expandAliases(commands) {
-  Object.keys(commands).forEach(cmd => {
-    const op = commands[op];
-    if (typeof op === "string") {
-      commands[cmd] = commands[op];
-    }
-  });
-}
+const expandAliases = commands =>
+  Object.keys(commands).reduce(
+    (commands, cmd) => {
+      const op = commands[cmd];
+      if (typeof op === "string") {
+        commands[cmd] = commands[op];
+      }
+      return commands;
+    },
+    commands
+  );
 
 // ## Core
 
@@ -26,8 +35,12 @@ export function expandAliases(commands) {
 // | **@set** | Assign a value to the global context | `10,'parts',@set` |
 // | **@get** | Push the value of a variable into the stack | `'repetitions',@get` |
 // | **@wait** | Wait an amount of time | `1,@wait` |
+// | **@sync** | Wait until next beat | `@sync` |
 // | **@fork** | Fork | `@fork, [0.5, '@wait', '@kick']` |
-export const core = {
+// | **@spawn** | Spawn | `"part-A", @spawn, [0.5, '@wait', '@kick']` |
+// | **@stop** | Stop current process | `@stop` |
+// | **@stop-all** | Stop all processes )| `@stop-all` |
+export const core = expandAliases({
   "@dup": ({ stack }) => stack.push(peek(stack)),
   "@execute": ({ stack }, { error }) => {
     const instr = stack.pop();
@@ -43,19 +56,38 @@ export const core = {
   "@get": ({ stack, context }) => stack.push(context.get(stack.pop())),
 
   "@wait": proc => proc.wait(Math.abs(Number(proc.stack.pop()))),
+  "@sync": proc => proc.wait(Math.floor(proc.time) + 1 - proc.time),
 
-  "@stop-all": (proc, { stop }) => stop(),
+  "@stop": ({ stack }, { stop }) => {
+    const name = stack.pop();
+    stop(name);
+  },
+  "@stop-all": (proc, { stopAll }) => stopAll(),
 
   "@fork": (proc, { error, fork }) => {
     const { instructions } = proc;
-    const pattern = instructions.pop();
+    let pattern = instructions.pop();
 
-    if (!isPattern(pattern))
-      error("Fork error - not valid pattern: " + pattern);
-    else
-      fork(proc, pattern);
+    if (isArray(pattern)) {
+      fork(null, proc, pattern);
+    } else {
+      error("@fork", ERR_BAD_PATTERN, pattern);
+    }
+  },
+  "@spawn": (proc, { stop, fork, error }) => {
+    const { stack, instructions } = proc;
+    const name = stack.pop();
+    let pattern = instructions.pop();
+    if (!isString(name))
+      error("@spawn", ERR_NAME, name);
+    else if (!isArray(pattern))
+      error("@spawn", ERR_BAD_PATTERN, pattern);
+    else {
+      stop(name);
+      fork(name, proc, ["@forever", pattern]);
+    }
   }
-};
+});
 
 // ## Repeat and loop
 
@@ -66,26 +98,24 @@ export const repetition = {
   "@repeat": ({ stack, instructions }) => {
     const repetitions = stack.pop();
     const pattern = peek(instructions);
-    if (!isPattern(pattern)) throw Error("Can't repeat: " + pattern);
+    if (!isArray(pattern)) throw Error("Can't repeat: " + pattern);
     for (let i = 1; i < repetitions; i++) {
       instructions.push(pattern);
     }
   },
   "@forever": ({ instructions }) => {
     const pattern = peek(instructions);
-    if (!isPattern(pattern)) throw Error("Can't forover: " + pattern);
+    if (!isArray(pattern)) throw Error("Can't forover: " + pattern);
     if (pattern.length) {
       instructions.push("@forever");
       instructions.push(pattern);
     }
   },
-  "@loop": proc => {
-    const { instructions, scheduler } = proc;
+  "@loop": (proc, { error, fork }) => {
+    const { instructions } = proc;
     const pattern = instructions.pop();
-    if (!scheduler) throw Error("Can't loop without an scheduler");
-    if (!isPattern(pattern))
-      throw Error("Can't loop something is not a pattern: " + pattern);
-    scheduler.fork(proc, ["@forever", pattern]);
+    if (isArray(pattern)) fork(null, proc, ["@forever", pattern]);
+    else error("@loop", ERR_BAD_PATTERN, pattern);
   }
 };
 
@@ -95,17 +125,60 @@ export const repetition = {
 // | **@iter** | Iterate a pattern | `[["@iter", [0.3, 1]], "@set-amp"]` |
 const lists = {
   "@iter": ({ instructions }) => {
-    const pattern = instructions.pop()
-    if (!isPattern(pattern) || !pattern.length) error("Can't iterate:", pattern)
+    const pattern = instructions.pop();
+    if (!isArray(pattern) || !pattern.length)
+      error("Can't iterate:", pattern);
     else {
       // Rotates the pattern and plays the first item only each time
       // remove '1st' item, schedule, then push to back:
-      const first = pattern.splice(0, 1)
-      instructions.push(first)
-      pattern.push(first)
+      const first = pattern.splice(0, 1);
+      instructions.push(first);
+      pattern.push(first);
     }
   }
-}
+};
+
+// ## Randomness
+
+// generate a random number between 0 and n
+const rnd = n => Math.floor(Math.random() * n);
+
+// | Name | Description | Example |
+// |------|-------------|---------|
+// | **@random** | Generate a random number between 0 and 1 | `["@random", "amp", "@set"]` |
+// | **@rand** | Alias for @random | |
+// | **@srandom** | Generate a random number between -1 and 1 | `["@srandom", "phase", "@set"]` |
+// | **@srand** | Alias for @srandom | |
+// | **@randi** | Generate a random integer between 0 and n | `[60, "@randi", "midi", "@set"]` |
+// | **@pick** | Pick a random element from a list | `["@pick", [1, 2, 3, 4]]` |
+// | **@chance** | Probabilistic execution | `probability, "@chance", executed-if-true, executed-if-false` |
+const random = expandAliases({
+  "@random": ({ stack }) => stack.push(Math.random()),
+  "@rand": "@random",
+  "@srandom": ({ stack }) => stack.push(Math.random * 2 - 1),
+  "@srand": "@srandom",
+  "@randi": ({ stack }) => stack.push(rnd(stack.pop())),
+  "@pick": ({ stack, instructions }, { error }) => {
+    const pattern = instructions.pop();
+    if (!isArray(pattern)) {
+      instructions.push(pattern);
+      error("Can't pick an element if is not an array", pattern);
+    } else {
+      const i = rnd(pattern.length);
+      instructions.push(pattern[i]);
+    }
+  },
+  "@chance": ({ stack, instructions }) => {
+    const prob = stack.pop();
+    const pattern = instructions.pop();
+    if (Math.random() < prob) {
+      // Skip item after
+      instructions.pop();
+      // Push the pattern
+      instructions.push(pattern);
+    }
+  }
+});
 
 // ## Arithmetic
 
@@ -127,20 +200,20 @@ const op2 = fn =>
 // see also http://jsperf.com/modulo-for-negative-numbers
 const wrap = (a, b) => (a % b + b) % b;
 
-export const arithmetic = {
+export const arithmetic = expandAliases({
   "@+": op2((a, b) => a + b),
   add: "@+",
   "@-": op2((a, b) => a - b),
   "@sub": "@-",
   "@*": op2((a, b) => a * b),
   "@mul": "@*",
-  "@/": op2((a, b) => b === 0 ? 0 : a / b),
+  "@/": op2((a, b) => b === 0 ? 0 : b / a),
   "@div": "@/",
   "@%": op2((a, b) => b === 0 ? 0 : wrap(a, b)),
   "@wrap": "@%",
   "@mod": op2((a, b) => b === 0 ? 0 : a % b),
   "@neg": op1(a => -a)
-};
+});
 
 // ## Conditionals
 // _should they return 1 and 0 instead of bools?_
@@ -175,15 +248,33 @@ export const logic = {
 
 // | Name | Description | Example |
 // |------|-------------|---------|
-// | **@print** | Print the last value of the stack | `10,@print` |
+// | **@print** | Print the last value of the stack | `10,"@print"` |
+// | **@log** | Log the name with the last value of the stack | `"@random", "amp", "@log"` |
 export const debug = {
   "@print": (proc, { log }) => {
-    const stack = proc.stack;
-    const last = stack.length ? stack.pop() : "<Empty Stack>";
+    const { stack } = proc;
+    const last = stack.length ? peek(stack) : "<Empty Stack>";
     log("@print", last, "(id, time)", proc.id, proc.time);
+  },
+  "@log": (proc, { log }) => {
+    const { stack } = proc;
+    const name = stack.pop();
+    const last = stack.length ? peek(stack) : "<Empty Stack>";
+    log("@log", name, last, "(id, time)", proc.id, proc.time);
+  },
+  "@debug": (proc, { log }) => {
+    const { stack } = proc
+    log('@debug', stack, proc.id, proc.time)
   }
 };
 
-export const all = Object.assign({},
-  core, repetition, lists, arithmetic, logic, debug
-)
+export const all = Object.assign(
+  {},
+  core,
+  repetition,
+  lists,
+  arithmetic,
+  random,
+  logic,
+  debug
+);

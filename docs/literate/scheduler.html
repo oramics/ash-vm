@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="builders.html">
+                  builders.js
+                </a>
+              
+                
                 <a class="source" href="commands.html">
                   commands.js
                 </a>
@@ -73,12 +78,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { Process, Context } <span class="hljs-keyword">from</span> <span class="hljs-string">'./process'</span>
-
-<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Scheduler</span> </span>{
-  <span class="hljs-keyword">constructor</span>() {
-    <span class="hljs-keyword">this</span>.procs = []; <span class="hljs-comment">// the procs are inverse ordered by time</span>
-    <span class="hljs-keyword">this</span>.time = <span class="hljs-number">0</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { Process, Context } <span class="hljs-keyword">from</span> <span class="hljs-string">'./process'</span></pre></div></div>
             
         </li>
         
@@ -89,19 +89,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>the action are exposed to be used in commands</p>
+              <p>TODO: probably is better to have functions and object instead of classes
+will change in the future</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.actions = {
-      <span class="hljs-attr">schedule</span>: <span class="hljs-keyword">this</span>.schedule.bind(<span class="hljs-keyword">this</span>),
-      <span class="hljs-attr">fork</span>: <span class="hljs-keyword">this</span>.fork.bind(<span class="hljs-keyword">this</span>),
-      <span class="hljs-attr">stop</span>: <span class="hljs-keyword">this</span>.stop.bind(<span class="hljs-keyword">this</span>)
-    }
-  }
-
-  schedule(ctxData, program, delay = <span class="hljs-number">0</span>, rate = <span class="hljs-number">1</span>) {
-    <span class="hljs-keyword">const</span> time = <span class="hljs-keyword">this</span>.time + delay;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Scheduler</span> </span>{
+  <span class="hljs-keyword">constructor</span>() {
+    <span class="hljs-keyword">this</span>.procs = []; <span class="hljs-comment">// the procs are inverse ordered by time</span>
+    <span class="hljs-keyword">this</span>.procsByName = {}; <span class="hljs-comment">// a map of names to procs</span>
+    <span class="hljs-keyword">this</span>.time = <span class="hljs-number">0</span>;</pre></div></div>
             
         </li>
         
@@ -112,17 +109,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Create a context with the given data</p>
+              <p>the action are exposed to be used in commands</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">const</span> context = <span class="hljs-keyword">new</span> Context(<span class="hljs-literal">null</span>, ctxData)
-    <span class="hljs-keyword">this</span>.add(<span class="hljs-keyword">new</span> Process(program, context, time, rate));
-  }
-
-  fork(proc, program, delay = <span class="hljs-number">0</span>, rate) {
-    <span class="hljs-keyword">const</span> time = <span class="hljs-keyword">this</span>.time + delay;
-    <span class="hljs-keyword">if</span> (!rate) rate = proc.rate;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.actions = {
+      <span class="hljs-attr">fork</span>: <span class="hljs-keyword">this</span>.fork.bind(<span class="hljs-keyword">this</span>),
+      <span class="hljs-attr">stop</span>: <span class="hljs-keyword">this</span>.stop.bind(<span class="hljs-keyword">this</span>),
+      <span class="hljs-attr">stopAll</span>: <span class="hljs-keyword">this</span>.stopAll.bind(<span class="hljs-keyword">this</span>)
+    }
+  }</pre></div></div>
             
         </li>
         
@@ -133,13 +129,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Create a child context</p>
+              <p>Create a new process</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">const</span> context = <span class="hljs-keyword">new</span> Context(proc.context)
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.add(<span class="hljs-keyword">new</span> Process(program, proc.context, time, rate));
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  fork(name, parent, program, delay = <span class="hljs-number">0</span>, rate) {
+    <span class="hljs-keyword">const</span> time = <span class="hljs-keyword">this</span>.time + delay;
+    <span class="hljs-keyword">if</span> (!rate &amp;&amp; parent) rate = parent.rate
+    <span class="hljs-keyword">const</span> context = parent ? parent.context || parent : <span class="hljs-literal">undefined</span></pre></div></div>
             
         </li>
         
@@ -150,17 +147,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>run the scheduler for the given time (Infinity if not specified)</p>
+              <p>Create a child context</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  resume(commands, actions, dur = <span class="hljs-literal">Infinity</span>, limit = <span class="hljs-number">10000</span>) {
-    <span class="hljs-keyword">const</span> { procs } = <span class="hljs-keyword">this</span>
-    <span class="hljs-keyword">if</span> (procs.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
-    <span class="hljs-keyword">const</span> time = <span class="hljs-keyword">this</span>.time + dur
-    <span class="hljs-keyword">while</span> (--limit &gt; <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.nextTime() &lt; time) {
-      <span class="hljs-keyword">const</span> proc = procs.pop();
-      <span class="hljs-keyword">if</span> (proc.resume(commands, actions, time)) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">const</span> proc = <span class="hljs-keyword">new</span> Process(program, context, time, rate)
+    push(proc, <span class="hljs-keyword">this</span>.procs)
+    <span class="hljs-keyword">if</span> (name) <span class="hljs-keyword">this</span>.procsByName[name] = proc
+    <span class="hljs-keyword">return</span> proc
+  }</pre></div></div>
             
         </li>
         
@@ -171,20 +166,17 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>the proc has more operations, re-schedule</p>
+              <p>run the scheduler for the given time (Infinity if not specified)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.add(proc);
-      }
-    }
-    <span class="hljs-keyword">this</span>.time = time;
-    <span class="hljs-keyword">return</span> procs.length &gt; <span class="hljs-number">0</span>;
-  }
-
-  stop () {
-    <span class="hljs-keyword">this</span>.procs.clear()
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  resume(commands, actions, dur = <span class="hljs-literal">Infinity</span>, limit = <span class="hljs-number">10000</span>) {
+    <span class="hljs-keyword">const</span> { procs } = <span class="hljs-keyword">this</span>
+    <span class="hljs-keyword">if</span> (procs.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">const</span> time = <span class="hljs-keyword">this</span>.time + dur
+    <span class="hljs-keyword">while</span> (--limit &gt; <span class="hljs-number">0</span> &amp;&amp; at(procs) &lt; time) {
+      <span class="hljs-keyword">const</span> proc = procs.pop();
+      <span class="hljs-keyword">if</span> (proc.resume(commands, actions, time)) {</pre></div></div>
             
         </li>
         
@@ -195,14 +187,20 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>add a process to the scheduler</p>
+              <p>the proc has more operations, re-schedule</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  add(proc) {
-    <span class="hljs-keyword">const</span> { procs } = <span class="hljs-keyword">this</span>
+            <div class="content"><div class='highlight'><pre>        push(proc, <span class="hljs-keyword">this</span>.procs);
+      }
+    }
+    <span class="hljs-keyword">this</span>.time = time;
+    <span class="hljs-keyword">return</span> procs.length &gt; <span class="hljs-number">0</span>;
+  }
 
-    <span class="hljs-keyword">if</span> (procs.length === <span class="hljs-number">0</span>) {</pre></div></div>
+  stopAll () {
+    <span class="hljs-keyword">this</span>.procs.length = <span class="hljs-number">0</span>
+  }</pre></div></div>
             
         </li>
         
@@ -213,12 +211,19 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>no need to sort: just push it</p>
+              <p>The stop function can stop a proccess by name or by object</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      procs.push(proc);
-    } <span class="hljs-keyword">else</span> {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  stop (proc) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> proc === <span class="hljs-string">'string'</span>) {
+      <span class="hljs-keyword">const</span> name = proc
+      proc = <span class="hljs-keyword">this</span>.procsByName[name]
+      <span class="hljs-keyword">this</span>.procsByName[name] = <span class="hljs-literal">null</span>
+    }
+    remove(proc, <span class="hljs-keyword">this</span>.procs)
+  }
+}</pre></div></div>
             
         </li>
         
@@ -229,20 +234,13 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>procs are sorted on insertion</p>
+              <p>remove the process</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">let</span> i = procs.length - <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">let</span> p = procs[i];
-      <span class="hljs-keyword">while</span> (p &amp;&amp; p.time &lt;= proc.time) {
-        i--;
-        p = procs[i];
-      }
-      procs.splice(i + <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, proc);
-    }
-    <span class="hljs-keyword">return</span> proc;
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">remove</span>(<span class="hljs-params">proc, procs</span>) </span>{
+  <span class="hljs-keyword">let</span> i = procs.length - <span class="hljs-number">1</span>
+  <span class="hljs-keyword">while</span> (i &gt;= <span class="hljs-number">0</span> &amp;&amp; procs[i] !== proc) i--</pre></div></div>
             
         </li>
         
@@ -253,14 +251,99 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
+              <p>if found, remove it</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (i !== <span class="hljs-number">-1</span>) procs.splice(i, <span class="hljs-number">1</span>)
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><strong>Private functions</strong></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>insert a process into a stack ordered by time
+(in fact, is in inverse order because is a stack)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">push</span>(<span class="hljs-params">proc, procs</span>) </span>{
+  <span class="hljs-keyword">if</span> (procs.length === <span class="hljs-number">0</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>no need to sort: just push it</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    procs.push(proc);
+  } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>procs are sorted on insertion</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">let</span> i = procs.length - <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">let</span> p = procs[i];
+    <span class="hljs-keyword">while</span> (p &amp;&amp; p.time &lt;= proc.time) {
+      i--;
+      p = procs[i];
+    }
+    procs.splice(i + <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, proc);
+  }
+  <span class="hljs-keyword">return</span> proc;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
               <p>get time of the next process</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  nextTime() {
-    <span class="hljs-keyword">const</span> len = <span class="hljs-keyword">this</span>.procs.length
-    <span class="hljs-keyword">return</span> len ? <span class="hljs-keyword">this</span>.procs[len - <span class="hljs-number">1</span>].time : <span class="hljs-literal">Infinity</span>;
-  }
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">at</span> (<span class="hljs-params">procs</span>) </span>{
+  <span class="hljs-keyword">const</span> len = procs.length
+  <span class="hljs-keyword">return</span> len ? procs[len - <span class="hljs-number">1</span>].time : <span class="hljs-literal">Infinity</span>;
 }</pre></div></div>
             
         </li>

@@ -2,13 +2,27 @@
 'use strict';
 
 // # Commands
-var isPattern = Array.isArray;
+
+// **Utilities**
+var isArray = Array.isArray;
+var isString = function isString(o) {
+  return typeof o === "string";
+};
+
+// get last element of the stack
 var peek = function peek(stack) {
   return stack[stack.length - 1];
 };
-
 // Given a commands object, expand the aliases
-
+var expandAliases = function expandAliases(commands) {
+  return Object.keys(commands).reduce(function (commands, cmd) {
+    var op = commands[cmd];
+    if (typeof op === "string") {
+      commands[cmd] = commands[op];
+    }
+    return commands;
+  }, commands);
+};
 
 // ## Core
 
@@ -24,8 +38,12 @@ var peek = function peek(stack) {
 // | **@set** | Assign a value to the global context | `10,'parts',@set` |
 // | **@get** | Push the value of a variable into the stack | `'repetitions',@get` |
 // | **@wait** | Wait an amount of time | `1,@wait` |
+// | **@sync** | Wait until next beat | `@sync` |
 // | **@fork** | Fork | `@fork, [0.5, '@wait', '@kick']` |
-var core = {
+// | **@spawn** | Spawn | `"part-A", @spawn, [0.5, '@wait', '@kick']` |
+// | **@stop** | Stop current process | `@stop` |
+// | **@stop-all** | Stop all processes )| `@stop-all` |
+var core = expandAliases({
   "@dup": function dup(_ref) {
     var stack = _ref.stack;
     return stack.push(peek(stack));
@@ -58,53 +76,80 @@ var core = {
   "@wait": function wait(proc) {
     return proc.wait(Math.abs(Number(proc.stack.pop())));
   },
-
-  "@stop-all": function stopAll(proc, _ref7) {
-    var stop = _ref7.stop;
-    return stop();
+  "@sync": function sync(proc) {
+    return proc.wait(Math.floor(proc.time) + 1 - proc.time);
   },
 
-  "@fork": function fork(proc, _ref8) {
-    var error = _ref8.error,
-        _fork = _ref8.fork;
+  "@stop": function stop(_ref7, _ref8) {
+    var stack = _ref7.stack;
+    var _stop = _ref8.stop;
+
+    var name = stack.pop();
+    _stop(name);
+  },
+  "@stop-all": function stopAll(proc, _ref9) {
+    var _stopAll = _ref9.stopAll;
+    return _stopAll();
+  },
+
+  "@fork": function fork(proc, _ref10) {
+    var error = _ref10.error,
+        _fork = _ref10.fork;
     var instructions = proc.instructions;
 
     var pattern = instructions.pop();
 
-    if (!isPattern(pattern)) error("Fork error - not valid pattern: " + pattern);else _fork(proc, pattern);
+    if (isArray(pattern)) {
+      _fork(null, proc, pattern);
+    } else {
+      error("@fork", ERR_BAD_PATTERN, pattern);
+    }
+  },
+  "@spawn": function spawn(proc, _ref11) {
+    var stop = _ref11.stop,
+        fork = _ref11.fork,
+        error = _ref11.error;
+    var stack = proc.stack,
+        instructions = proc.instructions;
+
+    var name = stack.pop();
+    var pattern = instructions.pop();
+    if (!isString(name)) error("@spawn", ERR_NAME, name);else if (!isArray(pattern)) error("@spawn", ERR_BAD_PATTERN, pattern);else {
+      stop(name);
+      fork(name, proc, ["@forever", pattern]);
+    }
   }
-};
+});
 
 var repetition = {
-  "@repeat": function repeat(_ref9) {
-    var stack = _ref9.stack,
-        instructions = _ref9.instructions;
+  "@repeat": function repeat(_ref12) {
+    var stack = _ref12.stack,
+        instructions = _ref12.instructions;
 
     var repetitions = stack.pop();
     var pattern = peek(instructions);
-    if (!isPattern(pattern)) throw Error("Can't repeat: " + pattern);
+    if (!isArray(pattern)) throw Error("Can't repeat: " + pattern);
     for (var i = 1; i < repetitions; i++) {
       instructions.push(pattern);
     }
   },
-  "@forever": function forever(_ref10) {
-    var instructions = _ref10.instructions;
+  "@forever": function forever(_ref13) {
+    var instructions = _ref13.instructions;
 
     var pattern = peek(instructions);
-    if (!isPattern(pattern)) throw Error("Can't forover: " + pattern);
+    if (!isArray(pattern)) throw Error("Can't forover: " + pattern);
     if (pattern.length) {
       instructions.push("@forever");
       instructions.push(pattern);
     }
   },
-  "@loop": function loop(proc) {
-    var instructions = proc.instructions,
-        scheduler = proc.scheduler;
+  "@loop": function loop(proc, _ref14) {
+    var error = _ref14.error,
+        fork = _ref14.fork;
+    var instructions = proc.instructions;
 
     var pattern = instructions.pop();
-    if (!scheduler) throw Error("Can't loop without an scheduler");
-    if (!isPattern(pattern)) throw Error("Can't loop something is not a pattern: " + pattern);
-    scheduler.fork(proc, ["@forever", pattern]);
+    if (isArray(pattern)) fork(null, proc, ["@forever", pattern]);else error("@loop", ERR_BAD_PATTERN, pattern);
   }
 };
 
@@ -113,11 +158,11 @@ var repetition = {
 // |------|-------------|---------|
 // | **@iter** | Iterate a pattern | `[["@iter", [0.3, 1]], "@set-amp"]` |
 var lists = {
-  "@iter": function iter(_ref11) {
-    var instructions = _ref11.instructions;
+  "@iter": function iter(_ref15) {
+    var instructions = _ref15.instructions;
 
     var pattern = instructions.pop();
-    if (!isPattern(pattern) || !pattern.length) error("Can't iterate:", pattern);else {
+    if (!isArray(pattern) || !pattern.length) error("Can't iterate:", pattern);else {
       // Rotates the pattern and plays the first item only each time
       // remove '1st' item, schedule, then push to back:
       var first = pattern.splice(0, 1);
@@ -127,12 +172,72 @@ var lists = {
   }
 };
 
+// ## Randomness
+
+// generate a random number between 0 and n
+var rnd = function rnd(n) {
+  return Math.floor(Math.random() * n);
+};
+
+// | Name | Description | Example |
+// |------|-------------|---------|
+// | **@random** | Generate a random number between 0 and 1 | `["@random", "amp", "@set"]` |
+// | **@rand** | Alias for @random | |
+// | **@srandom** | Generate a random number between -1 and 1 | `["@srandom", "phase", "@set"]` |
+// | **@srand** | Alias for @srandom | |
+// | **@randi** | Generate a random integer between 0 and n | `[60, "@randi", "midi", "@set"]` |
+// | **@pick** | Pick a random element from a list | `["@pick", [1, 2, 3, 4]]` |
+// | **@chance** | Probabilistic execution | `probability, "@chance", executed-if-true, executed-if-false` |
+var random = expandAliases({
+  "@random": function random(_ref16) {
+    var stack = _ref16.stack;
+    return stack.push(Math.random());
+  },
+  "@rand": "@random",
+  "@srandom": function srandom(_ref17) {
+    var stack = _ref17.stack;
+    return stack.push(Math.random * 2 - 1);
+  },
+  "@srand": "@srandom",
+  "@randi": function randi(_ref18) {
+    var stack = _ref18.stack;
+    return stack.push(rnd(stack.pop()));
+  },
+  "@pick": function pick(_ref19, _ref20) {
+    var stack = _ref19.stack,
+        instructions = _ref19.instructions;
+    var error = _ref20.error;
+
+    var pattern = instructions.pop();
+    if (!isArray(pattern)) {
+      instructions.push(pattern);
+      error("Can't pick an element if is not an array", pattern);
+    } else {
+      var i = rnd(pattern.length);
+      instructions.push(pattern[i]);
+    }
+  },
+  "@chance": function chance(_ref21) {
+    var stack = _ref21.stack,
+        instructions = _ref21.instructions;
+
+    var prob = stack.pop();
+    var pattern = instructions.pop();
+    if (Math.random() < prob) {
+      // Skip item after
+      instructions.pop();
+      // Push the pattern
+      instructions.push(pattern);
+    }
+  }
+});
+
 // ## Arithmetic
 
 // A generic operation that pops one value and pushes on result
 var op1 = function op1(fn) {
-  return function (_ref12) {
-    var stack = _ref12.stack;
+  return function (_ref22) {
+    var stack = _ref22.stack;
 
     stack.push(fn(stack.pop()));
   };
@@ -140,8 +245,8 @@ var op1 = function op1(fn) {
 
 // A generic operation that pops two values and pushes one result
 var op2 = function op2(fn) {
-  return function (_ref13) {
-    var stack = _ref13.stack;
+  return function (_ref23) {
+    var stack = _ref23.stack;
 
     stack.push(fn(stack.pop(), stack.pop()));
   };
@@ -155,7 +260,7 @@ var wrap = function wrap(a, b) {
   return (a % b + b) % b;
 };
 
-var arithmetic = {
+var arithmetic = expandAliases({
   "@+": op2(function (a, b) {
     return a + b;
   }),
@@ -169,7 +274,7 @@ var arithmetic = {
   }),
   "@mul": "@*",
   "@/": op2(function (a, b) {
-    return b === 0 ? 0 : a / b;
+    return b === 0 ? 0 : b / a;
   }),
   "@div": "@/",
   "@%": op2(function (a, b) {
@@ -182,15 +287,15 @@ var arithmetic = {
   "@neg": op1(function (a) {
     return -a;
   })
-};
+});
 
 // ## Conditionals
 // _should they return 1 and 0 instead of bools?_
 
 var logic = {
-  "@cond": function cond(_ref14) {
-    var stack = _ref14.stack,
-        instructions = _ref14.instructions;
+  "@cond": function cond(_ref24) {
+    var stack = _ref24.stack,
+        instructions = _ref24.instructions;
 
     var test = stack.pop();
     // this is the pattern to execute if the test passes
@@ -238,18 +343,33 @@ var logic = {
 
 // | Name | Description | Example |
 // |------|-------------|---------|
-// | **@print** | Print the last value of the stack | `10,@print` |
+// | **@print** | Print the last value of the stack | `10,"@print"` |
+// | **@log** | Log the name with the last value of the stack | `"@random", "amp", "@log"` |
 var debug = {
-  "@print": function print(proc, _ref15) {
-    var log = _ref15.log;
-
+  "@print": function print(proc, _ref25) {
+    var log = _ref25.log;
     var stack = proc.stack;
-    var last = stack.length ? stack.pop() : "<Empty Stack>";
+
+    var last = stack.length ? peek(stack) : "<Empty Stack>";
     log("@print", last, "(id, time)", proc.id, proc.time);
+  },
+  "@log": function log(proc, _ref26) {
+    var _log = _ref26.log;
+    var stack = proc.stack;
+
+    var name = stack.pop();
+    var last = stack.length ? peek(stack) : "<Empty Stack>";
+    _log("@log", name, last, "(id, time)", proc.id, proc.time);
+  },
+  "@debug": function debug(proc, _ref27) {
+    var log = _ref27.log;
+    var stack = proc.stack;
+
+    log('@debug', stack, proc.id, proc.time);
   }
 };
 
-var all = Object.assign({}, core, repetition, lists, arithmetic, logic, debug);
+var all = Object.assign({}, core, repetition, lists, arithmetic, random, logic, debug);
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -359,7 +479,7 @@ var Process = function () {
     // the instructions are stored in a stack (in reverse order)
     this.instructions = program ? [program] : [];
     // the context is used to store variables with scope
-    this.context = context ? context : new Context();
+    this.context = new Context(context);
     // the current time
     this.time = typeof time === "number" ? time : 0;
     // how fast time passes
@@ -389,6 +509,8 @@ var Process = function () {
         var instr = instructions.pop();
         if (instr === null || instr === undefined) {
           // ignore
+        } else if (typeof instruction === "function") {
+          instruction();
         } else if (isProgram(instr)) {
           // if it's program, and since the instructions are stored into an stack,
           // we need add to the program instructions in reverse order
@@ -428,11 +550,10 @@ var Process = function () {
 
 // A context is a hierarchical structure to store values with scope
 var Context = function () {
-  function Context(parent, local) {
+  function Context(parent) {
     classCallCheck(this, Context);
 
-    this.parent = parent;
-    this.local = local ? Object.assign({}, local) : undefined;
+    if (parent instanceof Context) this.parent = parent;else if (parent) this.local = Object.assign({}, parent);
   }
   // get a value from a context
 
@@ -479,42 +600,40 @@ var Context = function () {
 }();
 
 // # Scheduler
+// TODO: probably is better to have functions and object instead of classes
+// will change in the future
 var Scheduler = function () {
   function Scheduler() {
     classCallCheck(this, Scheduler);
 
     this.procs = []; // the procs are inverse ordered by time
+    this.procsByName = {}; // a map of names to procs
     this.time = 0;
     // the action are exposed to be used in commands
     this.actions = {
-      schedule: this.schedule.bind(this),
       fork: this.fork.bind(this),
-      stop: this.stop.bind(this)
+      stop: this.stop.bind(this),
+      stopAll: this.stopAll.bind(this)
     };
   }
 
+  // Create a new process
+
+
   createClass(Scheduler, [{
-    key: 'schedule',
-    value: function schedule(ctxData, program) {
-      var delay = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      var rate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
-
-      var time = this.time + delay;
-      // Create a context with the given data
-      var context = new Context(null, ctxData);
-      this.add(new Process(program, context, time, rate));
-    }
-  }, {
     key: 'fork',
-    value: function fork(proc, program) {
-      var delay = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      var rate = arguments[3];
+    value: function fork(name, parent, program) {
+      var delay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+      var rate = arguments[4];
 
       var time = this.time + delay;
-      if (!rate) rate = proc.rate;
+      if (!rate && parent) rate = parent.rate;
+      var context = parent ? parent.context || parent : undefined;
       // Create a child context
-      var context = new Context(proc.context);
-      return this.add(new Process(program, proc.context, time, rate));
+      var proc = new Process(program, context, time, rate);
+      push(proc, this.procs);
+      if (name) this.procsByName[name] = proc;
+      return proc;
     }
 
     // run the scheduler for the given time (Infinity if not specified)
@@ -528,57 +647,73 @@ var Scheduler = function () {
 
       if (procs.length === 0) return false;
       var time = this.time + dur;
-      while (--limit > 0 && this.nextTime() < time) {
+      while (--limit > 0 && at(procs) < time) {
         var proc = procs.pop();
         if (proc.resume(commands, actions, time)) {
           // the proc has more operations, re-schedule
-          this.add(proc);
+          push(proc, this.procs);
         }
       }
       this.time = time;
       return procs.length > 0;
     }
   }, {
+    key: 'stopAll',
+    value: function stopAll() {
+      this.procs.length = 0;
+    }
+
+    // The stop function can stop a proccess by name or by object
+
+  }, {
     key: 'stop',
-    value: function stop() {
-      this.procs.clear();
-    }
-
-    // add a process to the scheduler
-
-  }, {
-    key: 'add',
-    value: function add(proc) {
-      var procs = this.procs;
-
-
-      if (procs.length === 0) {
-        // no need to sort: just push it
-        procs.push(proc);
-      } else {
-        // procs are sorted on insertion
-        var i = procs.length - 1;
-        var p = procs[i];
-        while (p && p.time <= proc.time) {
-          i--;
-          p = procs[i];
-        }
-        procs.splice(i + 1, 0, proc);
+    value: function stop(proc) {
+      if (typeof proc === 'string') {
+        var name = proc;
+        proc = this.procsByName[name];
+        this.procsByName[name] = null;
       }
-      return proc;
-    }
-
-    // get time of the next process
-
-  }, {
-    key: 'nextTime',
-    value: function nextTime() {
-      var len = this.procs.length;
-      return len ? this.procs[len - 1].time : Infinity;
+      remove(proc, this.procs);
     }
   }]);
   return Scheduler;
 }();
+
+// remove the process
+function remove(proc, procs) {
+  var i = procs.length - 1;
+  while (i >= 0 && procs[i] !== proc) {
+    i--;
+  } // if found, remove it
+  if (i !== -1) procs.splice(i, 1);
+}
+
+// **Private functions**
+
+// insert a process into a stack ordered by time
+// (in fact, is in inverse order because is a stack)
+function push(proc, procs) {
+  if (procs.length === 0) {
+    // no need to sort: just push it
+    procs.push(proc);
+  } else {
+    // procs are sorted on insertion
+    var i = procs.length - 1;
+    var p = procs[i];
+    while (p && p.time <= proc.time) {
+      i--;
+      p = procs[i];
+    }
+    procs.splice(i + 1, 0, proc);
+  }
+  return proc;
+}
+
+// get time of the next process
+function at(procs) {
+  var len = procs.length;
+  return len ? procs[len - 1].time : Infinity;
+}
 
 // # Virtual Machine
 
@@ -596,7 +731,7 @@ var VM = function () {
     classCallCheck(this, VM);
 
     this.scheduler = new Scheduler();
-    this.initialContext = { amp: 0.8, freq: 440 };
+    this.initialContext = { amp: 0.5, freq: 440 };
 
     // commands are a map of instructions to commands with the form:
     // `{ '@instruction': (proc, actions) => ... }`
@@ -613,7 +748,7 @@ var VM = function () {
   createClass(VM, [{
     key: "run",
     value: function run(program, delay, rate) {
-      this.scheduler.schedule(this.initialContext, program, delay, rate);
+      this.scheduler.fork(null, this.initialContext, program, delay, rate);
     }
 
     // advance the virtual machine by a time ammount
@@ -717,7 +852,6 @@ var trBass = function trBass(bass, amp, freq) {
 };
 // trigger the pluck requires adjust dump and compensate volume
 var trPluck = function trPluck(strings, amp, freq) {
-  console.log("PLUCK", amp, freq, sampleRate);
   if (freq > 0) {
     // This is not in any way accurate, just a hack to make @set-dur do something semi-meaningful
     strings.damping = 1 - -6 / Math.log(freq / sampleRate);
@@ -782,6 +916,126 @@ function fromStack(inst, _ref8) {
   };
 }
 
+// # Builders
+
+// Create a new named sequence
+var def = function def(name, patt) {
+  return [name, "@spawn", patt];
+};
+
+// Set a value into the context
+var set$1 = function set(name, value) {
+  return [value, name, "@set"];
+};
+
+// Set a value into the local the context
+var lset = function lset(name, value) {
+  return [value, name, "@let"];
+};
+
+// Wait for an amount of time
+var wait = function wait(t) {
+  return [t, "@wait"];
+};
+
+// Stop the named sequence
+var stop = function stop(n) {
+  return n ? [n, "@stop"] : ["@stop-all"];
+};
+
+// Loop a pattern a number of times
+var loop = function loop(p, n) {
+  return n ? [n, "@repeat", p] : ["@loop", p];
+};
+
+// Print a value/message (and remove it from the stack)
+var print = function print(msg) {
+  return [msg, "@print"];
+};
+
+// Log a value (it prints the name and the value, but keeps the value into stack)
+var log = function log(name) {
+  return [name, "@log"];
+};
+
+// Reverse an array
+var reverse = function reverse(p) {
+  return ["@reverse", p];
+};
+
+// Schuffle an array
+var shuffle = function shuffle(p) {
+  return ["@shuffle", p];
+};
+
+// Rotate an array n times
+var rotate = function rotate(p, n) {
+  return [n !== undefined ? n : 1, "@rotate", p];
+};
+
+// Pick a random value from a list
+var pick = function pick(l) {
+  return ["@pick", l];
+};
+
+// Iterate a list
+var iter = function iter(l) {
+  return ["@iter", l];
+};
+
+// Conditional
+var cond = function cond(f, pt, pf) {
+  return [f, "@cond", pt, pf];
+};
+
+// Conditional operation based on a random
+var chance = function chance(f, pt, pf) {
+  return [f, "@chance", pt, pf];
+};
+
+// Subtract two values
+var sub = function sub(a, b) {
+  return [a, b, "@sub"];
+};
+
+// Execute arguments
+var execute = function execute(l, args) {
+  return args !== undefined ? [l, "@execute", args] : [l, "@execute"];
+};
+
+// Just a convenience
+// every(3, p) actually creates cond(iter([0,0,1]),p)
+// neat eh?
+var every = function every(n, p) {
+  var l = [];
+  for (var i = 0; i < n - 1; i++) {
+    l.push(0);
+  }
+  l.push(1);
+  return cond(iter(l), p);
+};
+
+var builders = Object.freeze({
+	def: def,
+	set: set$1,
+	lset: lset,
+	wait: wait,
+	stop: stop,
+	loop: loop,
+	print: print,
+	log: log,
+	reverse: reverse,
+	shuffle: shuffle,
+	rotate: rotate,
+	pick: pick,
+	iter: iter,
+	cond: cond,
+	chance: chance,
+	sub: sub,
+	execute: execute,
+	every: every
+});
+
 // # Audio Virtual Machine
 
 // The main purpose of the virtual machine is to run processes concurrently
@@ -804,10 +1058,23 @@ function init(Gibberish) {
   // Init the audio driver
   gibberish(Gibberish, vm);
   // Return vm's run function
-  return vm.run.bind(vm);
+  return function (prog) {
+    var sync = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+    vm.run(sync ? ['@sync', prog] : prog);
+  };
+}
+
+function live() {
+  var fns = Object.keys(builders);
+  fns.forEach(function (fn) {
+    window[fn] = builders[fn];
+  });
+  console.log('LIVE!', fns);
 }
 
 exports.init = init;
+exports.live = live;
 
 }((this.TimeVM = this.TimeVM || {})));
 //# sourceMappingURL=TimeVM.js.map

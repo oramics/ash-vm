@@ -14,7 +14,7 @@ export class Process {
     // the instructions are stored in a stack (in reverse order)
     this.instructions = program ? [program] : [];
     // the context is used to store variables with scope
-    this.context = context ? context : new Context();
+    this.context = new Context(context);
     // the current time
     this.time = typeof time === "number" ? time : 0;
     // how fast time passes
@@ -36,6 +36,8 @@ export class Process {
       const instr = instructions.pop();
       if (instr === null || instr === undefined) {
         // ignore
+      } else if (typeof instruction === "function") {
+        instruction()
       } else if (isProgram(instr)) {
         // if it's program, and since the instructions are stored into an stack,
         // we need add to the program instructions in reverse order
@@ -69,9 +71,9 @@ export class Process {
 
 // A context is a hierarchical structure to store values with scope
 export class Context {
-  constructor(parent, local) {
-    this.parent = parent;
-    this.local = local ? Object.assign({}, local) : undefined;
+  constructor(parent) {
+    if (parent instanceof Context) this.parent = parent
+    else if (parent) this.local = Object.assign({}, parent)
   }
   // get a value from a context
   get(id) {

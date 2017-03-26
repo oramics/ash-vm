@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="builders.html">
+                  builders.js
+                </a>
+              
+                
                 <a class="source" href="commands.html">
                   commands.js
                 </a>
@@ -99,7 +104,7 @@
             
             <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(plugins = []) {
     <span class="hljs-keyword">this</span>.scheduler = <span class="hljs-keyword">new</span> Scheduler();
-    <span class="hljs-keyword">this</span>.initialContext = { <span class="hljs-attr">amp</span>: <span class="hljs-number">0.8</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">440</span> };</pre></div></div>
+    <span class="hljs-keyword">this</span>.initialContext = { <span class="hljs-attr">amp</span>: <span class="hljs-number">0.5</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">440</span> };</pre></div></div>
             
         </li>
         
@@ -150,7 +155,7 @@
   }
 
   run(program, delay, rate) {
-    <span class="hljs-keyword">this</span>.scheduler.schedule(<span class="hljs-keyword">this</span>.initialContext, program, delay, rate);
+    <span class="hljs-keyword">this</span>.scheduler.fork(<span class="hljs-literal">null</span>, <span class="hljs-keyword">this</span>.initialContext, program, delay, rate);
   }</pre></div></div>
             
         </li>

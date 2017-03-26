@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="builders.html">
+                  builders.js
+                </a>
+              
+                
                 <a class="source" href="commands.html">
                   commands.js
                 </a>
@@ -139,7 +144,7 @@ processes in that it model the concept of time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.context = context ? context : <span class="hljs-keyword">new</span> Context();</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.context = <span class="hljs-keyword">new</span> Context(context);</pre></div></div>
             
         </li>
         
@@ -224,7 +229,9 @@ The <code>step</code> function runs the next instruction of the process</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isProgram(instr)) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> instruction === <span class="hljs-string">"function"</span>) {
+        instruction()
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isProgram(instr)) {</pre></div></div>
             
         </li>
         
@@ -318,9 +325,9 @@ we need add to the program instructions in reverse order</p>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Context</span> </span>{
-  <span class="hljs-keyword">constructor</span>(parent, local) {
-    <span class="hljs-keyword">this</span>.parent = parent;
-    <span class="hljs-keyword">this</span>.local = local ? <span class="hljs-built_in">Object</span>.assign({}, local) : <span class="hljs-literal">undefined</span>;
+  <span class="hljs-keyword">constructor</span>(parent) {
+    <span class="hljs-keyword">if</span> (parent <span class="hljs-keyword">instanceof</span> Context) <span class="hljs-keyword">this</span>.parent = parent
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parent) <span class="hljs-keyword">this</span>.local = <span class="hljs-built_in">Object</span>.assign({}, parent)
   }</pre></div></div>
             
         </li>

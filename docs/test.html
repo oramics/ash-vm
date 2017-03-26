@@ -1,96 +1,461 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8"/>
-<title>Test 1</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="js/jquery.min.js"></script>
+  <meta charset="utf-8"/>
+  <title>Test 1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="css/codemirror.css">
+  <link rel="stylesheet" href="css/github.min.css">
+  <style>
+  article { max-width: 50em; margin: 2em auto; }
+  </style>
+  <script src="js/jquery.min.js"></script>
 
-<script src="js/gibberish.min.js"></script>
-<script src="TimeVM.js"></script>
+  <script src="js/gibberish.min.js"></script>
+  <script src="TimeVM.js"></script>
 </head>
 <body>
+  <article>
 
-	<h1>TimeVM test1</h1>
+    <h1>TimeVM test1</h1>
 
-  <p>We have designed a target language that captures some essential concepts
-  for a musical live coding context, such as playing notes and looping patterns.
-  It is intentionally limited to make it fairly easy to learn, yet also
-  intentionally designed to make it possible to express a wide variety of ideas.
-  It is not designed to be succinct -- that's the job of the user-facing
-  language you create! The target language is a bit like the instruction
-  sequences real compilers use, in that it is a list of commands. However ours
-  can also have nested structures as lists of lists. A simple example is a
-  pattern that plays a note every beat:</p>
+    <p>We have designed a target language that captures some essential concepts
+      for a musical live coding context, such as playing notes and looping patterns.
+      It is intentionally limited to make it fairly easy to learn, yet also
+      intentionally designed to make it possible to express a wide variety of ideas.
+      It is not designed to be succinct -- that's the job of the user-facing
+      language you create! The target language is a bit like the instruction
+      sequences real compilers use, in that it is a list of commands. However ours
+      can also have nested structures as lists of lists. A simple example is a
+      pattern that plays a note every beat:
+    </p>
 
-	<pre class="runnable">
-    ["@loop", ["@pluck", [1, "@wait"]]]
-	</pre>
+<pre class="runnable"><code class="lang-javascript">
+  ["@loop", ["@pluck", [1, "@wait"]]]
+</code></pre>
 
-  <h2>Sounds</h2>
+<h2>Sounds</h2>
 
-  <p>The VM comes with a small number of instruments to get things going. Here's
+<p>The VM comes with a small number of instruments to get things going. Here's
   a plucked string instrument. There are two ways to trigger it. You can use
   @pluck-note to set the frequency and amplitude for each note like this:</p>
 
-	<pre class="runnable">
+  <pre class="runnable"><code class="lang-javascript">
     [440, 1, "@pluck-note"]
-	</pre>
-	<pre class="runnable">
+  </code></pre>
+  <pre class="runnable"><code class="lang-javascript">
     [880, 0.25, "@pluck-note"]
-	</pre>
+  </code></pre>
 
   <p>Or you can set the frequency and amplitude as contextual variables, and
-  just use @pluck to trigger using these values. This can allow a bit more
-  flexibility in how these values are calculated: </p>
+    just use @pluck to trigger using these values. This can allow a bit more
+    flexibility in how these values are calculated:
+  </p>
 
-	<pre class="runnable">
-    ["@pluck"]
-	</pre>
-	<pre class="runnable">
-    [[330, "freq", "@set"], [0.5, "amp", "@set"], "@pluck"]
-	</pre>
+    <pre class="runnable"><code class="lang-javascript">
+      ["@pluck"]
+    </code></pre>
+    <pre class="runnable"><code class="lang-javascript">
+      [[330, "freq", "@set"], [0.5, "amp", "@set"], "@pluck"]
+    </code></pre>
 
-  <p>There are also some percussion sounds, which either grab amplitude from the
-  context (set using @set-amp), or specify it using the -note variants: </p>
+    <p>There are also some percussion sounds, which either grab amplitude from the
+      context (set using @set-amp), or specify it using the -note variants:
+    </p>
 
-	<pre class="runnable">
-  [1, "@hat-note"]
-	</pre>
-	<pre class="runnable">
-  [1, "@kick-note"]
-	</pre>
-	<pre class="runnable">
-  [1, "@snare-note"]
-	</pre>
-	<pre class="runnable">
-  [[1, "amp", "@set"], "@hat"]
-	</pre>
-	<pre class="runnable">
-  [[1, "amp", "@set"], "@kick"]
-	</pre>
-	<pre class="runnable">
-  [[1, "amp", "@set"], "@snare"]
-	</pre>
-	<pre class="runnable">
-  [4, "@repeat", [
+    <pre class="runnable"><code class="lang-javascript">
+      [1, "@hat-note"]
+    </code></pre>
+    <pre class="runnable"><code class="lang-javascript">
+      [1, "@kick-note"]
+    </code></pre>
+    <pre class="runnable"><code class="lang-javascript">
+      [1, "@snare-note"]
+    </code></pre>
+    <pre class="runnable"><code class="lang-javascript">
+      [[1, "amp", "@set"], "@hat"]
+    </code></pre>
+    <pre class="runnable"><code class="lang-javascript">
+      [[1, "amp", "@set"], "@kick"]
+    </code></pre>
+    <pre class="runnable"><code class="lang-javascript">
+      [[1, "amp", "@set"], "@snare"]
+    </code></pre>
+    <pre class="runnable"><code class="lang-javascript">
+      [4, "@repeat", [
       [["@iter", [0.3, 1]], "amp", "@set"],
       8, "@repeat", ["@hat", 0.125, "@wait"]
-  ]]
-	</pre>
+      ]]
+    </code></pre>
+
+    <h2>Repetition and parallelism</h2>
+
+    <p>A list with several events normally happens at the same time:</p>
+
+    </code></pre>
+    <pre class="runnable"><code class="lang-javascript">
+      [
+      [220, "freq", "@set"], "@pluck",
+      [330, "freq", "@set"], "@pluck"
+      ]
+    </code></pre>
+    <p>Unless you add a n,@wait:</p>
+
+    <pre class="runnable"><code class="lang-javascript">
+      [
+      [220, "freq", "@set"], "@pluck",
+      1, "@wait",
+      [330, "freq", "@set"], "@pluck"
+      ]
+    </code></pre>
+
+  <p>Here's how to do something a specific number of times: </p>
+
+  <pre class="runnable"><code class="lang-javascript">
+    [
+    4, "@repeat", [ "@pluck", 0.25, "@wait" ]
+    ]
+  </code></pre>
+  <pre class="runnable"><code class="lang-javascript">
+    [
+    4, "@repeat", [ "@pluck", 0.25, "@wait" ],
+    [220, "freq", "@set"], "@pluck"
+    ]
+  </code></pre>
+
+  <p>Here's how to do something forever:</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+[
+"@loop", [ "@pluck", 0.25, "@wait" ]
+]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
 
 
-<script>
+  <p>Note that @loop will run the pattern that follows it in parallel, which
+  means that you can keep on triggering more things after it. So it's easy to
+  set up a bunch of parallel processes: </p>
 
-const run = TimeVM.init(Gibberish)
+  <pre class="runnable"><code class="lang-javascript">
+[
+    "@loop", [ 0.5, "@kick-note", 2, "@wait" ],
+    "@loop", [ 0.3, "@hat-note", 0.4, "@wait" ],
+    "@loop", [ 550, 0.5, "@pluck-note", 0.6, "@wait" ],
+    "@loop", [ 330, 0.4, "@pluck-note", 0.2, "@wait" ],
+    "@loop", [ 110, 1, "@pluck-note", 12, "@wait" ]
+]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
 
-$('.runnable').click((e) => {
-	const program = JSON.parse(e.target.innerHTML)
-  console.log('RUN', program)
-	run(program)
-})
+  <p>And to run something in parallel without looping it, just use @fork []:</p>
 
-</script>
+  <pre class="runnable"><code class="lang-javascript">
+[
+    "@loop", [
+        "@kick",
+        "@fork", [
+            0.25, "@wait",
+            550, 1, "@pluck-note",
+            0.33, "@wait",
+            660, 1, "@pluck-note"
+        ],
+        1, "@wait"
+    ]
+]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>This is also handy for setting up loops with different start times:</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+[
+    "@loop", ["@kick", 1, "@wait"],
+    "@fork", [0.5, "@wait",
+        "@loop", ["@hat", 1, "@wait"]
+    ]
+]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <h2>Expressions</h2>
+
+  <p>Anywhere that a number would go, you can insert an expression. Here are some fun expressions.</p>
+
+  <p>Here's picking a value at random from a list, instead of giving the freq and amp values as numbers:</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+  [
+      "@loop", [
+          ["@pick", [330, 440, 550, 660]],
+          ["@pick", [1, 0.7, 0.4]],
+          "@pluck-note",
+          0.25, "@wait"
+      ]
+  ]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>Here's alternating between a set of values in a list, one at a time:</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+  [
+      "@loop", [
+          ["@iter", [330, 440, 550, 660]],
+          ["@iter", [1, 0.7, 0.4]],
+          "@pluck-note",
+          0.25, "@wait"
+      ]
+  ]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>Here's way to set the probability of something happening. Note that two
+  lists have to be given after the "@chance"; either the first is run (if the
+  chance happens), else the other one will be run.</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+  [
+      "@loop", [
+          "@fork", [
+              0.2,
+              "@chance",
+              ["@snare"],
+              ["@tom"]
+          ],
+          "@hat", 0.25, "@wait"
+      ]
+  ]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>If you don't care about the 'else' case, just put an empty list [] or null.
+  But you must put something, or else the virtual machine will get corrupted,
+  and who knows what might happen.</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+  [
+      "@loop", [
+          "@fork", [
+              0.1,
+              "@chance",
+              ["@snare"],
+              []
+          ],
+          "@hat", 0.25, "@wait"
+      ]
+  ]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>Another way of getting some randomness is to use the @rand (which generates
+  a number between 0 and 1), @srand (which generates a number between -1 and 1),
+  and n,@randi (which generates a number between 0 and n-1):</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+  [
+      "@loop", [
+          "@rand", "amp", "@set",
+          "@pluck",
+          0.25, "@wait"
+      ]
+  ]
+  </code></pre>
+
+  <pre class="runnable"><code class="lang-javascript">
+  [
+      "@loop", [
+          "@pluck",
+          [3, "@randi"], "@wait"
+      ]
+  ]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>There are several basic math functions that can be used to map numbers into
+  useful ranges. Note that most math functions require the arguments first, e.g.
+  use [a,b,@+] to add a and b:</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+  [
+      "@loop", [
+          [[[4, "@randi"], 1, "@+"], 110, "@*"], "freq", "@set",
+          "@pluck",
+          0.25, "@wait"
+      ]
+  ]
+  </code></pre>
+  <pre class="runnable"><code class="lang-javascript">
+  [
+      "@loop", [
+          [["@srand", 10, "@*"], 110, "@+"], "freq", "@set",
+          "@pluck",
+          0.25, "@wait"
+      ]
+  ]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <h2>Get, set, and let</h2>
+
+  <p><b>FIXME: this is no longer true. At this moment you can only use
+    @set, @let or @get preceding the variable name</b></p>
+
+  <p>The @set-freq etc. are really just examples of creating named values
+  ("variables") that can be re-used again later. Actually you can use
+  @set-anything to create whatever variables you like, and use @get-anything to
+  retrieve them. Mainly this is useful when you want to re-use something a few
+  times:</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+[
+    "@loop", [
+        [[[4, "@randi"], 2, "@+"], 110, "@*"], "fq", "@set",
+        "fq", "@get", 0.6, "@pluck-note",
+        ["fq", "@get", 1.5, "@mul"], 0.6, "@pluck-note",
+        0.25, "@wait"
+    ]
+]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>By default @set-anything will apply globally, so you can modulate a
+  parameter from one loop while using it in another:</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+[
+    "@loop", [
+        [[[4, "@randi"], 2, "@+"], 110, "@*"], "fq", "@set",
+        1, "@wait"
+    ],
+    "@loop", [
+        "fq", "@get", 0.6, "@pluck-note",
+        ["fq", "@get", 1.5, "@mul"], 0.6, "@pluck-note",
+        0.25, "@wait"
+    ]
+]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>If globalism isn't what you care for, you can make a name "local" to a
+  particular loop by using @let-anything. Once you have @let- a variable in a
+  particular @loop (or @fork) pattern, it will remain local to that pattern.
+  Generally, use @let if you want some value that is only used within a pattern,
+  and @set if you want something global.</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+[
+    "@loop", [
+        [[[4, "@randi"], 1, "@+"], 110, "@mul"], "fq", "@let",
+        "fq", "@get", 0.6, "@pluck-note",
+        ["fq", "@get", 1.5, "@mul"], 0.6, "@pluck-note",
+        0.25, "@wait"
+    ],
+    "@loop", [
+        [[[4, "@randi"], 5, "@+"], 110, "@mul"], "fq", "@let",
+        "fq", "@get", 1, "@pluck-note",
+        ["fq", "@get", 1.5, "@mul"], 0.6, "@pluck-note",
+        0.25, "@wait"
+    ]
+]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>One use for this is to repeatedly modify a value, such as for a counter, or
+  a decay:</p>
+
+  <pre class="runnable"><code class="lang-javascript">
+[
+    "@loop", [
+        1, "a", "@let",
+        8, "@repeat", [
+            "a", "@get", "@snare-note",
+            0.25, "@wait",
+            "a", "@get", 0.6, "@*", "a", "@set"
+        ]
+    ]
+]
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <p>The only thing special about @set-freq is that the name "freq" is used by
+  @pluck. That is, @pluck is equivalent to: ["@get-freq", "@get-amp",
+  "@pluck-note"]. Similarly for @set-amp etc.</p>
+
+  <h2>Independently parallel</h2>
+
+  <p>Say you want to be able to launch a loop, then let it keep running while
+  you launch another. And say you want to redefine it while it plays, or stop
+  it. To do that you need to name it. We can do that via "@spawn".</p>
+
+  <pre class="runnable"><code class="lang-javascript">[
+    "foo", "@spawn", [220, 0.5, "@pluck-note", 0.50, "@wait"],
+    "bar", "@spawn", [330, 0.5, "@pluck-note", 0.75, "@wait"],
+    3, "@wait",
+    "foo", "@spawn", [110, 0.5, "@pluck-note", 1, "@wait"]
+]</code></pre>
+
+<pre class="runnable"><code class="lang-javascript">[
+    "foo", "@spawn", [440, 0.5, "@pluck-note", 0.5, "@wait"]
+]</code></pre>
+
+<pre class="runnable"><code class="lang-javascript">[
+    "bar", "@spawn", [110, 0.5, "@pluck-note", 1, "@wait"]
+]</code></pre>
+
+<p>Click to change the "foo" part:</p>
+<pre class="runnable"><code class="lang-javascript">["foo", "@stop"]
+</code></pre>
+
+<pre class="runnable"><code class="lang-javascript">[
+    "bar", "@stop"
+]  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+<pre class="runnable"><code class="lang-javascript">[
+    "@loop",[
+        "@iter",[0.01,0.2,0.01],"@hat-note",
+        "@iter",[1,3],8,"@div","@wait"
+    ],
+    "@loop",[
+        ["@iter",[14,15,16,17,18],44,"@mul"],"freq", "@set",
+        0.1,"amp", "@set",
+        "@pluck",
+        "@pick",[5,7],32,"@div","@wait"
+    ],
+    "@loop",[
+        ["@iter",[16,6,15,5,10,4,12],44,"@mul"],"freq", "@set",
+        1,"@pick",[2,3,5,6,5,6,5],"@div","amp", "@set",
+        "@pluck",
+        "@iter",[5,1,9,1],32,"@div","@wait"
+    ]
+]  </code></pre>
+
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  <pre class="runnable"><code class="lang-javascript">
+  </code></pre>
+  <button class="button-primary" onclick="run(['@stop-all'])">Stop</button>
+
+  </article>
+
+
+  <script>
+
+  const run = TimeVM.init(Gibberish)
+
+  $('.runnable').click((e) => {
+    const text = e.target.innerHTML
+    const lines = text.split('\n').filter(l => l.trim()[0] !== '/')
+    const program = JSON.parse(lines.join(''))
+    console.log('RUN', program)
+    run(program)
+  })
+
+  </script>
 
 </body>
 </html>

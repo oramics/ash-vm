@@ -4,9 +4,12 @@ import { Context } from '../src/process'
 describe('Context', () => {
   it('creates context', () => {
     const parent = new Context()
-    const child = new Context(parent, { value: 10 })
+    expect(parent.parent).toBe(undefined)
+    expect(parent.local).toBe(undefined)
+
+    const child = new Context(parent)
     expect(child.parent).toBe(parent)
-    expect(child.local).toEqual({ value: 10 })
+    expect(child.local).toBe(undefined)
   })
 
   it('set uses local if no parent', () => {
@@ -16,9 +19,13 @@ describe('Context', () => {
   })
 
   it('get - gets the value from parent if not preset', () => {
-    const a = new Context(null, { x: 1, y: 2, z: 3 })
-    const b = new Context(a, { y: 20, z: 30 })
-    const c = new Context(b, { z: 300 })
+    const a = new Context()
+    a.local = { x: 1, y: 2, z: 3}
+    const b = new Context(a)
+    b.local = { y: 20, z: 30 }
+    const c = new Context(b)
+    c.local = { z: 300 }
+
     expect(c.get('x')).toBe(1)
     expect(c.get('y')).toBe(20)
     expect(c.get('z')).toBe(300)

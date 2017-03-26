@@ -41,7 +41,7 @@
   },
   "standard": {
     "ignore": [
-      "dist/*", "src/*"
+      "**/*"
     ]
   },
   "dependencies": {
