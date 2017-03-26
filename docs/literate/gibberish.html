@@ -30,6 +30,21 @@
                 </a>
               
                 
+                <a class="source" href="debug.html">
+                  debug.js
+                </a>
+              
+                
+                <a class="source" href="midi.html">
+                  midi.js
+                </a>
+              
+                
+                <a class="source" href="random.html">
+                  random.js
+                </a>
+              
+                
                 <a class="source" href="gibberish.html">
                   gibberish.js
                 </a>
@@ -42,11 +57,6 @@
                 
                 <a class="source" href="process.html">
                   process.js
-                </a>
-              
-                
-                <a class="source" href="scheduler.html">
-                  scheduler.js
                 </a>
               
                 
@@ -96,19 +106,21 @@
 
 <span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">gibberish</span>(<span class="hljs-params">Gibberish, vm</span>) </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length === <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-params">vm</span> =&gt;</span> gibberish(Gibberish, vm);
-
-  <span class="hljs-keyword">if</span> (sampleRate === <span class="hljs-literal">null</span>) {
-    Gibberish.init();
-    sampleRate = Gibberish.context.sampleRate;
-    bpm2bpa = <span class="hljs-number">1</span> / (<span class="hljs-number">60</span> * sampleRate);
-    instruments = createInstruments(Gibberish, instConfig);
-    commands = createCommands(instruments, cmdConfig);
-    Gibberish.sequencers.push(sequencer);
-  }
+  <span class="hljs-keyword">if</span> (sampleRate === <span class="hljs-literal">null</span>) initAudio()
 
   vms.push(vm);
-  vm.usePlugin({ <span class="hljs-attr">actions</span>: instruments, commands });
+  vm.addCommands(commands)
   <span class="hljs-keyword">return</span> Gibberish;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">initAudio</span> (<span class="hljs-params"></span>) </span>{
+  Gibberish.init();
+  sampleRate = Gibberish.context.sampleRate;
+  bpm2bpa = <span class="hljs-number">1</span> / (<span class="hljs-number">60</span> * sampleRate);
+  instruments = createInstruments(Gibberish, instConfig);
+  commands = createCommands(instruments, cmdConfig);
+  Gibberish.sequencers.push(sequencer);
+
 }</pre></div></div>
             
         </li>
@@ -130,7 +142,7 @@
     <span class="hljs-keyword">if</span> (len === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>;
     <span class="hljs-keyword">const</span> dur = bpm * bpm2bpa;
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; len; i++) {
-      vms[i].tick(dur);
+      vms[i].resume(dur);
     }
   }
 };</pre></div></div>

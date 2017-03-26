@@ -3,6 +3,7 @@
 const isCommand = o => typeof o === "string" && o[0] === "@";
 const isProgram = Array.isArray;
 let procId = 1;
+const ERR_INSTR_NOT_FOUND = "Instruction not recognized.";
 
 // Processes are the principal computation unit. It departures from typical
 // processes in that it model the concept of time
@@ -19,25 +20,24 @@ export class Process {
     this.time = typeof time === "number" ? time : 0;
     // how fast time passes
     this.rate = typeof rate === "number" ? rate : 1;
+    // bind error to allow destructuring in commands
+    this.error = this.error.bind(this)
   }
 
   // wait an amount of time
-  wait (time) {
-    this.time += this.rate * time
+  wait(time) {
+    this.time += this.rate * time;
   }
 
-  // To run an instruction, the process uses a _commands_ object (a map from
-  // a instruction to a function) and an actions object (that will be exposed
-  // to that function an uses as communication mechanism with the outside world)
-  // The `step` function runs the next instruction of the process
-  step(commands, actions) {
+  // The process is agnostic about the commands to be use
+  step(commands) {
     const { instructions } = this;
     if (instructions.length) {
       const instr = instructions.pop();
       if (instr === null || instr === undefined) {
         // ignore
       } else if (typeof instruction === "function") {
-        instruction()
+        instruction();
       } else if (isProgram(instr)) {
         // if it's program, and since the instructions are stored into an stack,
         // we need add to the program instructions in reverse order
@@ -46,8 +46,8 @@ export class Process {
         }
       } else if (isCommand(instr)) {
         const operation = commands[instr];
-        if (typeof operation === "function") operation(this, actions);
-        else actions.error("Instruction '" + instr + "' not recognized.");
+        if (typeof operation === "function") operation(this);
+        else this.error("", ERR_INSTR_NOT_FOUND, instr);
       } else {
         // if it's a value, push it into the stack
         this.stack.push(instr);
@@ -56,14 +56,18 @@ export class Process {
   }
 
   // the `resume` function run all the instructions until time is reached
-  resume(commands, actions, time = Infinity, limit = 10000) {
+  resume(commands, time = Infinity, limit = 10000) {
     const { instructions } = this;
     while (--limit > 0 && this.time < time && instructions.length) {
-      this.step(commands, actions);
+      this.step(commands);
     }
-    if (limit === 0)
-      actions.error("Run limit reached. Probably an infinite loop.");
+    if (limit === 0) this.error("Resume", ERR_LIMIT_REACHED);
     return instructions.length > 0;
+  }
+
+  // an utility function to write errors
+  error(instr, msg, obj) {
+    console.error(instr, msg, obj, "id", this.id, "time", this.time);
   }
 }
 
@@ -72,8 +76,8 @@ export class Process {
 // A context is a hierarchical structure to store values with scope
 export class Context {
   constructor(parent) {
-    if (parent instanceof Context) this.parent = parent
-    else if (parent) this.local = Object.assign({}, parent)
+    if (parent instanceof Context) this.parent = parent;
+    else if (parent) this.local = Object.assign({}, parent);
   }
   // get a value from a context
   get(id) {

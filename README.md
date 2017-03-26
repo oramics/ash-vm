@@ -29,3 +29,8 @@ const run = init(Gibberish)
 
 run(["@loop", ["@kick", 0.5, "@wait", "@snare", 0.5, "@wait"]])
 ```
+
+## Demos, docs and source code
+
+- An introduction to TimeVM (by @grrrwaaa and @charlieroberts): https://danigb.github.io/ScheddVM/
+- Annotated source code: https://danigb.github.io/ScheddVM/literate/

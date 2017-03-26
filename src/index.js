@@ -8,28 +8,28 @@
 // an internal time value that can be modified.
 
 import { VM } from "./vm";
-import { all } from "./commands";
 import { gibberish } from "./gibberish";
-import * as builders from "./builders";
+import random from './ext/random'
+import debug from './ext/debug'
+
+const INITIAL_CTX = { amp: 0.5, freq: 440 };
+const newCtx = () => Object.assign({}, INITIAL_CTX)
 
 // ## API
 
 export function init(Gibberish, ...plugins) {
-  plugins = [{ commands: all }].concat(plugins);
-  // Create the virtual machine
-  const vm = new VM(plugins);
+  // Create the virtual machine and setup commands
+  const vm = new VM();
+  vm.addCommands(random())
+  vm.addCommands(debug())
+  plugins.forEach(cmds => vm.addCommands(cmds))
+
   // Init the audio driver
   gibberish(Gibberish, vm);
-  // Return vm's run function
-  return (prog, sync = true) => {
-    vm.run(sync ? ['@sync', prog] : prog)
-  }
-}
 
-export function live() {
-  const fns = Object.keys(builders);
-  fns.forEach(fn => {
-    window[fn] = builders[fn];
-  });
-  console.log('LIVE!', fns)
+  // Return a `run(program)` function
+  // this is the simplest API I can think. Probably will change.
+  return (prog, sync = true) => {
+    vm.fork(null, newCtx(), sync ? ["@sync", prog] : prog);
+  };
 }

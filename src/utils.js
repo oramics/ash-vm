@@ -1,27 +1,16 @@
-// # AudioVM utilities
+// # TimeVM utilities
 
-// ## Array utilities
-
+// test if an object is an array
 export const isArray = Array.isArray;
 
+// test if an object is a string
+export const isString = o => typeof o === "string";
+
 // get last element from an array
-export function last(array) {
-  return array[array.length - 1];
-}
+export const last = (a) => a[a.length - 1];
 
-// ## Stack utilities
-
-// push a value into a stack
-export function push(stack, value) {
-  stack.push(value);
-}
-
-// pop a value from the stack
-export function pop(stack) {
-  return stack.pop();
-}
-
-// get the next value of the stack without remove it
-export function peek(stack) {
-  return stack[stack.length - 1];
-}
+// A modulo operation that handles negative n more appropriately
+// e.g. wrap(-1, 3) returns 2
+// see http://en.wikipedia.org/wiki/Modulo_operation
+// see also http://jsperf.com/modulo-for-negative-numbers
+export const wrap = (a, b) => (a % b + b) % b;

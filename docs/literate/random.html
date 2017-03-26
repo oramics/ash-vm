@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>random.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="builders.html">
+                  builders.js
+                </a>
+              
+                
+                <a class="source" href="commands.html">
+                  commands.js
+                </a>
+              
+                
+                <a class="source" href="debug.html">
+                  debug.js
+                </a>
+              
+                
+                <a class="source" href="midi.html">
+                  midi.js
+                </a>
+              
+                
+                <a class="source" href="random.html">
+                  random.js
+                </a>
+              
+                
+                <a class="source" href="gibberish.html">
+                  gibberish.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
+                <a class="source" href="process.html">
+                  process.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="vm.html">
+                  vm.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>random.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2 id="randomness">Randomness</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { isArray } <span class="hljs-keyword">from</span> <span class="hljs-string">'../utils'</span>
+<span class="hljs-keyword">const</span> { floor } = <span class="hljs-built_in">Math</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>@random</strong></td>
+<td>Generate a random number between 0 and 1</td>
+<td><code>[&quot;@random&quot;, &quot;amp&quot;, &quot;@set&quot;]</code></td>
+</tr>
+<tr>
+<td><strong>@rand</strong></td>
+<td>Alias for @random</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>@srandom</strong></td>
+<td>Generate a random number between -1 and 1</td>
+<td><code>[&quot;@srandom&quot;, &quot;phase&quot;, &quot;@set&quot;]</code></td>
+</tr>
+<tr>
+<td><strong>@srand</strong></td>
+<td>Alias for @srandom</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>@randi</strong></td>
+<td>Generate a random integer between 0 and n</td>
+<td><code>[60, &quot;@randi&quot;, &quot;midi&quot;, &quot;@set&quot;]</code></td>
+</tr>
+<tr>
+<td><strong>@pick</strong></td>
+<td>Pick a random element from a list</td>
+<td><code>[&quot;@pick&quot;, [1, 2, 3, 4]]</code></td>
+</tr>
+<tr>
+<td><strong>@chance</strong></td>
+<td>Probabilistic execution</td>
+<td><code>probability, &quot;@chance&quot;, executed-if-true, executed-if-false</code></td>
+</tr>
+</tbody>
+</table>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">random</span>(<span class="hljs-params">random</span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>allow to use a custom random function</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> rnd = random || <span class="hljs-built_in">Math</span>.random;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>a function that generates integer random from 0 to n</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> irnd = <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> floor(rnd() * n);
+
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-string">"@random"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd()),
+    <span class="hljs-string">"@rand"</span>: <span class="hljs-string">"@random"</span>,
+    <span class="hljs-string">"@srandom"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd() * <span class="hljs-number">2</span> - <span class="hljs-number">1</span>),
+    <span class="hljs-string">"@srand"</span>: <span class="hljs-string">"@srandom"</span>,
+    <span class="hljs-string">"@randi"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(irnd(stack.pop())),
+    <span class="hljs-string">"@pick"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+      <span class="hljs-keyword">const</span> { stack, instructions, error } = proc;
+      <span class="hljs-keyword">const</span> pattern = instructions.pop();
+      <span class="hljs-keyword">if</span> (!isArray(pattern)) {
+        instructions.push(pattern);
+        error(<span class="hljs-string">"Can't pick an element if is not an array"</span>, pattern);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">const</span> i = irnd(pattern.length);
+        instructions.push(pattern[i]);
+      }
+    },
+    <span class="hljs-string">"@chance"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, instructions }</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> prob = stack.pop();
+      <span class="hljs-keyword">const</span> pattern = instructions.pop();
+      <span class="hljs-keyword">if</span> (rnd() &lt; prob) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Skip item after</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        instructions.pop();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Push the pattern</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        instructions.push(pattern);
+      }
+    }
+  };
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 /* global describe test expect */
 import { all as commands } from "../src/commands";
 
-describe("Random commands", () => {
+describe.skip("Random commands", () => {
   test("@random", () => {
     const proc = { stack: [] };
     commands["@random"](proc);

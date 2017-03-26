@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Audio Virtual Machine</title>
+  <title>MIDI</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -84,7 +84,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h1 id="audio-virtual-machine">Audio Virtual Machine</h1>
+              <h1 id="midi">MIDI</h1>
 
             </div>
             
@@ -97,9 +97,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>The main purpose of the virtual machine is to run processes concurrently</p>
+              <p>This module gives MIDI support to the VM
+not working yet</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">midi</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> {</pre></div></div>
             
         </li>
         
@@ -110,9 +115,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h2 id="architecture-overview">Architecture Overview</h2>
+              <p>[pitch, velocity, channel, “@note-on”]</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@note-on"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> chan = <span class="hljs-built_in">Number</span>(stack.pop());
+      <span class="hljs-keyword">const</span> vel = <span class="hljs-built_in">Number</span>(stack.pop());
+      <span class="hljs-keyword">const</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop());
+      sendMidi([<span class="hljs-number">0x90</span> + chan, pitch, vel], <span class="hljs-number">0</span>);
+    },</pre></div></div>
             
         </li>
         
@@ -123,19 +135,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>A <strong>scheduler</strong> is a collection of processes. Each <strong>process</strong> mantains
-an internal time value that can be modified.</p>
+              <p>[pitch, velocity, channel, “@note-off”]</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">import</span> { VM } <span class="hljs-keyword">from</span> <span class="hljs-string">"./vm"</span>;
-<span class="hljs-keyword">import</span> { gibberish } <span class="hljs-keyword">from</span> <span class="hljs-string">"./gibberish"</span>;
-<span class="hljs-keyword">import</span> random <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/random'</span>
-<span class="hljs-keyword">import</span> debug <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/debug'</span>
-
-<span class="hljs-keyword">const</span> INITIAL_CTX = { <span class="hljs-attr">amp</span>: <span class="hljs-number">0.5</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">440</span> };
-<span class="hljs-keyword">const</span> newCtx = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-built_in">Object</span>.assign({}, INITIAL_CTX)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@note-off"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> chan = <span class="hljs-built_in">Number</span>(stack.pop());
+      <span class="hljs-keyword">const</span> vel = <span class="hljs-built_in">Number</span>(stack.pop());
+      <span class="hljs-keyword">const</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop());
+      sendMidi([<span class="hljs-number">0x80</span> + chan, pitch, vel], <span class="hljs-number">0</span>);
+    },</pre></div></div>
             
         </li>
         
@@ -146,12 +155,20 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h2 id="api">API</h2>
+              <p>[pitch, velocity, channel, duration, “@note”]</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span>(<span class="hljs-params">Gibberish, ...plugins</span>) </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@note"</span>: <span class="hljs-function">(<span class="hljs-params">proc</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> { stack, instructions } = proc;
+      <span class="hljs-keyword">const</span> dur = <span class="hljs-built_in">Number</span>(stack.pop());
+      <span class="hljs-keyword">let</span> chan = <span class="hljs-built_in">Number</span>(stack.pop());
+      <span class="hljs-keyword">let</span> vel = <span class="hljs-built_in">Number</span>(stack.pop());
+      <span class="hljs-keyword">let</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop());
+
+      sendMidi([<span class="hljs-number">0x90</span> + chan, pitch, vel], <span class="hljs-number">0</span>);
+      instructions.push([<span class="hljs-string">"@fork"</span>, [dur, <span class="hljs-string">"@wait"</span>, pitch, <span class="hljs-number">0</span>, chan, <span class="hljs-string">"note-off"</span>]])
+    },</pre></div></div>
             
         </li>
         
@@ -162,14 +179,14 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Create the virtual machine and setup commands</p>
+              <p>[controller, value, channel, “@cc”]</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM();
-  vm.addCommands(random())
-  vm.addCommands(debug())
-  plugins.forEach(<span class="hljs-function"><span class="hljs-params">cmds</span> =&gt;</span> vm.addCommands(cmds))</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@cc"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+      <span class="hljs-keyword">let</span> chan = <span class="hljs-built_in">Number</span>(stack.pop());
+      <span class="hljs-keyword">let</span> value = <span class="hljs-built_in">Number</span>(stack.pop());
+      <span class="hljs-keyword">const</span> controller = <span class="hljs-built_in">Number</span>(stack.pop());</pre></div></div>
             
         </li>
         
@@ -180,28 +197,12 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Init the audio driver</p>
+              <p>Send cc controller value chan</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  gibberish(Gibberish, vm);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>Return a <code>run(program)</code> function
-this is the simplest API I can think. Probably will change.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">prog, sync = <span class="hljs-literal">true</span></span>) =&gt;</span> {
-    vm.fork(<span class="hljs-literal">null</span>, newCtx(), sync ? [<span class="hljs-string">"@sync"</span>, prog] : prog);
+            <div class="content"><div class='highlight'><pre>      sendMidi([<span class="hljs-number">0xb0</span> + chan, controller, value], <span class="hljs-number">0</span>);
+    }
   };
 }</pre></div></div>
             

@@ -11,19 +11,21 @@ const instrumentCmds = {
 
 export function gibberish(Gibberish, vm) {
   if (arguments.length === 1) return vm => gibberish(Gibberish, vm);
-
-  if (sampleRate === null) {
-    Gibberish.init();
-    sampleRate = Gibberish.context.sampleRate;
-    bpm2bpa = 1 / (60 * sampleRate);
-    instruments = createInstruments(Gibberish, instConfig);
-    commands = createCommands(instruments, cmdConfig);
-    Gibberish.sequencers.push(sequencer);
-  }
+  if (sampleRate === null) initAudio()
 
   vms.push(vm);
-  vm.usePlugin({ actions: instruments, commands });
+  vm.addCommands(commands)
   return Gibberish;
+}
+
+function initAudio () {
+  Gibberish.init();
+  sampleRate = Gibberish.context.sampleRate;
+  bpm2bpa = 1 / (60 * sampleRate);
+  instruments = createInstruments(Gibberish, instConfig);
+  commands = createCommands(instruments, cmdConfig);
+  Gibberish.sequencers.push(sequencer);
+
 }
 
 // The Gibberish sequencer that controlls all
@@ -33,7 +35,7 @@ const sequencer = {
     if (len === 0) return;
     const dur = bpm * bpm2bpa;
     for (let i = 0; i < len; i++) {
-      vms[i].tick(dur);
+      vms[i].resume(dur);
     }
   }
 };
