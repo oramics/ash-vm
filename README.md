@@ -1,4 +1,8 @@
 # Audio Scheduler VM
+[![Travis CI](https://img.shields.io/travis/danigb/ash-vm/master.svg)](https://travis-ci.org/danigb/ash-vm)
+[![Codecov](https://img.shields.io/codecov/c/github/danigb/ash-vm/master.svg)](https://codecov.io/gh/danigb/ash-vm)
+[![CDNJS](https://img.shields.io/cdnjs/v/ash-vm.svg?colorB=ff69b4)](https://cdnjs.com/libraries/ash-vm)
+[![npm](https://img.shields.io/npm/v/ash-vm.svg?colorB=ff69b4)](https://www.npmjs.org/package/ash-vm)
 
 > A stack virtual machine audio scheduler.
 
