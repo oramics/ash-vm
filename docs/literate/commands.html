@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="gibberish.html">
+                  gibberish.js
+                </a>
+              
+                
                 <a class="source" href="builders.html">
                   builders.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="commands.html">
                   commands.js
+                </a>
+              
+                
+                <a class="source" href="compatibility.html">
+                  compatibility.js
                 </a>
               
                 
@@ -42,11 +52,6 @@
                 
                 <a class="source" href="random.html">
                   random.js
-                </a>
-              
-                
-                <a class="source" href="gibberish.html">
-                  gibberish.js
                 </a>
               
                 
@@ -88,7 +93,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { isArray, isString, last, wrap } <span class="hljs-keyword">from</span> <span class="hljs-string">"./utils"</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { isArray, isString, last, wrap } <span class="hljs-keyword">from</span> <span class="hljs-string">'./utils'</span></pre></div></div>
             
         </li>
         
@@ -103,8 +108,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> ERR_BAD_PATTERN = <span class="hljs-string">"Expected a pattern, but found:"</span>;
-<span class="hljs-keyword">const</span> ERR_LIMIT_REACHED = <span class="hljs-string">"Limit reached. Probably an infinity loop."</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> ERR_EXPECT_PATTERN = <span class="hljs-string">'Expected a pattern, but found:'</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> ERR_EXPECT_STRING = <span class="hljs-string">'Expected a string, but found:'</span></pre></div></div>
             
         </li>
         
@@ -132,10 +137,9 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> op1 = <span class="hljs-function"><span class="hljs-params">fn</span> =&gt;</span>
-  ({ stack }) =&gt; {
-    stack.push(fn(stack.pop()));
-  };</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> op1 = <span class="hljs-function"><span class="hljs-params">fn</span> =&gt;</span> ({ stack }) =&gt; {
+  stack.push(fn(stack.pop()))
+}</pre></div></div>
             
         </li>
         
@@ -150,10 +154,9 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> op2 = <span class="hljs-function"><span class="hljs-params">fn</span> =&gt;</span>
-  ({ stack }) =&gt; {
-    stack.push(fn(stack.pop(), stack.pop()));
-  };</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> op2 = <span class="hljs-function"><span class="hljs-params">fn</span> =&gt;</span> ({ stack }) =&gt; {
+  stack.push(fn(stack.pop(), stack.pop()))
+}</pre></div></div>
             
         </li>
         
@@ -230,7 +233,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@+"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a + b),</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@+'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a + b),</pre></div></div>
             
         </li>
         
@@ -245,7 +248,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@add"</span>: <span class="hljs-string">"@+"</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@add'</span>: <span class="hljs-string">'@+'</span>,</pre></div></div>
             
         </li>
         
@@ -260,7 +263,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@-"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a - b),</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@-'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a - b),</pre></div></div>
             
         </li>
         
@@ -275,15 +278,15 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@sub"</span>: <span class="hljs-string">"@-"</span>,
-  <span class="hljs-string">"@*"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a * b),
-  <span class="hljs-string">"@mul"</span>: <span class="hljs-string">"@*"</span>,
-  <span class="hljs-string">"@/"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> b === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : a / b),
-  <span class="hljs-string">"@div"</span>: <span class="hljs-string">"@/"</span>,
-  <span class="hljs-string">"@%"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> b === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : wrap(a, b)),
-  <span class="hljs-string">"@wrap"</span>: <span class="hljs-string">"@%"</span>,
-  <span class="hljs-string">"@mod"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> b === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : a % b),
-  <span class="hljs-string">"@neg"</span>: op1(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> -a),</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@sub'</span>: <span class="hljs-string">'@-'</span>,
+  <span class="hljs-string">'@*'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a * b),
+  <span class="hljs-string">'@mul'</span>: <span class="hljs-string">'@*'</span>,
+  <span class="hljs-string">'@/'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> b === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : a / b),
+  <span class="hljs-string">'@div'</span>: <span class="hljs-string">'@/'</span>,
+  <span class="hljs-string">'@%'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> b === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : wrap(a, b)),
+  <span class="hljs-string">'@wrap'</span>: <span class="hljs-string">'@%'</span>,
+  <span class="hljs-string">'@mod'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> b === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : a % b),
+  <span class="hljs-string">'@neg'</span>: op1(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> -a),</pre></div></div>
             
         </li>
         
@@ -299,8 +302,8 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  <span class="hljs-string">"@cond"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, instructions }</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> test = stack.pop();</pre></div></div>
+  <span class="hljs-string">'@cond'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> test = stack.pop()</pre></div></div>
             
         </li>
         
@@ -315,7 +318,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">const</span> success = instructions.pop();</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">const</span> success = operations.pop()</pre></div></div>
             
         </li>
         
@@ -345,22 +348,22 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      instructions.pop();
-      instructions.push(success);
+            <div class="content"><div class='highlight'><pre>      operations.pop()
+      operations.push(success)
     }
   },
-  <span class="hljs-string">"@&gt;"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &gt; b),
-  <span class="hljs-string">"@&gt;="</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &gt;= b),
-  <span class="hljs-string">"@&lt;"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &lt; b),
-  <span class="hljs-string">"@&lt;="</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &lt;= b),
-  <span class="hljs-string">"@=="</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a === b),
-  <span class="hljs-string">"@!="</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a !== b),
-  <span class="hljs-string">"@!"</span>: op1(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> !a),
-  <span class="hljs-string">"@not"</span>: <span class="hljs-string">"@!"</span>,
-  <span class="hljs-string">"@&amp;&amp;"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &amp;&amp; b),
-  <span class="hljs-string">"@and"</span>: <span class="hljs-string">"@&amp;&amp;"</span>,
-  <span class="hljs-string">"@||"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a || b),
-  <span class="hljs-string">"@or"</span>: <span class="hljs-string">"@||"</span>,</pre></div></div>
+  <span class="hljs-string">'@&gt;'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &gt; b),
+  <span class="hljs-string">'@&gt;='</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &gt;= b),
+  <span class="hljs-string">'@&lt;'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &lt; b),
+  <span class="hljs-string">'@&lt;='</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &lt;= b),
+  <span class="hljs-string">'@=='</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a === b),
+  <span class="hljs-string">'@!='</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a !== b),
+  <span class="hljs-string">'@!'</span>: op1(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> !a),
+  <span class="hljs-string">'@not'</span>: <span class="hljs-string">'@!'</span>,
+  <span class="hljs-string">'@&amp;&amp;'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &amp;&amp; b),
+  <span class="hljs-string">'@and'</span>: <span class="hljs-string">'@&amp;&amp;'</span>,
+  <span class="hljs-string">'@||'</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a || b),
+  <span class="hljs-string">'@or'</span>: <span class="hljs-string">'@||'</span>,</pre></div></div>
             
         </li>
         
@@ -371,7 +374,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <h2 id="core">Core</h2>
+              <h2 id="process">Process</h2>
 
             </div>
             
@@ -384,8 +387,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>This are the core operations: execute instructions, modify
-process time and context variables</p>
+              <p>Operation related to interact with the current process</p>
 
             </div>
             
@@ -442,6 +444,13 @@ process time and context variables</p>
 
             </div>
             
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@let'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> context.let(stack.pop(), stack.pop()),
+  <span class="hljs-string">'@set'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> context.set(stack.pop(), stack.pop()),
+  <span class="hljs-string">'@get'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> stack.push(context.get(stack.pop())),
+
+  <span class="hljs-string">'@wait'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> proc.wait(<span class="hljs-built_in">Math</span>.abs(<span class="hljs-built_in">Number</span>(proc.stack.pop()))),
+  <span class="hljs-string">'@sync'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> proc.wait(<span class="hljs-built_in">Math</span>.floor(proc.time) + <span class="hljs-number">1</span> - proc.time),</pre></div></div>
+            
         </li>
         
         
@@ -451,7 +460,7 @@ process time and context variables</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <h2 id="process">Process</h2>
+              <h2 id="execute-and-repeat">Execute and repeat</h2>
 
             </div>
             
@@ -463,40 +472,6 @@ process time and context variables</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>Operation related to interact with the current process</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-  <span class="hljs-string">"@let"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> context.let(stack.pop(), stack.pop()),
-  <span class="hljs-string">"@set"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> context.set(stack.pop(), stack.pop()),
-  <span class="hljs-string">"@get"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> stack.push(context.get(stack.pop())),
-
-  <span class="hljs-string">"@wait"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> proc.wait(<span class="hljs-built_in">Math</span>.abs(<span class="hljs-built_in">Number</span>(proc.stack.pop()))),
-  <span class="hljs-string">"@sync"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> proc.wait(<span class="hljs-built_in">Math</span>.floor(proc.time) + <span class="hljs-number">1</span> - proc.time),</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-20">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
-              </div>
-              <h2 id="execute-and-repeat">Execute and repeat</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-21">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <table>
 <thead>
@@ -532,38 +507,38 @@ process time and context variables</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@dup"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(last(stack)),
-  <span class="hljs-string">"@execute"</span>: <span class="hljs-function">(<span class="hljs-params">{ instructions, error }</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> instr = instructions.pop();
-    <span class="hljs-keyword">if</span> (isString(instr)) instructions.push(<span class="hljs-string">"@instr"</span>);
-    <span class="hljs-keyword">else</span> error(<span class="hljs-string">"@execute"</span>, ERR_EXPECT_STRING, instr);
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@dup'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(last(stack)),
+  <span class="hljs-string">'@execute'</span>: <span class="hljs-function">(<span class="hljs-params">{ operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> instr = operations.pop()
+    <span class="hljs-keyword">if</span> (isString(instr)) operations.push(<span class="hljs-string">'@instr'</span>)
+    <span class="hljs-keyword">else</span> error(<span class="hljs-string">'@execute'</span>, ERR_EXPECT_STRING, instr)
   },
-  <span class="hljs-string">"@"</span>: <span class="hljs-string">"@execute"</span>,
-  <span class="hljs-string">"@repeat"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, instructions }</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> repetitions = stack.pop();
-    <span class="hljs-keyword">const</span> pattern = last(instructions);
-    <span class="hljs-keyword">if</span> (!isArray(pattern)) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Can't repeat: "</span> + pattern);
+  <span class="hljs-string">'@'</span>: <span class="hljs-string">'@execute'</span>,
+  <span class="hljs-string">'@repeat'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> repetitions = stack.pop()
+    <span class="hljs-keyword">const</span> pattern = last(operations)
+    <span class="hljs-keyword">if</span> (!isArray(pattern)) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Can't repeat: "</span> + pattern)
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">1</span>; i &lt; repetitions; i++) {
-      instructions.push(pattern);
+      operations.push(pattern)
     }
   },
-  <span class="hljs-string">"@forever"</span>: <span class="hljs-function">(<span class="hljs-params">{ instructions }</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> pattern = last(instructions);
-    <span class="hljs-keyword">if</span> (!isArray(pattern)) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Can't forover: "</span> + pattern);
+  <span class="hljs-string">'@forever'</span>: <span class="hljs-function">(<span class="hljs-params">{ operations }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> pattern = last(operations)
+    <span class="hljs-keyword">if</span> (!isArray(pattern)) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Can't forover: "</span> + pattern)
     <span class="hljs-keyword">if</span> (pattern.length) {
-      instructions.push(<span class="hljs-string">"@forever"</span>);
-      instructions.push(pattern);
+      operations.push(<span class="hljs-string">'@forever'</span>)
+      operations.push(pattern)
     }
   },</pre></div></div>
             
         </li>
         
         
-        <li id="section-22">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <h2 id="iteration-and-lists">Iteration and lists</h2>
 <table>
@@ -585,53 +560,53 @@ process time and context variables</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@iter"</span>: <span class="hljs-function">(<span class="hljs-params">{ instructions, error }</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> pattern = instructions.pop();
-    <span class="hljs-keyword">if</span> (!isArray(pattern) || !pattern.length)
-      error(<span class="hljs-string">"@iter"</span>, ERR_BAD_PATTERN, pattern);
-    <span class="hljs-keyword">else</span> {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@iter'</span>: <span class="hljs-function">(<span class="hljs-params">{ operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> pattern = operations.pop()
+    <span class="hljs-keyword">if</span> (!isArray(pattern) || !pattern.length) {
+      error(<span class="hljs-string">'@iter'</span>, ERR_EXPECT_PATTERN, pattern)
+    } <span class="hljs-keyword">else</span> {</pre></div></div>
             
         </li>
         
         
-        <li id="section-23">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Rotates the pattern and plays the first item only each time
 remove ‘1st’ item, schedule, then push to back:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">const</span> first = pattern.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
-      instructions.push(first);
-      pattern.push(first);
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">const</span> first = pattern.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
+      operations.push(first)
+      pattern.push(first)
     }
   },
-
-};</pre></div></div>
+  <span class="hljs-string">'@reverse'</span>: <span class="hljs-function">(<span class="hljs-params">{ operations }</span>) =&gt;</span> {}
+}</pre></div></div>
             
         </li>
         
         
-        <li id="section-24">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Given a commands object, expand the aliases</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">expandAliases</span>(<span class="hljs-params">commands</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">expandAliases</span> (<span class="hljs-params">commands</span>) </span>{
   <span class="hljs-built_in">Object</span>.keys(commands).forEach(<span class="hljs-function"><span class="hljs-params">name</span> =&gt;</span> {
-    <span class="hljs-keyword">const</span> op = commands[name];
-    <span class="hljs-keyword">if</span> (isString(op)) commands[name] = commands[op];
-  });
-  <span class="hljs-keyword">return</span> commands;
+    <span class="hljs-keyword">const</span> op = commands[name]
+    <span class="hljs-keyword">if</span> (isString(op)) commands[name] = commands[op]
+  })
+  <span class="hljs-keyword">return</span> commands
 }</pre></div></div>
             
         </li>

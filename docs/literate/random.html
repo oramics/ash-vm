@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="gibberish.html">
+                  gibberish.js
+                </a>
+              
+                
                 <a class="source" href="builders.html">
                   builders.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="commands.html">
                   commands.js
+                </a>
+              
+                
+                <a class="source" href="compatibility.html">
+                  compatibility.js
                 </a>
               
                 
@@ -42,11 +52,6 @@
                 
                 <a class="source" href="random.html">
                   random.js
-                </a>
-              
-                
-                <a class="source" href="gibberish.html">
-                  gibberish.js
                 </a>
               
                 
@@ -155,7 +160,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">random</span>(<span class="hljs-params">random</span>) </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">random</span> (<span class="hljs-params">random</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -170,7 +175,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> rnd = random || <span class="hljs-built_in">Math</span>.random;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> rnd = random || <span class="hljs-built_in">Math</span>.random</pre></div></div>
             
         </li>
         
@@ -185,28 +190,28 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> irnd = <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> floor(rnd() * n);
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> irnd = <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> floor(rnd() * n)
 
   <span class="hljs-keyword">return</span> {
-    <span class="hljs-string">"@random"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd()),
-    <span class="hljs-string">"@rand"</span>: <span class="hljs-string">"@random"</span>,
-    <span class="hljs-string">"@srandom"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd() * <span class="hljs-number">2</span> - <span class="hljs-number">1</span>),
-    <span class="hljs-string">"@srand"</span>: <span class="hljs-string">"@srandom"</span>,
-    <span class="hljs-string">"@randi"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(irnd(stack.pop())),
-    <span class="hljs-string">"@pick"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
-      <span class="hljs-keyword">const</span> { stack, instructions, error } = proc;
-      <span class="hljs-keyword">const</span> pattern = instructions.pop();
+    <span class="hljs-string">'@random'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd()),
+    <span class="hljs-string">'@rand'</span>: <span class="hljs-string">'@random'</span>,
+    <span class="hljs-string">'@srandom'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd() * <span class="hljs-number">2</span> - <span class="hljs-number">1</span>),
+    <span class="hljs-string">'@srand'</span>: <span class="hljs-string">'@srandom'</span>,
+    <span class="hljs-string">'@randi'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(irnd(stack.pop())),
+    <span class="hljs-string">'@pick'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+      <span class="hljs-keyword">const</span> { operations, error } = proc
+      <span class="hljs-keyword">const</span> pattern = operations.pop()
       <span class="hljs-keyword">if</span> (!isArray(pattern)) {
-        instructions.push(pattern);
-        error(<span class="hljs-string">"Can't pick an element if is not an array"</span>, pattern);
+        operations.push(pattern)
+        error(<span class="hljs-string">"Can't pick an element if is not an array"</span>, pattern)
       } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">const</span> i = irnd(pattern.length);
-        instructions.push(pattern[i]);
+        <span class="hljs-keyword">const</span> i = irnd(pattern.length)
+        operations.push(pattern[i])
       }
     },
-    <span class="hljs-string">"@chance"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, instructions }</span>) =&gt;</span> {
-      <span class="hljs-keyword">const</span> prob = stack.pop();
-      <span class="hljs-keyword">const</span> pattern = instructions.pop();
+    <span class="hljs-string">'@chance'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations }</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> prob = stack.pop()
+      <span class="hljs-keyword">const</span> pattern = operations.pop()
       <span class="hljs-keyword">if</span> (rnd() &lt; prob) {</pre></div></div>
             
         </li>
@@ -222,7 +227,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        instructions.pop();</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        operations.pop()</pre></div></div>
             
         </li>
         
@@ -237,10 +242,10 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        instructions.push(pattern);
+            <div class="content"><div class='highlight'><pre>        operations.push(pattern)
       }
     }
-  };
+  }
 }</pre></div></div>
             
         </li>

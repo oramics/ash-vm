@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="gibberish.html">
+                  gibberish.js
+                </a>
+              
+                
                 <a class="source" href="builders.html">
                   builders.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="commands.html">
                   commands.js
+                </a>
+              
+                
+                <a class="source" href="compatibility.html">
+                  compatibility.js
                 </a>
               
                 
@@ -42,11 +52,6 @@
                 
                 <a class="source" href="random.html">
                   random.js
-                </a>
-              
-                
-                <a class="source" href="gibberish.html">
-                  gibberish.js
                 </a>
               
                 
@@ -103,7 +108,8 @@ not working yet</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">midi</span>(<span class="hljs-params"></span>) </span>{
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">midi</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">const</span> sendMidi = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}
   <span class="hljs-keyword">return</span> {</pre></div></div>
             
         </li>
@@ -119,11 +125,11 @@ not working yet</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@note-on"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
-      <span class="hljs-keyword">const</span> chan = <span class="hljs-built_in">Number</span>(stack.pop());
-      <span class="hljs-keyword">const</span> vel = <span class="hljs-built_in">Number</span>(stack.pop());
-      <span class="hljs-keyword">const</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop());
-      sendMidi([<span class="hljs-number">0x90</span> + chan, pitch, vel], <span class="hljs-number">0</span>);
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@note-on'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> chan = <span class="hljs-built_in">Number</span>(stack.pop())
+      <span class="hljs-keyword">const</span> vel = <span class="hljs-built_in">Number</span>(stack.pop())
+      <span class="hljs-keyword">const</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop())
+      sendMidi([<span class="hljs-number">0x90</span> + chan, pitch, vel], <span class="hljs-number">0</span>)
     },</pre></div></div>
             
         </li>
@@ -139,11 +145,11 @@ not working yet</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@note-off"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
-      <span class="hljs-keyword">const</span> chan = <span class="hljs-built_in">Number</span>(stack.pop());
-      <span class="hljs-keyword">const</span> vel = <span class="hljs-built_in">Number</span>(stack.pop());
-      <span class="hljs-keyword">const</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop());
-      sendMidi([<span class="hljs-number">0x80</span> + chan, pitch, vel], <span class="hljs-number">0</span>);
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@note-off'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> chan = <span class="hljs-built_in">Number</span>(stack.pop())
+      <span class="hljs-keyword">const</span> vel = <span class="hljs-built_in">Number</span>(stack.pop())
+      <span class="hljs-keyword">const</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop())
+      sendMidi([<span class="hljs-number">0x80</span> + chan, pitch, vel], <span class="hljs-number">0</span>)
     },</pre></div></div>
             
         </li>
@@ -159,15 +165,15 @@ not working yet</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@note"</span>: <span class="hljs-function">(<span class="hljs-params">proc</span>) =&gt;</span> {
-      <span class="hljs-keyword">const</span> { stack, instructions } = proc;
-      <span class="hljs-keyword">const</span> dur = <span class="hljs-built_in">Number</span>(stack.pop());
-      <span class="hljs-keyword">let</span> chan = <span class="hljs-built_in">Number</span>(stack.pop());
-      <span class="hljs-keyword">let</span> vel = <span class="hljs-built_in">Number</span>(stack.pop());
-      <span class="hljs-keyword">let</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop());
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@note'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+      <span class="hljs-keyword">const</span> { stack, operations } = proc
+      <span class="hljs-keyword">const</span> dur = <span class="hljs-built_in">Number</span>(stack.pop())
+      <span class="hljs-keyword">let</span> chan = <span class="hljs-built_in">Number</span>(stack.pop())
+      <span class="hljs-keyword">let</span> vel = <span class="hljs-built_in">Number</span>(stack.pop())
+      <span class="hljs-keyword">let</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop())
 
-      sendMidi([<span class="hljs-number">0x90</span> + chan, pitch, vel], <span class="hljs-number">0</span>);
-      instructions.push([<span class="hljs-string">"@fork"</span>, [dur, <span class="hljs-string">"@wait"</span>, pitch, <span class="hljs-number">0</span>, chan, <span class="hljs-string">"note-off"</span>]])
+      sendMidi([<span class="hljs-number">0x90</span> + chan, pitch, vel], <span class="hljs-number">0</span>)
+      operations.push([<span class="hljs-string">'@fork'</span>, [dur, <span class="hljs-string">'@wait'</span>, pitch, <span class="hljs-number">0</span>, chan, <span class="hljs-string">'note-off'</span>]])
     },</pre></div></div>
             
         </li>
@@ -183,10 +189,10 @@ not working yet</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@cc"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
-      <span class="hljs-keyword">let</span> chan = <span class="hljs-built_in">Number</span>(stack.pop());
-      <span class="hljs-keyword">let</span> value = <span class="hljs-built_in">Number</span>(stack.pop());
-      <span class="hljs-keyword">const</span> controller = <span class="hljs-built_in">Number</span>(stack.pop());</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@cc'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+      <span class="hljs-keyword">let</span> chan = <span class="hljs-built_in">Number</span>(stack.pop())
+      <span class="hljs-keyword">let</span> value = <span class="hljs-built_in">Number</span>(stack.pop())
+      <span class="hljs-keyword">const</span> controller = <span class="hljs-built_in">Number</span>(stack.pop())</pre></div></div>
             
         </li>
         
@@ -201,9 +207,9 @@ not working yet</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      sendMidi([<span class="hljs-number">0xb0</span> + chan, controller, value], <span class="hljs-number">0</span>);
+            <div class="content"><div class='highlight'><pre>      sendMidi([<span class="hljs-number">0xb0</span> + chan, controller, value], <span class="hljs-number">0</span>)
     }
-  };
+  }
 }</pre></div></div>
             
         </li>

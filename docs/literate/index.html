@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Audio Virtual Machine</title>
+  <title>Audio Scheduler Virtual Machine</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="gibberish.html">
+                  gibberish.js
+                </a>
+              
+                
                 <a class="source" href="builders.html">
                   builders.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="commands.html">
                   commands.js
+                </a>
+              
+                
+                <a class="source" href="compatibility.html">
+                  compatibility.js
                 </a>
               
                 
@@ -42,11 +52,6 @@
                 
                 <a class="source" href="random.html">
                   random.js
-                </a>
-              
-                
-                <a class="source" href="gibberish.html">
-                  gibberish.js
                 </a>
               
                 
@@ -84,9 +89,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h1 id="audio-virtual-machine">Audio Virtual Machine</h1>
+              <h1 id="audio-scheduler-virtual-machine">Audio Scheduler Virtual Machine</h1>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { VM } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vm'</span>
+<span class="hljs-keyword">import</span> gibberish <span class="hljs-keyword">from</span> <span class="hljs-string">'./audio/gibberish'</span>
+<span class="hljs-keyword">import</span> random <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/random'</span>
+<span class="hljs-keyword">import</span> debug <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/debug'</span>
+<span class="hljs-keyword">import</span> compatibility <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/compatibility'</span></pre></div></div>
             
         </li>
         
@@ -97,7 +108,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>The main purpose of the virtual machine is to run processes concurrently</p>
+              <h2 id="architecture-overview">Architecture Overview</h2>
 
             </div>
             
@@ -110,7 +121,10 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h2 id="architecture-overview">Architecture Overview</h2>
+              <p>The main purpose of the virtual machine is to run processes concurrently.
+It holds a <code>commands</code> object (that maps instruction names to functions)
+and schedules a collection of <code>processes</code>. Each <strong>process</strong> has an values <code>stack</code>
+and <code>operations</code> stack (to be executed).</p>
 
             </div>
             
@@ -123,19 +137,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>A <strong>scheduler</strong> is a collection of processes. Each <strong>process</strong> mantains
-an internal time value that can be modified.</p>
+              <h2 id="api">API</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">import</span> { VM } <span class="hljs-keyword">from</span> <span class="hljs-string">"./vm"</span>;
-<span class="hljs-keyword">import</span> { gibberish } <span class="hljs-keyword">from</span> <span class="hljs-string">"./gibberish"</span>;
-<span class="hljs-keyword">import</span> random <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/random'</span>
-<span class="hljs-keyword">import</span> debug <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/debug'</span>
-
-<span class="hljs-keyword">const</span> INITIAL_CTX = { <span class="hljs-attr">amp</span>: <span class="hljs-number">0.5</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">440</span> };
-<span class="hljs-keyword">const</span> newCtx = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-built_in">Object</span>.assign({}, INITIAL_CTX)</pre></div></div>
             
         </li>
         
@@ -146,12 +150,11 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h2 id="api">API</h2>
+              <p>the init function creates a vm controlled by Gibberish</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span>(<span class="hljs-params">Gibberish, ...plugins</span>) </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">Gibberish, ...plugins</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -162,14 +165,11 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Create the virtual machine and setup commands</p>
+              <p>Create the virtual machine</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM();
-  vm.addCommands(random())
-  vm.addCommands(debug())
-  plugins.forEach(<span class="hljs-function"><span class="hljs-params">cmds</span> =&gt;</span> vm.addCommands(cmds))</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM({ <span class="hljs-attr">amp</span>: <span class="hljs-number">0.5</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">440</span> })</pre></div></div>
             
         </li>
         
@@ -180,11 +180,11 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Init the audio driver</p>
+              <p>Init the audio driver and use its commands</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  gibberish(Gibberish, vm);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  vm.addCommands(gibberish(Gibberish))</pre></div></div>
             
         </li>
         
@@ -195,14 +195,30 @@ an internal time value that can be modified.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Return a <code>run(program)</code> function
-this is the simplest API I can think. Probably will change.</p>
+              <p>Include all the command extensions</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">prog, sync = <span class="hljs-literal">true</span></span>) =&gt;</span> {
-    vm.fork(<span class="hljs-literal">null</span>, newCtx(), sync ? [<span class="hljs-string">"@sync"</span>, prog] : prog);
-  };
+            <div class="content"><div class='highlight'><pre>  vm.addCommands(random())
+  vm.addCommands(debug())
+  vm.addCommands(compatibility())</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Add the plugins</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  plugins.forEach(<span class="hljs-function"><span class="hljs-params">cmds</span> =&gt;</span> vm.addCommands(cmds))
+
+  <span class="hljs-keyword">return</span> vm
 }</pre></div></div>
             
         </li>

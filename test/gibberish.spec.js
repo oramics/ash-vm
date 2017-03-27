@@ -55,6 +55,8 @@ function Gibber (sr = 100) {
       sampleRate: sr
     }
   }
-  insts.forEach(name => { g[name] = () => new InstStub(name) })
+  insts.forEach(name => {
+    g[name] = () => new InstStub(name)
+  })
   return g
 }

@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="gibberish.html">
+                  gibberish.js
+                </a>
+              
+                
                 <a class="source" href="builders.html">
                   builders.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="commands.html">
                   commands.js
+                </a>
+              
+                
+                <a class="source" href="compatibility.html">
+                  compatibility.js
                 </a>
               
                 
@@ -42,11 +52,6 @@
                 
                 <a class="source" href="random.html">
                   random.js
-                </a>
-              
-                
-                <a class="source" href="gibberish.html">
-                  gibberish.js
                 </a>
               
                 
@@ -101,7 +106,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isArray = <span class="hljs-built_in">Array</span>.isArray;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isArray = <span class="hljs-built_in">Array</span>.isArray</pre></div></div>
             
         </li>
         
@@ -112,11 +117,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>test if an object is a string</p>
+              <p>test if  is a string</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isString = <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> <span class="hljs-keyword">typeof</span> o === <span class="hljs-string">"string"</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isString = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-keyword">typeof</span> x === <span class="hljs-string">'string'</span></pre></div></div>
             
         </li>
         
@@ -127,11 +132,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>get last element from an array</p>
+              <p>test if  is a function</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> last = <span class="hljs-function">(<span class="hljs-params">a</span>) =&gt;</span> a[a.length - <span class="hljs-number">1</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isFn = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-keyword">typeof</span> x === <span class="hljs-string">'function'</span></pre></div></div>
             
         </li>
         
@@ -142,6 +147,51 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
+              <p>test if  is defined</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isDef = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-keyword">typeof</span> x !== <span class="hljs-string">'undefined'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>get last element from an array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> last = <span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> a[a.length - <span class="hljs-number">1</span>]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>take the next element of stack without remove it</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> peek = last</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
               <p>A modulo operation that handles negative n more appropriately
 e.g. wrap(-1, 3) returns 2
 see <a href="http://en.wikipedia.org/wiki/Modulo_operation">http://en.wikipedia.org/wiki/Modulo_operation</a>
@@ -149,7 +199,7 @@ see also <a href="http://jsperf.com/modulo-for-negative-numbers">http://jsperf.c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> wrap = <span class="hljs-function">(<span class="hljs-params">a, b</span>) =&gt;</span> (a % b + b) % b;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> wrap = <span class="hljs-function">(<span class="hljs-params">a, b</span>) =&gt;</span> (a % b + b) % b</pre></div></div>
             
         </li>
         

@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="gibberish.html">
+                  gibberish.js
+                </a>
+              
+                
                 <a class="source" href="builders.html">
                   builders.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="commands.html">
                   commands.js
+                </a>
+              
+                
+                <a class="source" href="compatibility.html">
+                  compatibility.js
                 </a>
               
                 
@@ -42,11 +52,6 @@
                 
                 <a class="source" href="random.html">
                   random.js
-                </a>
-              
-                
-                <a class="source" href="gibberish.html">
-                  gibberish.js
                 </a>
               
                 
@@ -101,7 +106,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> def = <span class="hljs-function">(<span class="hljs-params">name, patt</span>) =&gt;</span> [name, <span class="hljs-string">"@spawn"</span>, patt];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> def = <span class="hljs-function">(<span class="hljs-params">name, patt</span>) =&gt;</span> [name, <span class="hljs-string">'@spawn'</span>, patt]</pre></div></div>
             
         </li>
         
@@ -116,7 +121,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> set = <span class="hljs-function">(<span class="hljs-params">name, value</span>) =&gt;</span> [value, name, <span class="hljs-string">"@set"</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> set = <span class="hljs-function">(<span class="hljs-params">name, value</span>) =&gt;</span> [value, name, <span class="hljs-string">'@set'</span>]</pre></div></div>
             
         </li>
         
@@ -131,7 +136,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> lset = <span class="hljs-function">(<span class="hljs-params">name, value</span>) =&gt;</span> [value, name, <span class="hljs-string">"@let"</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> lset = <span class="hljs-function">(<span class="hljs-params">name, value</span>) =&gt;</span> [value, name, <span class="hljs-string">'@let'</span>]</pre></div></div>
             
         </li>
         
@@ -146,7 +151,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> wait = <span class="hljs-function"><span class="hljs-params">t</span> =&gt;</span> [t, <span class="hljs-string">"@wait"</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> wait = <span class="hljs-function"><span class="hljs-params">t</span> =&gt;</span> [t, <span class="hljs-string">'@wait'</span>]</pre></div></div>
             
         </li>
         
@@ -161,7 +166,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> stop = <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n ? [n, <span class="hljs-string">"@stop"</span>] : [<span class="hljs-string">"@stop-all"</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> stop = <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n ? [n, <span class="hljs-string">'@stop'</span>] : [<span class="hljs-string">'@stop-all'</span>]</pre></div></div>
             
         </li>
         
@@ -176,7 +181,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> loop = <span class="hljs-function">(<span class="hljs-params">p, n</span>) =&gt;</span> n ? [n, <span class="hljs-string">"@repeat"</span>, p] : [<span class="hljs-string">"@loop"</span>, p];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> loop = <span class="hljs-function">(<span class="hljs-params">p, n</span>) =&gt;</span> n ? [n, <span class="hljs-string">'@repeat'</span>, p] : [<span class="hljs-string">'@loop'</span>, p]</pre></div></div>
             
         </li>
         
@@ -191,7 +196,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> print = <span class="hljs-function"><span class="hljs-params">msg</span> =&gt;</span> [msg, <span class="hljs-string">"@print"</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> print = <span class="hljs-function"><span class="hljs-params">msg</span> =&gt;</span> [msg, <span class="hljs-string">'@print'</span>]</pre></div></div>
             
         </li>
         
@@ -206,7 +211,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> log = <span class="hljs-function"><span class="hljs-params">name</span> =&gt;</span> [name, <span class="hljs-string">"@log"</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> log = <span class="hljs-function"><span class="hljs-params">name</span> =&gt;</span> [name, <span class="hljs-string">'@log'</span>]</pre></div></div>
             
         </li>
         
@@ -221,7 +226,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> reverse = <span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> [<span class="hljs-string">"@reverse"</span>, p];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> reverse = <span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> [<span class="hljs-string">'@reverse'</span>, p]</pre></div></div>
             
         </li>
         
@@ -236,7 +241,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> shuffle = <span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> [<span class="hljs-string">"@shuffle"</span>, p];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> shuffle = <span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> [<span class="hljs-string">'@shuffle'</span>, p]</pre></div></div>
             
         </li>
         
@@ -251,7 +256,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> rotate = <span class="hljs-function">(<span class="hljs-params">p, n</span>) =&gt;</span> [n !== <span class="hljs-literal">undefined</span> ? n : <span class="hljs-number">1</span>, <span class="hljs-string">"@rotate"</span>, p];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> rotate = <span class="hljs-function">(<span class="hljs-params">p, n</span>) =&gt;</span> [n !== <span class="hljs-literal">undefined</span> ? n : <span class="hljs-number">1</span>, <span class="hljs-string">'@rotate'</span>, p]</pre></div></div>
             
         </li>
         
@@ -266,7 +271,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> pick = <span class="hljs-function"><span class="hljs-params">l</span> =&gt;</span> [<span class="hljs-string">"@pick"</span>, l];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> pick = <span class="hljs-function"><span class="hljs-params">l</span> =&gt;</span> [<span class="hljs-string">'@pick'</span>, l]</pre></div></div>
             
         </li>
         
@@ -281,7 +286,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> iter = <span class="hljs-function"><span class="hljs-params">l</span> =&gt;</span> [<span class="hljs-string">"@iter"</span>, l];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> iter = <span class="hljs-function"><span class="hljs-params">l</span> =&gt;</span> [<span class="hljs-string">'@iter'</span>, l]</pre></div></div>
             
         </li>
         
@@ -296,7 +301,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> cond = <span class="hljs-function">(<span class="hljs-params">f, pt, pf</span>) =&gt;</span> [f, <span class="hljs-string">"@cond"</span>, pt, pf];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> cond = <span class="hljs-function">(<span class="hljs-params">f, pt, pf</span>) =&gt;</span> [f, <span class="hljs-string">'@cond'</span>, pt, pf]</pre></div></div>
             
         </li>
         
@@ -311,7 +316,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> chance = <span class="hljs-function">(<span class="hljs-params">f, pt, pf</span>) =&gt;</span> [f, <span class="hljs-string">"@chance"</span>, pt, pf];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> chance = <span class="hljs-function">(<span class="hljs-params">f, pt, pf</span>) =&gt;</span> [f, <span class="hljs-string">'@chance'</span>, pt, pf]</pre></div></div>
             
         </li>
         
@@ -326,7 +331,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> sub = <span class="hljs-function">(<span class="hljs-params">a, b</span>) =&gt;</span> [a, b, <span class="hljs-string">"@sub"</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> sub = <span class="hljs-function">(<span class="hljs-params">a, b</span>) =&gt;</span> [a, b, <span class="hljs-string">'@sub'</span>]</pre></div></div>
             
         </li>
         
@@ -342,7 +347,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> execute = <span class="hljs-function">(<span class="hljs-params">l, args</span>) =&gt;</span>
-  args !== <span class="hljs-literal">undefined</span> ? [l, <span class="hljs-string">"@execute"</span>, args] : [l, <span class="hljs-string">"@execute"</span>];</pre></div></div>
+  args !== <span class="hljs-literal">undefined</span> ? [l, <span class="hljs-string">'@execute'</span>, args] : [l, <span class="hljs-string">'@execute'</span>]</pre></div></div>
             
         </li>
         
@@ -360,13 +365,13 @@ neat eh?</p>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> every = <span class="hljs-function">(<span class="hljs-params">n, p</span>) =&gt;</span> {
-  <span class="hljs-keyword">const</span> l = [];
+  <span class="hljs-keyword">const</span> l = []
   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; n - <span class="hljs-number">1</span>; i++) {
-    l.push(<span class="hljs-number">0</span>);
+    l.push(<span class="hljs-number">0</span>)
   }
-  l.push(<span class="hljs-number">1</span>);
-  <span class="hljs-keyword">return</span> cond(iter(l), p);
-};</pre></div></div>
+  l.push(<span class="hljs-number">1</span>)
+  <span class="hljs-keyword">return</span> cond(iter(l), p)
+}</pre></div></div>
             
         </li>
         

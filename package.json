@@ -9,9 +9,19 @@
   "license": "MIT",
   "repository": "danigb/ash-vm",
   "files": [
-    "src",
+    "lib",
     "dist"
   ],
+  "scripts": {
+    "format": "prettier-standard-formatter lib/* test/*",
+    "test": "eslint src && jest --coverage",
+    "prebuild": "npm run format && npm run test",
+    "build": "rollup -cm -n AshVM -f iife -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
+    "watch": "rollup --watch -cm -n AshVM -f iife -i lib/index.js -o docs/dist/ash-vm.js",
+    "prepublish": "npm run build",
+    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
+    "docs": "docco lib/* lib/**/* -o docs/literate"
+  },
   "authors": [
     "@grrrwaaa",
     "@charlieroberts",
@@ -26,16 +36,6 @@
     "music",
     "live-coding"
   ],
-  "scripts": {
-    "format": "prettier-standard-formatter lib/* test/*",
-    "test": "eslint src && jest --coverage",
-    "prebuild": "npm run format && npm run test",
-    "build": "rollup -cm -n AshVM -f iife -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
-    "watch": "rollup --watch -cm -n AshVM -f iife -i lib/index.js -o docs/dist/ash-vm.js",
-    "prepublish": "npm run build",
-    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
-    "docs": "docco lib/* lib/**/* -o docs/literate"
-  },
   "babel": {
     "presets": "es2015"
   },

@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="gibberish.html">
+                  gibberish.js
+                </a>
+              
+                
                 <a class="source" href="builders.html">
                   builders.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="commands.html">
                   commands.js
+                </a>
+              
+                
+                <a class="source" href="compatibility.html">
+                  compatibility.js
                 </a>
               
                 
@@ -42,11 +52,6 @@
                 
                 <a class="source" href="random.html">
                   random.js
-                </a>
-              
-                
-                <a class="source" href="gibberish.html">
-                  gibberish.js
                 </a>
               
                 
@@ -89,10 +94,11 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">const</span> isCommand = <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> <span class="hljs-keyword">typeof</span> o === <span class="hljs-string">"string"</span> &amp;&amp; o[<span class="hljs-number">0</span>] === <span class="hljs-string">"@"</span>;
-<span class="hljs-keyword">const</span> isProgram = <span class="hljs-built_in">Array</span>.isArray;
-<span class="hljs-keyword">let</span> procId = <span class="hljs-number">1</span>;
-<span class="hljs-keyword">const</span> ERR_INSTR_NOT_FOUND = <span class="hljs-string">"Instruction not recognized."</span>;</pre></div></div>
+<span class="hljs-keyword">const</span> isCommand = <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> <span class="hljs-keyword">typeof</span> o === <span class="hljs-string">'string'</span> &amp;&amp; o[<span class="hljs-number">0</span>] === <span class="hljs-string">'@'</span>
+<span class="hljs-keyword">const</span> isProgram = <span class="hljs-built_in">Array</span>.isArray
+<span class="hljs-keyword">let</span> procId = <span class="hljs-number">1</span>
+<span class="hljs-keyword">const</span> ERR_INSTR_NOT_FOUND = <span class="hljs-string">'Instruction not recognized.'</span>
+<span class="hljs-keyword">const</span> ERR_LIMIT_REACHED = <span class="hljs-string">'Limit reached. Probably an infinity loop.'</span></pre></div></div>
             
         </li>
         
@@ -109,8 +115,8 @@ processes in that it model the concept of time</p>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Process</span> </span>{
-  <span class="hljs-keyword">constructor</span>(program, context, time, rate) {
-    <span class="hljs-keyword">this</span>.id = <span class="hljs-string">"proc-"</span> + procId++;</pre></div></div>
+  <span class="hljs-keyword">constructor</span> (program, context, time, rate) {
+    <span class="hljs-keyword">this</span>.id = <span class="hljs-string">'proc-'</span> + procId++</pre></div></div>
             
         </li>
         
@@ -125,7 +131,7 @@ processes in that it model the concept of time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.stack = [];</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.stack = []</pre></div></div>
             
         </li>
         
@@ -136,11 +142,11 @@ processes in that it model the concept of time</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>the instructions are stored in a stack (in reverse order)</p>
+              <p>the operations are stored in a stack (in reverse order)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.instructions = program ? [program] : [];</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.operations = program ? [program] : []</pre></div></div>
             
         </li>
         
@@ -155,7 +161,7 @@ processes in that it model the concept of time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.context = <span class="hljs-keyword">new</span> Context(context);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.context = <span class="hljs-keyword">new</span> Context(context)</pre></div></div>
             
         </li>
         
@@ -170,7 +176,7 @@ processes in that it model the concept of time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.time = <span class="hljs-keyword">typeof</span> time === <span class="hljs-string">"number"</span> ? time : <span class="hljs-number">0</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.time = <span class="hljs-keyword">typeof</span> time === <span class="hljs-string">'number'</span> ? time : <span class="hljs-number">0</span></pre></div></div>
             
         </li>
         
@@ -185,7 +191,7 @@ processes in that it model the concept of time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.rate = <span class="hljs-keyword">typeof</span> rate === <span class="hljs-string">"number"</span> ? rate : <span class="hljs-number">1</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.rate = <span class="hljs-keyword">typeof</span> rate === <span class="hljs-string">'number'</span> ? rate : <span class="hljs-number">1</span></pre></div></div>
             
         </li>
         
@@ -216,8 +222,8 @@ processes in that it model the concept of time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  wait(time) {
-    <span class="hljs-keyword">this</span>.time += <span class="hljs-keyword">this</span>.rate * time;
+            <div class="content"><div class='highlight'><pre>  wait (time) {
+    <span class="hljs-keyword">this</span>.time += <span class="hljs-keyword">this</span>.rate * time
   }</pre></div></div>
             
         </li>
@@ -233,10 +239,10 @@ processes in that it model the concept of time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  step(commands) {
-    <span class="hljs-keyword">const</span> { instructions } = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">if</span> (instructions.length) {
-      <span class="hljs-keyword">const</span> instr = instructions.pop();
+            <div class="content"><div class='highlight'><pre>  step (commands) {
+    <span class="hljs-keyword">const</span> { operations } = <span class="hljs-keyword">this</span>
+    <span class="hljs-keyword">if</span> (operations.length) {
+      <span class="hljs-keyword">const</span> instr = operations.pop()
       <span class="hljs-keyword">if</span> (instr === <span class="hljs-literal">null</span> || instr === <span class="hljs-literal">undefined</span>) {</pre></div></div>
             
         </li>
@@ -252,9 +258,7 @@ processes in that it model the concept of time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> instruction === <span class="hljs-string">"function"</span>) {
-        instruction();
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isProgram(instr)) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> instruction === <span class="hljs-string">'function'</span>) {</pre></div></div>
             
         </li>
         
@@ -265,19 +269,12 @@ processes in that it model the concept of time</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>if it’s program, and since the instructions are stored into an stack,
-we need add to the program instructions in reverse order</p>
+              <p>functions can be scheduled too</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = instr.length - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--) {
-          instructions.push(instr[i]);
-        }
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isCommand(instr)) {
-        <span class="hljs-keyword">const</span> operation = commands[instr];
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> operation === <span class="hljs-string">"function"</span>) operation(<span class="hljs-keyword">this</span>);
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">this</span>.error(<span class="hljs-string">""</span>, ERR_INSTR_NOT_FOUND, instr);
-      } <span class="hljs-keyword">else</span> {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        instr()
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isProgram(instr)) {</pre></div></div>
             
         </li>
         
@@ -288,14 +285,19 @@ we need add to the program instructions in reverse order</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>if it’s a value, push it into the stack</p>
+              <p>if it’s program, and since the operations are stored into an stack,
+we need add to the program operations in reverse order</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.stack.push(instr);
-      }
-    }
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = instr.length - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--) {
+          operations.push(instr[i])
+        }
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isCommand(instr)) {
+        <span class="hljs-keyword">const</span> cmd = commands[instr]
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> cmd === <span class="hljs-string">'function'</span>) cmd(<span class="hljs-keyword">this</span>)
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">this</span>.error(<span class="hljs-string">''</span>, ERR_INSTR_NOT_FOUND, instr)
+      } <span class="hljs-keyword">else</span> {</pre></div></div>
             
         </li>
         
@@ -306,17 +308,13 @@ we need add to the program instructions in reverse order</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>the <code>resume</code> function run all the instructions until time is reached</p>
+              <p>if it’s a value, push it into the stack</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  resume(commands, time = <span class="hljs-literal">Infinity</span>, limit = <span class="hljs-number">10000</span>) {
-    <span class="hljs-keyword">const</span> { instructions } = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">while</span> (--limit &gt; <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.time &lt; time &amp;&amp; instructions.length) {
-      <span class="hljs-keyword">this</span>.step(commands);
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.stack.push(instr)
+      }
     }
-    <span class="hljs-keyword">if</span> (limit === <span class="hljs-number">0</span>) <span class="hljs-keyword">this</span>.error(<span class="hljs-string">"Resume"</span>, ERR_LIMIT_REACHED);
-    <span class="hljs-keyword">return</span> instructions.length &gt; <span class="hljs-number">0</span>;
   }</pre></div></div>
             
         </li>
@@ -328,14 +326,18 @@ we need add to the program instructions in reverse order</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>an utility function to write errors</p>
+              <p>the <code>resume</code> function run all the operations until time is reached</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  error(instr, msg, obj) {
-    <span class="hljs-built_in">console</span>.error(instr, msg, obj, <span class="hljs-string">"id"</span>, <span class="hljs-keyword">this</span>.id, <span class="hljs-string">"time"</span>, <span class="hljs-keyword">this</span>.time);
-  }
-}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  resume (commands, time = <span class="hljs-literal">Infinity</span>, limit = <span class="hljs-number">10000</span>) {
+    <span class="hljs-keyword">const</span> { operations } = <span class="hljs-keyword">this</span>
+    <span class="hljs-keyword">while</span> (--limit &gt; <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.time &lt; time &amp;&amp; operations.length) {
+      <span class="hljs-keyword">this</span>.step(commands)
+    }
+    <span class="hljs-keyword">if</span> (limit === <span class="hljs-number">0</span>) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(ERR_LIMIT_REACHED)
+    <span class="hljs-keyword">return</span> operations.length &gt; <span class="hljs-number">0</span>
+  }</pre></div></div>
             
         </li>
         
@@ -346,9 +348,14 @@ we need add to the program instructions in reverse order</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <h2 id="context">Context</h2>
+              <p>an utility function to write errors</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  error (instr, msg, obj) {
+    <span class="hljs-built_in">console</span>.error(instr, msg, obj, <span class="hljs-string">'id'</span>, <span class="hljs-keyword">this</span>.id, <span class="hljs-string">'time'</span>, <span class="hljs-keyword">this</span>.time)
+  }
+}</pre></div></div>
             
         </li>
         
@@ -359,15 +366,9 @@ we need add to the program instructions in reverse order</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>A context is a hierarchical structure to store values with scope</p>
+              <h2 id="context">Context</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Context</span> </span>{
-  <span class="hljs-keyword">constructor</span>(parent) {
-    <span class="hljs-keyword">if</span> (parent <span class="hljs-keyword">instanceof</span> Context) <span class="hljs-keyword">this</span>.parent = parent;
-    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parent) <span class="hljs-keyword">this</span>.local = <span class="hljs-built_in">Object</span>.assign({}, parent);
-  }</pre></div></div>
             
         </li>
         
@@ -378,16 +379,14 @@ we need add to the program instructions in reverse order</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>get a value from a context</p>
+              <p>A context is a hierarchical structure to store values with scope</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  get(id) {
-    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">while</span> (target.value(id) === <span class="hljs-literal">undefined</span> &amp;&amp; target.parent) {
-      target = target.parent;
-    }
-    <span class="hljs-keyword">return</span> target.value(id);
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Context</span> </span>{
+  <span class="hljs-keyword">constructor</span> (parent) {
+    <span class="hljs-keyword">if</span> (parent <span class="hljs-keyword">instanceof</span> Context) <span class="hljs-keyword">this</span>.parent = parent
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parent) <span class="hljs-keyword">this</span>.local = <span class="hljs-built_in">Object</span>.assign({}, parent)
   }</pre></div></div>
             
         </li>
@@ -399,16 +398,14 @@ we need add to the program instructions in reverse order</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>set a value from a context</p>
+              <p>Create a child</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  set(id, value) {
-    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">while</span> (target.value(id) === <span class="hljs-literal">undefined</span> &amp;&amp; target.parent) {
-      target = target.parent;
-    }
-    target.let(id, value);
+            <div class="content"><div class='highlight'><pre>  child (local) {
+    <span class="hljs-keyword">const</span> c = <span class="hljs-keyword">new</span> Context(<span class="hljs-keyword">this</span>)
+    c.local = <span class="hljs-built_in">Object</span>.assign({}, local)
+    <span class="hljs-keyword">return</span> c
   }</pre></div></div>
             
         </li>
@@ -420,12 +417,16 @@ we need add to the program instructions in reverse order</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>get a value from the local scope of a context</p>
+              <p>get a value from a context</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  value(id) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.local ? <span class="hljs-keyword">this</span>.local[id] : <span class="hljs-literal">undefined</span>;
+            <div class="content"><div class='highlight'><pre>  get (id) {
+    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>
+    <span class="hljs-keyword">while</span> (target.value(id) === <span class="hljs-literal">undefined</span> &amp;&amp; target.parent) {
+      target = target.parent
+    }
+    <span class="hljs-keyword">return</span> target.value(id)
   }</pre></div></div>
             
         </li>
@@ -437,13 +438,51 @@ we need add to the program instructions in reverse order</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
+              <p>set a value from a context</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  set (id, value) {
+    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>
+    <span class="hljs-keyword">while</span> (target.value(id) === <span class="hljs-literal">undefined</span> &amp;&amp; target.parent) {
+      target = target.parent
+    }
+    target.let(id, value)
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>get a value from the local scope of a context</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  value (id) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.local ? <span class="hljs-keyword">this</span>.local[id] : <span class="hljs-literal">undefined</span>
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
               <p>set a value into the local scope of a context</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">let</span>(id, value) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.local) <span class="hljs-keyword">this</span>.local = {};
-    <span class="hljs-keyword">this</span>.local[id] = value;
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">let</span> (id, value) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.local) <span class="hljs-keyword">this</span>.local = {}
+    <span class="hljs-keyword">this</span>.local[id] = value
   }
 }</pre></div></div>
             

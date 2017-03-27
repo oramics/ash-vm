@@ -433,6 +433,39 @@
 ]  </code></pre><button class="play button-primary">Play</button>
   <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
+  <h2>Tempo and rate</h2>
+  <p>There's a global tempo that can be manipulated:</p>
+
+  <pre class="runnable"><code class="lang-javascript">[
+    0.4,"amp","@set",
+    "@loop",[
+      ["@iter",[120, 80, 60]],"@bpm",4,"@wait"
+    ],
+    "@loop",[
+        ["@iter",[14,15,16,17,18],44,"@mul"],"freq","@set",
+        "@pluck", 0.25, "@wait"
+    ],0.125,"@wait",
+    "@loop",[
+        ["@iter",[32,34,36,24,30],44,"@mul"],"freq","@set",
+        "@pluck", 0.25, "@wait"
+    ]
+]</code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+
+  <p>And also each process has can have it's own rate:</p>
+  <pre class="runnable"><code class="lang-javascript">[
+    0.4,"amp","@set",
+    "@loop",[
+      ["@iter",[14,15,16,17,18],44,"@mul"],"freq","@set",
+      "@pluck", 0.25, "@wait"
+    ],0.125,"@wait",
+    "@loop",[
+      ["@iter",[32,34,36,24,30],44,"@mul"],"freq","@set",
+      "@pluck", 0.25, "@wait"
+    ]
+]</code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+
   <pre class="runnable"><code class="lang-javascript">
   </code></pre><button class="play button-primary">Play</button>
   <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
@@ -451,6 +484,7 @@
   $('.play').click(e => {
     const text = $(e.target).prev().text()
     const program = JSON.parse(text)
+    console.log('RUN', program)
     vm.run(program)
   })
   hljs.initHighlightingOnLoad();
