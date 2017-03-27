@@ -28,6 +28,7 @@ export class VM {
 
   // Run a program
   run (program, sync = true) {
+    if (this.procs.length === 0) sync = false
     this.fork(null, this.context, sync ? ['@sync', program] : program)
   }
 

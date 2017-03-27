@@ -28,11 +28,10 @@
       pattern that plays a note every beat:
     </p>
 
-<p><b>Click the code to run it.</b></p>
 <pre class="runnable"><code class="lang-javascript">
   ["@loop", ["@pluck", [1, "@wait"]]]
-</code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+</code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
 <h2>Sounds</h2>
 
@@ -42,10 +41,10 @@
 
   <pre class="runnable"><code class="lang-javascript">
     [440, 1, "@pluck-note"]
-  </code></pre>
+  </code></pre><button class="play button-primary">Play</button>
   <pre class="runnable"><code class="lang-javascript">
     [880, 0.25, "@pluck-note"]
-  </code></pre>
+  </code></pre><button class="play button-primary">Play</button>
 
   <p>Or you can set the frequency and amplitude as contextual variables, and
     just use @pluck to trigger using these values. This can allow a bit more
@@ -54,10 +53,10 @@
 
     <pre class="runnable"><code class="lang-javascript">
       ["@pluck"]
-    </code></pre>
+    </code></pre><button class="play button-primary">Play</button>
     <pre class="runnable"><code class="lang-javascript">
       [[330, "freq", "@set"], [0.5, "amp", "@set"], "@pluck"]
-    </code></pre>
+    </code></pre><button class="play button-primary">Play</button>
 
     <p>There are also some percussion sounds, which either grab amplitude from the
       context (set using @set-amp), or specify it using the -note variants:
@@ -65,63 +64,59 @@
 
     <pre class="runnable"><code class="lang-javascript">
       [1, "@hat-note"]
-    </code></pre>
+    </code></pre><button class="play button-primary">Play</button>
     <pre class="runnable"><code class="lang-javascript">
       [1, "@kick-note"]
-    </code></pre>
+    </code></pre><button class="play button-primary">Play</button>
     <pre class="runnable"><code class="lang-javascript">
       [1, "@snare-note"]
-    </code></pre>
+    </code></pre><button class="play button-primary">Play</button>
     <pre class="runnable"><code class="lang-javascript">
       [[1, "amp", "@set"], "@hat"]
-    </code></pre>
+    </code></pre><button class="play button-primary">Play</button>
     <pre class="runnable"><code class="lang-javascript">
       [[1, "amp", "@set"], "@kick"]
-    </code></pre>
+    </code></pre><button class="play button-primary">Play</button>
     <pre class="runnable"><code class="lang-javascript">
       [[1, "amp", "@set"], "@snare"]
-    </code></pre>
+    </code></pre><button class="play button-primary">Play</button>
     <pre class="runnable"><code class="lang-javascript">
       [4, "@repeat", [
       [["@iter", [0.3, 1]], "amp", "@set"],
       8, "@repeat", ["@hat", 0.125, "@wait"]
       ]]
-    </code></pre>
+    </code></pre><button class="play button-primary">Play</button>
 
     <h2>Repetition and parallelism</h2>
 
     <p>A list with several events normally happens at the same time:</p>
 
-    </code></pre>
-    <pre class="runnable"><code class="lang-javascript">
-      [
+    <pre class="runnable"><code class="lang-javascript">[
       [220, "freq", "@set"], "@pluck",
       [330, "freq", "@set"], "@pluck"
-      ]
-    </code></pre>
+]
+    </code></pre><button class="play button-primary">Play</button>
     <p>Unless you add a n,@wait:</p>
 
-    <pre class="runnable"><code class="lang-javascript">
-      [
+    <pre class="runnable"><code class="lang-javascript">[
       [220, "freq", "@set"], "@pluck",
       1, "@wait",
       [330, "freq", "@set"], "@pluck"
-      ]
-    </code></pre>
+]
+    </code></pre><button class="play button-primary">Play</button>
 
   <p>Here's how to do something a specific number of times: </p>
 
-  <pre class="runnable"><code class="lang-javascript">
-    [
+  <pre class="runnable"><code class="lang-javascript">[
     4, "@repeat", [ "@pluck", 0.25, "@wait" ]
-    ]
-  </code></pre>
+]
+  </code></pre><button class="play button-primary">Play</button>
   <pre class="runnable"><code class="lang-javascript">
     [
     4, "@repeat", [ "@pluck", 0.25, "@wait" ],
     [220, "freq", "@set"], "@pluck"
     ]
-  </code></pre>
+  </code></pre><button class="play button-primary">Play</button>
 
   <p>Here's how to do something forever:</p>
 
@@ -129,8 +124,8 @@
 [
 "@loop", [ "@pluck", 0.25, "@wait" ]
 ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
 
   <p>Note that @loop will run the pattern that follows it in parallel, which
@@ -145,8 +140,8 @@
     "@loop", [ 330, 0.4, "@pluck-note", 0.2, "@wait" ],
     "@loop", [ 110, 1, "@pluck-note", 12, "@wait" ]
 ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>And to run something in parallel without looping it, just use @fork []:</p>
 
@@ -163,8 +158,8 @@
         1, "@wait"
     ]
 ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>This is also handy for setting up loops with different start times:</p>
 
@@ -175,8 +170,8 @@
         "@loop", ["@hat", 1, "@wait"]
     ]
 ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <h2>Expressions</h2>
 
@@ -193,8 +188,8 @@
           0.25, "@wait"
       ]
   ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>Here's alternating between a set of values in a list, one at a time:</p>
 
@@ -207,8 +202,8 @@
           0.25, "@wait"
       ]
   ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>Here's way to set the probability of something happening. Note that two
   lists have to be given after the "@chance"; either the first is run (if the
@@ -226,8 +221,8 @@
           "@hat", 0.25, "@wait"
       ]
   ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>If you don't care about the 'else' case, just put an empty list [] or null.
   But you must put something, or else the virtual machine will get corrupted,
@@ -245,8 +240,8 @@
           "@hat", 0.25, "@wait"
       ]
   ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>Another way of getting some randomness is to use the @rand (which generates
   a number between 0 and 1), @srand (which generates a number between -1 and 1),
@@ -260,7 +255,7 @@
           0.25, "@wait"
       ]
   ]
-  </code></pre>
+  </code></pre><button class="play button-primary">Play</button>
 
   <pre class="runnable"><code class="lang-javascript">
   [
@@ -269,8 +264,8 @@
           [3, "@randi"], "@wait"
       ]
   ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>There are several basic math functions that can be used to map numbers into
   useful ranges. Note that most math functions require the arguments first, e.g.
@@ -284,7 +279,7 @@
           0.25, "@wait"
       ]
   ]
-  </code></pre>
+  </code></pre><button class="play button-primary">Play</button>
   <pre class="runnable"><code class="lang-javascript">
   [
       "@loop", [
@@ -293,8 +288,8 @@
           0.25, "@wait"
       ]
   ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <h2>Get, set, and let</h2>
 
@@ -316,8 +311,8 @@
         0.25, "@wait"
     ]
 ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>By default @set-anything will apply globally, so you can modulate a
   parameter from one loop while using it in another:</p>
@@ -334,8 +329,8 @@
         0.25, "@wait"
     ]
 ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>If globalism isn't what you care for, you can make a name "local" to a
   particular loop by using @let-anything. Once you have @let- a variable in a
@@ -358,8 +353,8 @@
         0.25, "@wait"
     ]
 ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>One use for this is to repeatedly modify a value, such as for a counter, or
   a decay:</p>
@@ -375,8 +370,8 @@
         ]
     ]
 ]
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <p>The only thing special about @set-freq is that the name "freq" is used by
   @pluck. That is, @pluck is equivalent to: ["@get-freq", "@get-amp",
@@ -393,24 +388,24 @@
     "bar", "@spawn", [330, 0.5, "@pluck-note", 0.75, "@wait"],
     3, "@wait",
     "foo", "@spawn", [110, 0.5, "@pluck-note", 1, "@wait"]
-]</code></pre>
+]</code></pre><button class="play button-primary">Play</button>
 
 <pre class="runnable"><code class="lang-javascript">[
     "foo", "@spawn", [440, 0.5, "@pluck-note", 0.5, "@wait"]
-]</code></pre>
+]</code></pre><button class="play button-primary">Play</button>
 
 <pre class="runnable"><code class="lang-javascript">[
     "bar", "@spawn", [110, 0.5, "@pluck-note", 1, "@wait"]
-]</code></pre>
+]</code></pre><button class="play button-primary">Play</button>
 
 <p>Click to change the "foo" part:</p>
 <pre class="runnable"><code class="lang-javascript">["foo", "@stop"]
-</code></pre>
+</code></pre><button class="play button-primary">Play</button>
 
 <pre class="runnable"><code class="lang-javascript">[
     "bar", "@stop"
-]  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+]  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
 <pre class="runnable"><code class="lang-javascript">[
     "@loop",[
@@ -429,18 +424,17 @@
         "@pluck",
         "@iter",[5,1,9,1],32,"@div","@wait"
     ]
-]  </code></pre>
-
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+]  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   <pre class="runnable"><code class="lang-javascript">
-  </code></pre>
-  <button class="button-primary" onclick="vm.run(['@stop-all'], false)">Stop</button>
+  </code></pre><button class="play button-primary">Play</button>
+  <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
 
   </article>
   <script src="js/jquery.min.js"></script>
   <script src="js/gibberish.min.js"></script>
-  <script src="dist/ashvm.js"></script>
+  <script src="dist/ash-vm.js"></script>
   <script src="js/highlight.min.js"></script>
   <script src="js/hljs/javascript.min.js"></script>
 
@@ -448,14 +442,17 @@
   <script>
   const vm = AshVM.init(Gibberish)
 
-  $('.runnable').click((e) => {
-    const text = e.target.innerHTML
-    const lines = text.split('\n').filter(l => l.trim()[0] !== '/')
-    const program = JSON.parse(lines.join(''))
+  function run (element) {
+    console.log(element)
+  }
+
+  $('.play').click(e => {
+    const text = $(e.target).prev().text()
+    const program = JSON.parse(text)
     vm.run(program)
   })
+  hljs.initHighlightingOnLoad();
 
   </script>
-  <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>

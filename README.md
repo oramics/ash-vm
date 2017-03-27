@@ -1,4 +1,4 @@
-# Time VM
+# Audio Scheduler VM
 
 > A stack virtual machine audio scheduler.
 
@@ -14,7 +14,7 @@ Kudos for both!
 ```js
 // ES6
 import Gibberish from "gibberish-dsp"
-import { init } from "ashvm"
+import { init } from "ash-vm"
 
 const run = init(Gibberish)
 run(["@loop", [440, "freq", "@set", "@pluck", 0.5, "@wait"]])
@@ -24,16 +24,22 @@ run(["@loop", [440, "freq", "@set", "@pluck", 0.5, "@wait"]])
 ```js
 // ES5
 const Gibberish = require("gibberish-dsp")
-const init = require("ashvm").init(Gibberish)
+const init = require("ash-vm").init(Gibberish)
 const run = init(Gibberish)
 
 run(["@loop", ["@kick", 0.5, "@wait", "@snare", 0.5, "@wait"]])
 ```
 
+## Install
+
+Via npm: `npm i -S ash-vm` or with yarn: `yarn add ash-vm`
+
+Not yet published.
+
 ## Demos, docs and source code
 
-- An introduction to TimeVM (by @grrrwaaa and @charlieroberts): https://danigb.github.io/ashvm/
-- Annotated source code: https://danigb.github.io/ashvm/literate/
+- An introduction to AshVM (by @grrrwaaa and @charlieroberts): https://danigb.github.io/ash-vm/
+- Annotated source code: https://danigb.github.io/ash-vm/literate/
 
 ## Develop
 
