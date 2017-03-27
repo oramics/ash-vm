@@ -3,9 +3,9 @@
   "description": "Audio Scheduler VM",
   "version": "0.0.0",
   "private": true,
-  "main": "src/index.js",
-  "jsnext:main": "src/index.js",
-  "module": "src/index.js",
+  "main": "lib/index.js",
+  "jsnext:main": "lib/index.js",
+  "module": "lib/index.js",
   "license": "MIT",
   "repository": "danigb/ash-vm",
   "files": [
@@ -27,14 +27,14 @@
     "live-coding"
   ],
   "scripts": {
-    "format": "prettier-standard-formatter src/* test/*",
+    "format": "prettier-standard-formatter lib/* test/*",
     "test": "eslint src && jest --coverage",
     "prebuild": "npm run format && npm run test",
-    "build": "rollup -cm -n AshVM -f iife -i src/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
-    "watch": "rollup --watch -cm -n AshVM -f iife -i src/index.js -o docs/dist/ash-vm.js",
+    "build": "rollup -cm -n AshVM -f iife -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
+    "watch": "rollup --watch -cm -n AshVM -f iife -i lib/index.js -o docs/dist/ash-vm.js",
     "prepublish": "npm run build",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
-    "docs": "docco src/* src/**/* -o docs/literate"
+    "docs": "docco lib/* lib/**/* -o docs/literate"
   },
   "babel": {
     "presets": "es2015"

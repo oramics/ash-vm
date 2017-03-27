@@ -1,4 +1,4 @@
-import { VM } from '../src/vm'
+import { VM } from '../lib/vm'
 
 // Setup a VM for testing
 export default function initVM (ext) {
@@ -11,9 +11,5 @@ export default function initVM (ext) {
     '@ptime': proc => vm.printed.push(proc.time.toFixed(2))
   })
 
-  vm.run = (prog, dur = Infinity) => {
-    vm.fork(null, null, prog)
-    if (dur) vm.resume(dur)
-  }
   return vm
 }

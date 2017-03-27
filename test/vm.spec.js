@@ -9,6 +9,27 @@ describe('VM', () => {
     expect(vm.printed).toEqual([1, 2])
   })
 
+  test('the context of the vm is the initial context of the procs', () => {
+    const vm = initVM()
+    vm.context = { amp: 'amp', inst: 'inst' }
+    vm.run(['@loop'], false)
+    const ctx = vm.procs[0].context
+    expect(ctx.get('amp')).toBe('amp')
+    expect(ctx.get('inst')).toBe('inst')
+  })
+
+  test('addCommands accept a function', () => {
+    let received = null
+    const vm = initVM()
+    const plugin = vm => {
+      received = vm
+      return { '@plugin': () => true }
+    }
+    vm.addCommands(plugin)
+    expect(received).toBe(vm)
+    expect(vm.commands['@plugin']).not.toBe(undefined)
+  })
+
   test('add new commands', () => {
     const vm = initVM()
     vm.addCommands({
@@ -16,6 +37,7 @@ describe('VM', () => {
       '@hi': '@hello'
     })
     vm.run(['@hello', '@hi'])
+    vm.resume(Infinity)
     expect(vm.printed).toEqual(['hello', 'hello'])
   })
 
@@ -35,12 +57,14 @@ describe('VM commands', () => {
   test('@fork', () => {
     const vm = initVM()
     vm.run(['@fork', [1, '@print'], 2, '@print'])
+    vm.resume(Infinity)
     expect(vm.printed).toEqual([2, 1])
   })
 
   test('@loop', () => {
     const vm = initVM()
-    vm.run(['@loop', ['@ptime', 0.2, '@wait']], 1)
+    vm.run(['@loop', ['@ptime', 0.2, '@wait']])
+    vm.resume(1)
     expect(vm.printed).toEqual(['0.00', '0.20', '0.40', '0.60', '0.80'])
   })
 

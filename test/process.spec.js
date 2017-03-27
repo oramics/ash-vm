@@ -1,5 +1,5 @@
 /* global describe it expect */
-const { Process } = require('../src/process')
+const { Process } = require('../lib/process')
 
 describe('Process', () => {
   it('executes an instruction', () => {

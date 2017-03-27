@@ -1,5 +1,5 @@
 /* global describe it expect */
-import { Context } from '../src/process'
+import { Context } from '../lib/process'
 
 describe('Context', () => {
   it('creates context', () => {
