@@ -28,8 +28,9 @@ export class VM {
 
   // Run a program
   run (program, sync = true) {
-    if (this.procs.length === 0) sync = false
-    this.fork(null, this.context, sync ? ['@sync', program] : program)
+    // if there are no processes, no need to sync
+    if (sync && this.procs.length) program = ['@sync', program]
+    this.fork(null, this.context, program)
   }
 
   // Add more commands

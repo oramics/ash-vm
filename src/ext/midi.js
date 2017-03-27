@@ -4,8 +4,7 @@
 // not working yet
 
 export function midi () {
-  const sendMidi = () => {
-  }
+  const sendMidi = () => {}
   return {
     // [pitch, velocity, channel, "@note-on"]
     '@note-on': ({ stack }) => {
