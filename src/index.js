@@ -1,35 +1,27 @@
-// # Audio Virtual Machine
-
-// The main purpose of the virtual machine is to run processes concurrently
-
-// ## Architecture Overview
-
-// A **scheduler** is a collection of processes. Each **process** mantains
-// an internal time value that can be modified.
-
-import { VM } from "./vm";
-import { gibberish } from "./gibberish";
+// # Audio Scheduler Virtual Machine
+import { VM } from './vm'
+import { gibberish } from './gibberish'
 import random from './ext/random'
 import debug from './ext/debug'
 
-const INITIAL_CTX = { amp: 0.5, freq: 440 };
-const newCtx = () => Object.assign({}, INITIAL_CTX)
+// ## Architecture Overview
 
-// ## API
+// The main purpose of the virtual machine is to run processes concurrently.
+// It holds a `commands` object (that maps instruction names to functions)
+// and schedules a collection of `processes`. Each **process** has an values `stack`
+// and `operations` stack (to be executed).
 
-export function init(Gibberish, ...plugins) {
+// ## API
+
+// the init function creates a vm controlled by Gibberish
+export function init (Gibberish, ...plugins) {
   // Create the virtual machine and setup commands
-  const vm = new VM();
+  const vm = new VM({ amp: 0.5, freq: 440 })
   vm.addCommands(random())
   vm.addCommands(debug())
   plugins.forEach(cmds => vm.addCommands(cmds))
 
   // Init the audio driver
-  gibberish(Gibberish, vm);
-
-  // Return a `run(program)` function
-  // this is the simplest API I can think. Probably will change.
-  return (prog, sync = true) => {
-    vm.fork(null, newCtx(), sync ? ["@sync", prog] : prog);
-  };
+  gibberish(Gibberish, vm)
+  return vm
 }

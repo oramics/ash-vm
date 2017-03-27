@@ -1,74 +1,74 @@
 /* global describe test expect */
-import initVM from "./testVM";
+import initVM from './testVM'
 
-describe("VM", () => {
-  test("run processes", () => {
-    const vm = initVM();
-    vm.run([1, "@print", 2, "@print"]);
-    vm.resume(Infinity);
-    expect(vm.printed).toEqual([1, 2]);
-  });
+describe('VM', () => {
+  test('run processes', () => {
+    const vm = initVM()
+    vm.run([1, '@print', 2, '@print'])
+    vm.resume(Infinity)
+    expect(vm.printed).toEqual([1, 2])
+  })
 
-  test("add new commands", () => {
-    const vm = initVM();
+  test('add new commands', () => {
+    const vm = initVM()
     vm.addCommands({
-      "@hello": proc => vm.printed.push("hello"),
-      "@hi": "@hello"
-    });
-    vm.run(["@hello", "@hi"]);
-    expect(vm.printed).toEqual(["hello", "hello"]);
-  });
+      '@hello': proc => vm.printed.push('hello'),
+      '@hi': '@hello'
+    })
+    vm.run(['@hello', '@hi'])
+    expect(vm.printed).toEqual(['hello', 'hello'])
+  })
 
-  test("run processes concurrently", () => {
-    const vm = initVM();
-    vm.fork(null, null, [1, "@print", 0.5, "@wait", 2, "@print"]);
-    vm.fork(null, null, [3, "@print", 0.25, "@wait", 4, "@print"]);
-    vm.resume(0.25);
-    vm.resume(0.25);
-    vm.resume(0.25);
-    vm.resume(0.25);
-    expect(vm.printed).toEqual([1, 3, 4, 2]);
-  });
-});
+  test('run processes concurrently', () => {
+    const vm = initVM()
+    vm.fork(null, null, [1, '@print', 0.5, '@wait', 2, '@print'])
+    vm.fork(null, null, [3, '@print', 0.25, '@wait', 4, '@print'])
+    vm.resume(0.25)
+    vm.resume(0.25)
+    vm.resume(0.25)
+    vm.resume(0.25)
+    expect(vm.printed).toEqual([1, 3, 4, 2])
+  })
+})
 
-describe("VM commands", () => {
-  test("@fork", () => {
-    const vm = initVM();
-    vm.run(["@fork", [1, "@print"], 2, "@print"]);
-    expect(vm.printed).toEqual([2, 1]);
-  });
+describe('VM commands', () => {
+  test('@fork', () => {
+    const vm = initVM()
+    vm.run(['@fork', [1, '@print'], 2, '@print'])
+    expect(vm.printed).toEqual([2, 1])
+  })
 
-  test("@loop", () => {
-    const vm = initVM();
-    vm.run(["@loop", ["@ptime", 0.2, "@wait"]], 1);
-    expect(vm.printed).toEqual(["0.00", "0.20", "0.40", "0.60", "0.80"]);
-  });
+  test('@loop', () => {
+    const vm = initVM()
+    vm.run(['@loop', ['@ptime', 0.2, '@wait']], 1)
+    expect(vm.printed).toEqual(['0.00', '0.20', '0.40', '0.60', '0.80'])
+  })
 
-  test("@stop-all", () => {
-    const vm = initVM();
+  test('@stop-all', () => {
+    const vm = initVM()
     vm.run(
       [
-        "@loop",
-        ["A", "@print", "@ptime", 0.5, "@wait"],
-        "@loop",
-        ["B", "@print", "@ptime", 0.6, "@wait"],
+        '@loop',
+        ['A', '@print', '@ptime', 0.5, '@wait'],
+        '@loop',
+        ['B', '@print', '@ptime', 0.6, '@wait'],
         1,
-        "@wait",
-        "@stop-all"
+        '@wait',
+        '@stop-all'
       ],
       false
-    );
-    vm.resume(1);
-    vm.resume(2);
+    )
+    vm.resume(1)
+    vm.resume(2)
     expect(vm.printed).toEqual([
-      "A",
-      "0.00",
-      "A",
-      "0.50",
-      "B",
-      "0.00",
-      "B",
-      "0.60"
-    ]);
-  });
-});
+      'A',
+      '0.00',
+      'A',
+      '0.50',
+      'B',
+      '0.00',
+      'B',
+      '0.60'
+    ])
+  })
+})

@@ -11,38 +11,38 @@ const { floor } = Math
 // | **@randi** | Generate a random integer between 0 and n | `[60, "@randi", "midi", "@set"]` |
 // | **@pick** | Pick a random element from a list | `["@pick", [1, 2, 3, 4]]` |
 // | **@chance** | Probabilistic execution | `probability, "@chance", executed-if-true, executed-if-false` |
-export default function random(random) {
+export default function random (random) {
   // allow to use a custom random function
-  const rnd = random || Math.random;
+  const rnd = random || Math.random
   // a function that generates integer random from 0 to n
-  const irnd = n => floor(rnd() * n);
+  const irnd = n => floor(rnd() * n)
 
   return {
-    "@random": ({ stack }) => stack.push(rnd()),
-    "@rand": "@random",
-    "@srandom": ({ stack }) => stack.push(rnd() * 2 - 1),
-    "@srand": "@srandom",
-    "@randi": ({ stack }) => stack.push(irnd(stack.pop())),
-    "@pick": proc => {
-      const { stack, instructions, error } = proc;
-      const pattern = instructions.pop();
+    '@random': ({ stack }) => stack.push(rnd()),
+    '@rand': '@random',
+    '@srandom': ({ stack }) => stack.push(rnd() * 2 - 1),
+    '@srand': '@srandom',
+    '@randi': ({ stack }) => stack.push(irnd(stack.pop())),
+    '@pick': proc => {
+      const { instructions, error } = proc
+      const pattern = instructions.pop()
       if (!isArray(pattern)) {
-        instructions.push(pattern);
-        error("Can't pick an element if is not an array", pattern);
+        instructions.push(pattern)
+        error("Can't pick an element if is not an array", pattern)
       } else {
-        const i = irnd(pattern.length);
-        instructions.push(pattern[i]);
+        const i = irnd(pattern.length)
+        instructions.push(pattern[i])
       }
     },
-    "@chance": ({ stack, instructions }) => {
-      const prob = stack.pop();
-      const pattern = instructions.pop();
+    '@chance': ({ stack, instructions }) => {
+      const prob = stack.pop()
+      const pattern = instructions.pop()
       if (rnd() < prob) {
         // Skip item after
-        instructions.pop();
+        instructions.pop()
         // Push the pattern
-        instructions.push(pattern);
+        instructions.push(pattern)
       }
     }
-  };
+  }
 }

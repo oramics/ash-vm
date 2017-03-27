@@ -4,8 +4,12 @@ const { Process } = require('../src/process')
 describe('Process', () => {
   it('executes an instruction', () => {
     const proc = new Process('@debug')
-    const commands = { '@debug': (proc) => { proc.debug = true } }
-    proc.step(commands, { error: (e) => console.error(e) })
+    const commands = {
+      '@debug': proc => {
+        proc.debug = true
+      }
+    }
+    proc.step(commands, { error: e => console.error(e) })
     expect(proc.debug).toBe(true)
   })
 

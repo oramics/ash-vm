@@ -20,7 +20,7 @@ describe('Context', () => {
 
   it('get - gets the value from parent if not preset', () => {
     const a = new Context()
-    a.local = { x: 1, y: 2, z: 3}
+    a.local = { x: 1, y: 2, z: 3 }
     const b = new Context(a)
     b.local = { y: 20, z: 30 }
     const c = new Context(b)

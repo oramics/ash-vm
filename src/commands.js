@@ -1,23 +1,21 @@
 // # Commands
-import { isArray, isString, last, wrap } from "./utils";
+import { isArray, isString, last, wrap } from './utils'
 
 // **Error messages**
-const ERR_BAD_PATTERN = "Expected a pattern, but found:";
-const ERR_LIMIT_REACHED = "Limit reached. Probably an infinity loop.";
+export const ERR_EXPECT_PATTERN = 'Expected a pattern, but found:'
+export const ERR_EXPECT_STRING = 'Expected a string, but found:'
 
 // **Utilities**
 
 // A generic stack operation that pops one value and pushes on result
-const op1 = fn =>
-  ({ stack }) => {
-    stack.push(fn(stack.pop()));
-  };
+const op1 = fn => ({ stack }) => {
+  stack.push(fn(stack.pop()))
+}
 
 // A generic stack operation that pops two values and pushes one result
-const op2 = fn =>
-  ({ stack }) => {
-    stack.push(fn(stack.pop(), stack.pop()));
-  };
+const op2 = fn => ({ stack }) => {
+  stack.push(fn(stack.pop(), stack.pop()))
+}
 
 // A commands object is a map from instrunction name to functions
 export default {
@@ -32,47 +30,47 @@ export default {
   // | **@mod* | Standard modulo operation | `[4, 2, "@mod"]` |
   // | **@neg* | The negative of a value | `[4, "@neg"]` |
   // [1, 2, "@+"]
-  "@+": op2((b, a) => a + b),
+  '@+': op2((b, a) => a + b),
   // [1, 2, "@add"]
-  "@add": "@+",
+  '@add': '@+',
   // [2, 1, "@-"]
-  "@-": op2((b, a) => a - b),
+  '@-': op2((b, a) => a - b),
   // [2, 1, "@sub"]
-  "@sub": "@-",
-  "@*": op2((b, a) => a * b),
-  "@mul": "@*",
-  "@/": op2((b, a) => b === 0 ? 0 : a / b),
-  "@div": "@/",
-  "@%": op2((b, a) => b === 0 ? 0 : wrap(a, b)),
-  "@wrap": "@%",
-  "@mod": op2((b, a) => b === 0 ? 0 : a % b),
-  "@neg": op1(a => -a),
+  '@sub': '@-',
+  '@*': op2((b, a) => a * b),
+  '@mul': '@*',
+  '@/': op2((b, a) => b === 0 ? 0 : a / b),
+  '@div': '@/',
+  '@%': op2((b, a) => b === 0 ? 0 : wrap(a, b)),
+  '@wrap': '@%',
+  '@mod': op2((b, a) => b === 0 ? 0 : a % b),
+  '@neg': op1(a => -a),
 
   // ## Logic
 
-  "@cond": ({ stack, instructions }) => {
-    const test = stack.pop();
+  '@cond': ({ stack, instructions }) => {
+    const test = stack.pop()
     // this is the pattern to execute if the test passes
-    const success = instructions.pop();
+    const success = instructions.pop()
     // the next pattern is the "else" part
     if (test) {
       // remove the "else" part
-      instructions.pop();
-      instructions.push(success);
+      instructions.pop()
+      instructions.push(success)
     }
   },
-  "@>": op2((b, a) => a > b),
-  "@>=": op2((b, a) => a >= b),
-  "@<": op2((b, a) => a < b),
-  "@<=": op2((b, a) => a <= b),
-  "@==": op2((b, a) => a === b),
-  "@!=": op2((b, a) => a !== b),
-  "@!": op1(a => !a),
-  "@not": "@!",
-  "@&&": op2((b, a) => a && b),
-  "@and": "@&&",
-  "@||": op2((b, a) => a || b),
-  "@or": "@||",
+  '@>': op2((b, a) => a > b),
+  '@>=': op2((b, a) => a >= b),
+  '@<': op2((b, a) => a < b),
+  '@<=': op2((b, a) => a <= b),
+  '@==': op2((b, a) => a === b),
+  '@!=': op2((b, a) => a !== b),
+  '@!': op1(a => !a),
+  '@not': '@!',
+  '@&&': op2((b, a) => a && b),
+  '@and': '@&&',
+  '@||': op2((b, a) => a || b),
+  '@or': '@||',
 
   // ## Core
 
@@ -88,16 +86,16 @@ export default {
   // | **@wait** | Wait an amount of time | `1,@wait` |
   // | **@sync** | Wait until next beat | `@sync` |
 
-  // ## Process
+  // ## Process
 
   // Operation related to interact with the current process
 
-  "@let": ({ stack, context }) => context.let(stack.pop(), stack.pop()),
-  "@set": ({ stack, context }) => context.set(stack.pop(), stack.pop()),
-  "@get": ({ stack, context }) => stack.push(context.get(stack.pop())),
+  '@let': ({ stack, context }) => context.let(stack.pop(), stack.pop()),
+  '@set': ({ stack, context }) => context.set(stack.pop(), stack.pop()),
+  '@get': ({ stack, context }) => stack.push(context.get(stack.pop())),
 
-  "@wait": proc => proc.wait(Math.abs(Number(proc.stack.pop()))),
-  "@sync": proc => proc.wait(Math.floor(proc.time) + 1 - proc.time),
+  '@wait': proc => proc.wait(Math.abs(Number(proc.stack.pop()))),
+  '@sync': proc => proc.wait(Math.floor(proc.time) + 1 - proc.time),
 
   // ## Execute and repeat
 
@@ -107,27 +105,27 @@ export default {
   // | **@execute** | Execute an instruction | `10,'dup','@execute'` |
   // | **@repeat** | Repeat | `4, "@repeat", ["@kick", 0.5, "@wait"]` |
   // | **@forever** | Repeat forever | `"@forever", ["@kick", 0.5, "@wait"]` |
-  "@dup": ({ stack }) => stack.push(last(stack)),
-  "@execute": ({ instructions, error }) => {
-    const instr = instructions.pop();
-    if (isString(instr)) instructions.push("@instr");
-    else error("@execute", ERR_EXPECT_STRING, instr);
+  '@dup': ({ stack }) => stack.push(last(stack)),
+  '@execute': ({ instructions, error }) => {
+    const instr = instructions.pop()
+    if (isString(instr)) instructions.push('@instr')
+    else error('@execute', ERR_EXPECT_STRING, instr)
   },
-  "@": "@execute",
-  "@repeat": ({ stack, instructions }) => {
-    const repetitions = stack.pop();
-    const pattern = last(instructions);
-    if (!isArray(pattern)) throw Error("Can't repeat: " + pattern);
+  '@': '@execute',
+  '@repeat': ({ stack, instructions }) => {
+    const repetitions = stack.pop()
+    const pattern = last(instructions)
+    if (!isArray(pattern)) throw Error("Can't repeat: " + pattern)
     for (let i = 1; i < repetitions; i++) {
-      instructions.push(pattern);
+      instructions.push(pattern)
     }
   },
-  "@forever": ({ instructions }) => {
-    const pattern = last(instructions);
-    if (!isArray(pattern)) throw Error("Can't forover: " + pattern);
+  '@forever': ({ instructions }) => {
+    const pattern = last(instructions)
+    if (!isArray(pattern)) throw Error("Can't forover: " + pattern)
     if (pattern.length) {
-      instructions.push("@forever");
-      instructions.push(pattern);
+      instructions.push('@forever')
+      instructions.push(pattern)
     }
   },
 
@@ -135,26 +133,25 @@ export default {
   // | Name | Description | Example |
   // |------|-------------|---------|
   // | **@iter** | Iterate a pattern | `[["@iter", [0.3, 1]], "amp", "@set"]` |
-  "@iter": ({ instructions, error }) => {
-    const pattern = instructions.pop();
-    if (!isArray(pattern) || !pattern.length)
-      error("@iter", ERR_BAD_PATTERN, pattern);
-    else {
+  '@iter': ({ instructions, error }) => {
+    const pattern = instructions.pop()
+    if (!isArray(pattern) || !pattern.length) {
+      error('@iter', ERR_EXPECT_PATTERN, pattern)
+    } else {
       // Rotates the pattern and plays the first item only each time
       // remove '1st' item, schedule, then push to back:
-      const first = pattern.splice(0, 1);
-      instructions.push(first);
-      pattern.push(first);
+      const first = pattern.splice(0, 1)
+      instructions.push(first)
+      pattern.push(first)
     }
-  },
-
-};
+  }
+}
 
 // Given a commands object, expand the aliases
-export function expandAliases(commands) {
+export function expandAliases (commands) {
   Object.keys(commands).forEach(name => {
-    const op = commands[name];
-    if (isString(op)) commands[name] = commands[op];
-  });
-  return commands;
+    const op = commands[name]
+    if (isString(op)) commands[name] = commands[op]
+  })
+  return commands
 }
