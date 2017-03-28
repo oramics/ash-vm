@@ -172,7 +172,7 @@ will change in the future.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (sync &amp;&amp; <span class="hljs-keyword">this</span>.procs.length) program = [<span class="hljs-string">'@sync'</span>, program]
-    <span class="hljs-keyword">this</span>.fork(<span class="hljs-literal">null</span>, <span class="hljs-keyword">this</span>.context, program)
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fork(<span class="hljs-literal">null</span>, <span class="hljs-keyword">this</span>.context, program)
   }</pre></div></div>
             
         </li>

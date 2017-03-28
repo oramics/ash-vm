@@ -15,7 +15,7 @@
   "scripts": {
     "format": "prettier-standard-formatter lib/* test/*",
     "test": "eslint src && jest --coverage",
-    "build": "npm run format && npm run test && npm run dist",
+    "build": "npm run test && npm run dist && npm run docs",
     "dist": "rollup -cm -n AshVM -f umd -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
     "watch": "rollup --watch -cm -n AshVM -f umd -i lib/index.js -o docs/dist/ash-vm.js",
     "prepublish": "npm run build",

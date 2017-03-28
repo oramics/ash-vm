@@ -154,7 +154,8 @@ and <code>operations</code> stack (to be executed).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">Gibberish, ...plugins</span>) </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">Gibberish, options = {}</span>) </span>{
+  <span class="hljs-keyword">const</span> { plugins } = options</pre></div></div>
             
         </li>
         
@@ -169,7 +170,7 @@ and <code>operations</code> stack (to be executed).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM({ <span class="hljs-attr">amp</span>: <span class="hljs-number">0.5</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">440</span> })</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM({ <span class="hljs-attr">amp</span>: <span class="hljs-number">0.5</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">440</span> }, options)</pre></div></div>
             
         </li>
         
@@ -184,7 +185,7 @@ and <code>operations</code> stack (to be executed).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  vm.addCommands(gibberish(Gibberish))</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  vm.addCommands(gibberish(Gibberish, options))</pre></div></div>
             
         </li>
         
@@ -199,9 +200,9 @@ and <code>operations</code> stack (to be executed).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  vm.addCommands(random())
-  vm.addCommands(debug())
-  vm.addCommands(compatibility())</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  vm.addCommands(random(options))
+  vm.addCommands(debug(options))
+  vm.addCommands(compatibility(options))</pre></div></div>
             
         </li>
         
@@ -212,11 +213,11 @@ and <code>operations</code> stack (to be executed).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Add the plugins</p>
+              <p>Add the plugins if any</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  plugins.forEach(<span class="hljs-function"><span class="hljs-params">cmds</span> =&gt;</span> vm.addCommands(cmds))
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (plugins) plugins.forEach(<span class="hljs-function"><span class="hljs-params">cmds</span> =&gt;</span> vm.addCommands(cmds))
 
   <span class="hljs-keyword">return</span> vm
 }</pre></div></div>

@@ -15,8 +15,8 @@ const iterator = (opts) => {
 
 function alternation (rhythm) {
   const steps = (rhythm + rhythm).split('')
-  const alt = iterator(['@conga', '@clave'])
-  const alternated = steps.map(s => s === '.' ? s : alt())
+  const iter = iterator(['@conga', '@clave'])
+  const alternated = steps.map(s => s === '.' ? s : iter())
 
   return alternated
 }

@@ -298,11 +298,12 @@
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <h2 id="logic">Logic</h2>
+<p><strong>cond</strong>: Conditional execution
+<code>[true, &quot;@cond&quot;, [&lt;success pattern&gt;], [&lt;fail pattern&gt;]]</code></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-  <span class="hljs-string">'@cond'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations }</span>) =&gt;</span> {
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@cond'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations }</span>) =&gt;</span> {
     <span class="hljs-keyword">const</span> test = stack.pop()</pre></div></div>
             
         </li>
@@ -374,7 +375,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <h2 id="process">Process</h2>
+              <h2 id="processes">Processes</h2>
 
             </div>
             
@@ -417,39 +418,62 @@
 <tr>
 <td><strong>@let</strong></td>
 <td>Assign a value to the local context</td>
-<td><code>10,&#39;repetitions&#39;,@let</code></td>
+<td><code>10,&#39;repetitions&#39;,&#39;@let&#39;</code></td>
 </tr>
 <tr>
 <td><strong>@set</strong></td>
 <td>Assign a value to the global context</td>
-<td><code>10,&#39;parts&#39;,@set</code></td>
+<td><code>10,&#39;parts&#39;,&#39;@set&#39;</code></td>
 </tr>
 <tr>
 <td><strong>@get</strong></td>
 <td>Push the value of a variable into the stack</td>
-<td><code>&#39;repetitions&#39;,@get</code></td>
+<td><code>&#39;repetitions&#39;,&#39;@get&#39;</code></td>
 </tr>
 <tr>
 <td><strong>@wait</strong></td>
 <td>Wait an amount of time</td>
-<td><code>1,@wait</code></td>
+<td><code>1,&#39;@wait&#39;</code></td>
 </tr>
 <tr>
 <td><strong>@sync</strong></td>
 <td>Wait until next beat</td>
-<td><code>@sync</code></td>
+<td><code>&#39;@sync&#39;</code></td>
+</tr>
+<tr>
+<td><strong>@scale-rate</strong></td>
+<td>Change the current rate by a factor</td>
+<td><code>1.5, &#39;@scale-rate&#39;</code></td>
 </tr>
 </tbody>
 </table>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@let'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> context.let(stack.pop(), stack.pop()),
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-string">'@let'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> context.let(stack.pop(), stack.pop()),
   <span class="hljs-string">'@set'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> context.set(stack.pop(), stack.pop()),
   <span class="hljs-string">'@get'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> stack.push(context.get(stack.pop())),
 
   <span class="hljs-string">'@wait'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> proc.wait(<span class="hljs-built_in">Math</span>.abs(<span class="hljs-built_in">Number</span>(proc.stack.pop()))),
-  <span class="hljs-string">'@sync'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> proc.wait(<span class="hljs-built_in">Math</span>.floor(proc.time) + <span class="hljs-number">1</span> - proc.time),</pre></div></div>
+  <span class="hljs-string">'@sync'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> proc.wait(<span class="hljs-built_in">Math</span>.floor(proc.time) + <span class="hljs-number">1</span> - proc.time),
+
+  <span class="hljs-string">'@scale-rate'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+    <span class="hljs-keyword">const</span> factor = <span class="hljs-built_in">parseFloat</span>(proc.stack.pop(), <span class="hljs-number">10</span>)
+    <span class="hljs-keyword">if</span> (factor &gt; <span class="hljs-number">0</span>) proc.rate *= factor
+  },
+  <span class="hljs-string">'@with-rate'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> factor = <span class="hljs-built_in">parseFloat</span>(stack.pop(), <span class="hljs-number">10</span>)
+    <span class="hljs-keyword">const</span> pattern = operations.pop()
+    <span class="hljs-keyword">if</span> (!isArray(pattern)) error(<span class="hljs-string">'@with-rate'</span>, ERR_EXPECT_PATTERN, pattern)
+    operations.push([
+      factor,
+      <span class="hljs-string">'@scale-rate'</span>,
+      pattern,
+      <span class="hljs-number">1</span> / factor,
+      <span class="hljs-string">'@scale-rate'</span>
+    ])
+  },</pre></div></div>
             
         </li>
         
@@ -485,7 +509,7 @@
 <tr>
 <td><strong>@dup</strong></td>
 <td>Duplicate item (so you can use it twice)</td>
-<td><code>10,@dup</code></td>
+<td><code>10,&#39;@dup&#39;</code></td>
 </tr>
 <tr>
 <td><strong>@execute</strong></td>
@@ -555,6 +579,11 @@
 <td>Iterate a pattern</td>
 <td><code>[[&quot;@iter&quot;, [0.3, 1]], &quot;amp&quot;, &quot;@set&quot;]</code></td>
 </tr>
+<tr>
+<td><strong>@rotate</strong></td>
+<td>Rotate a pattern</td>
+<td><code>[]</code></td>
+</tr>
 </tbody>
 </table>
 
@@ -585,8 +614,10 @@ remove ‘1st’ item, schedule, then push to back:</p>
       pattern.push(first)
     }
   },
-  <span class="hljs-string">'@reverse'</span>: <span class="hljs-function">(<span class="hljs-params">{ operations }</span>) =&gt;</span> {}
-}</pre></div></div>
+  <span class="hljs-string">'@rotate'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> pattern = operations.pop()
+    <span class="hljs-keyword">let</span> rot = stack.pop()
+    <span class="hljs-keyword">if</span> (isArray(pattern) &amp;&amp; pattern.length &gt; <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -596,6 +627,86 @@ remove ‘1st’ item, schedule, then push to back:</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>ensure rot is valid between -args.length to +args.length</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      rot = rot % pattern.length
+      <span class="hljs-keyword">var</span> copy = pattern.splice(<span class="hljs-number">0</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>rotate in-place</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      pattern.push.apply(pattern, copy.slice(rot))
+      pattern.push.apply(pattern, copy.slice(<span class="hljs-number">0</span>, rot))</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>schedule a shallow copy:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      operations.push(copy)
+    } <span class="hljs-keyword">else</span> {
+      error(<span class="hljs-string">'@rotate'</span>, ERR_EXPECT_PATTERN, pattern)
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>scale a value
+[value, fromLow, fromHi, toLow, toHi, ‘@linear’]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">'@linear'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> ohi = stack.pop()
+    <span class="hljs-keyword">const</span> olo = stack.pop()
+    <span class="hljs-keyword">const</span> ihi = stack.pop()
+    <span class="hljs-keyword">const</span> ilo = stack.pop()
+    <span class="hljs-keyword">const</span> v = stack.pop()
+
+    <span class="hljs-keyword">if</span> (ihi === ilo) {
+      stack.push(olo)
+    } <span class="hljs-keyword">else</span> {
+      stack.push(olo + (ohi - olo) * ((v - ilo) / (ihi - ilo)))
+    }
+  }
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Given a commands object, expand the aliases</p>
 
