@@ -32,7 +32,6 @@ vm.run(["@loop", [440, "freq", "@set", "@pluck", 0.5, "@wait"]])
 ES6:
 
 ```js
-// ES6
 import Gibberish from "gibberish-dsp"
 import { init } from "ash-vm"
 
@@ -42,12 +41,11 @@ vm.run(["@loop", [440, "freq", "@set", "@pluck", 0.5, "@wait"]])
 
 ES5:
 
-
 ```js
 const Gibberish = require("gibberish-dsp")
 const init = require("ash-vm").init
-const vm = init(Gibberish)
 
+const vm = init(Gibberish)
 vm.run(["@loop", ["@kick", 0.5, "@wait", "@snare", 0.5, "@wait"]])
 ```
 
@@ -91,10 +89,102 @@ vm.addCommands({
 vm.run(["@loop", ["@bang!", 1, "@wait"]])
 ```
 
-## Demos, docs and source code
+## Examples, docs and source code
 
-- An introduction to AshVM (by @grrrwaaa and @charlieroberts): https://danigb.github.io/ash-vm/
+- An introduction to the language with lot of examples (by @grrrwaaa and @charlieroberts): https://danigb.github.io/ash-vm/
 - Annotated source code: https://danigb.github.io/ash-vm/literate/
+
+## Language reference
+
+#### Arithmetic
+| Name | Description | Example |
+|------|-------------|---------|
+| **@+**, **@add** | Add two values | `[1, 2, "@+"]` |
+| **@-**, **@sub** | Subtract two values | `[2, 1, "@-"]` |
+| **@\***, **@mul** | Multiply two values | `[2, 4, "@*"]` |
+| **@/**, **@div** | Divide two values | `[4, 2, "@*"]` |
+| **@%**, **@wrap** | Modulo for positive and negative numbers | `[4, -2, "@%"]` |
+| **@mod** | Standard modulo operation | `[4, 2, "@mod"]` |
+| **@neg** | The negative of a value | `[4, "@neg"]` |
+
+#### Logic
+| Name | Description | Example |
+|------|-------------|---------|
+| **@cond** | Conditional execution | `condition, "@cond", executed-if-true, executed-if-false` |
+| **@>** | a > b | ```a, b, "@>"```
+| **@>=** | a >= b | ```a, b, "@>="```
+| **@<** | a < b | ```a, b, "@<"```
+| **@<=** | a <= b | ```a, b, "@<="```
+| **@==** | a == b | ```a, b, "@=="```
+| **@!=** | a != b | ```a, b, "@!="```
+| **@!**, **@!not** | not a | ```a, "@not"```
+| **@&**, **@and** | a and b | ```a, b, "@and"```
+| **@or** | a or b | ```a, b, "@or"```
+
+#### Start and stop processes
+
+| Name | Description | Example |
+|------|-------------|---------|
+| **@fork** | Fork | `@fork, [0.5, "@wait", "@kick"]` |
+| **@spawn** | Spawn | `"melody", "@spawn", [0.5, "@wait", "@kick"]` |
+| **@stop** | Stop current process | `@stop` |
+| **@stop-all** | Stop all processes | `@stop-all` |
+
+#### Running context
+
+Every process has a context, a time and rate.
+
+| Name | Description | Example |
+|------|-------------|---------|
+| **@let** | Assign a value to the local context | `10,'repetitions',@let` |
+| **@set** | Assign a value to the global context | `10,'parts',@set` |
+| **@get** | Push the value of a variable into the stack | `'repetitions',@get` |
+| **@wait** | Wait an amount of time (in beats) | `1,@wait` |
+| **@sync** | Wait until next beat | `@sync` |
+
+#### Execution and repetition
+
+| Name | Description | Example |
+|------|-------------|---------|
+| **@execute** | Execute an instruction | `10,'dup','@execute'` |
+| **@dup** | Duplicate item (so you can use it twice) | `10,@dup` |
+| **@repeat** | Repeat | `4, "@repeat", ["@kick", 0.5, "@wait"]` |
+| **@forever** | Repeat forever | `"@forever", ["@kick", 0.5, "@wait"]` |
+
+#### Iteration and lists
+
+| Name | Description | Example |
+|------|-------------|---------|
+| **@iter** | Iterate a pattern | `[["@iter", [0.3, 1]], "amp", "@set"]` |
+
+#### Randomness
+
+| Name | Description | Example |
+|------|-------------|---------|
+| **@random**, **@rand** | Generate a random number between 0 and 1 | `["@random", "amp", "@set"]` |
+| **@srandom**, **@srand** | Generate a random number between -1 and 1 | `["@srandom", "phase", "@set"]` |
+| **@randi** | Generate a random integer between 0 and n | `[60, "@randi", "midi", "@set"]` |
+| **@pick** | Pick a random element from a list | `["@pick", [1, 2, 3, 4]]` |
+| **@chance** | Probabilistic execution | `probability, "@chance", executed-if-true, executed-if-false` |
+
+#### Playing sounds
+
+Play sounds and alter tempo.
+
+| Name | Description | Example |
+|------|-------------|---------|
+| **@bpm** | Change the global tempo | `120, "@bpm"` |
+| **@play-note** | Trigger a note with params | `{ inst: "pluck", amp: 0.5}, "@note-params"` |
+| **@play** | Trigger a note | `"@note"` |
+
+#### Debug
+
+| Name | Description | Example |
+|------|-------------|---------|
+| **@print** | Print the last value of the stack | `10,"@print"` |
+| **@log** | Log the name with the last value of the stack | `"@random", "amp", "@log"` |
+
+
 
 ## Develop
 

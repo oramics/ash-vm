@@ -3,7 +3,7 @@
   "description": "Audio Scheduler VM",
   "version": "0.0.0",
   "private": true,
-  "main": "lib/index.js",
+  "main": "dist/ash-vm.js",
   "jsnext:main": "lib/index.js",
   "module": "lib/index.js",
   "license": "MIT",
@@ -15,9 +15,9 @@
   "scripts": {
     "format": "prettier-standard-formatter lib/* test/*",
     "test": "eslint src && jest --coverage",
-    "prebuild": "npm run format && npm run test",
-    "build": "rollup -cm -n AshVM -f iife -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
-    "watch": "rollup --watch -cm -n AshVM -f iife -i lib/index.js -o docs/dist/ash-vm.js",
+    "build": "npm run format && npm run test && npm run dist",
+    "dist": "rollup -cm -n AshVM -f umd -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
+    "watch": "rollup --watch -cm -n AshVM -f umd -i lib/index.js -o docs/dist/ash-vm.js",
     "prepublish": "npm run build",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
     "docs": "docco lib/* lib/**/* -o docs/literate"
