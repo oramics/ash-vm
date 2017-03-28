@@ -130,7 +130,7 @@ vm.run(["@loop", ["@bang!", 1, "@wait"]])
 | **@stop** | Stop current process | `@stop` |
 | **@stop-all** | Stop all processes | `@stop-all` |
 
-#### Running context
+#### Variables
 
 Every process has a context, a time and rate.
 
@@ -139,8 +139,16 @@ Every process has a context, a time and rate.
 | **@let** | Assign a value to the local context | `10,'repetitions',@let` |
 | **@set** | Assign a value to the global context | `10,'parts',@set` |
 | **@get** | Push the value of a variable into the stack | `'repetitions',@get` |
+
+#### Time and tempo
+
+| Name | Description | Example |
+|------|-------------|---------|
 | **@wait** | Wait an amount of time (in beats) | `1,@wait` |
 | **@sync** | Wait until next beat | `@sync` |
+| **@scale-rate** | Scale the time rate by a factor | `1.5, '@scale-rate'` |
+| **@set-bpm** | Set the global tempo in beats per minute | `120, "@set-bpm"` |
+| **@scale-tempo* | Scale the global tempo by a factor | `0.75`, "@scale-tempo"
 
 #### Execution and repetition
 
@@ -169,13 +177,11 @@ Every process has a context, a time and rate.
 
 #### Playing sounds
 
-Play sounds and alter tempo.
-
 | Name | Description | Example |
 |------|-------------|---------|
-| **@bpm** | Change the global tempo | `120, "@bpm"` |
 | **@play-note** | Trigger a note with params | `{ inst: "pluck", amp: 0.5}, "@note-params"` |
 | **@play** | Trigger a note | `"@note"` |
+
 
 #### Debug
 
@@ -183,8 +189,6 @@ Play sounds and alter tempo.
 |------|-------------|---------|
 | **@print** | Print the last value of the stack | `10,"@print"` |
 | **@log** | Log the name with the last value of the stack | `"@random", "amp", "@log"` |
-
-
 
 ## Develop
 
