@@ -15,33 +15,50 @@ const vm = AshVM.init(Gibberish, {
   onstop: ({ proc }) => console.log('STOP', proc)
 })
 vm.audio.bpm = 160
+const bpmToSecs = (beats) => beats * 60 / vm.audio.bpm
 
-const INSTS = ['@pluck'] //, '@pluck', '@pluck', '@pluck', '@clave', '@pluck', '@hat', '@pluck', '@pluck', '@kick', '@pluck', '@pluck', '@pluck']
+const INSTS = ['@pluck'] //, '@pluck', '@pluck', '@clave', '@pluck', '@bass'] //, '@pluck', '@pluck', '@pluck', '@clave', '@pluck', '@hat', '@pluck', '@pluck', '@kick', '@pluck', '@pluck', '@pluck']
 const MAX_PARTS = 10 // INSTS.length
 
+const model = () => ({
+  metro: false,
+  advance: 8,
+  time: 0,
+  next: 0,
+  program: '',
+  parts: []
+})
+
 app({
-  model: {
-    next: 0,
-    program: '',
-    parts: []
-  },
+  model: model(),
   subscriptions: [
     (model, actions) => {
-      vm.run(['@loop', [1320, 0.5, '@pluck-note', 0.5, '@wait']])
+      vm.run(['@loop', [actions.trigger, model.advance, '@wait']])
     }
   ],
   actions: {
-    trigger ({ next, parts }) {
+    tick (model, data) {
+      return { time: vm.time }
+    },
+    trigger ({ next, parts, metro }) {
+      if (!metro) {
+        metro = true
+        vm.run(['@loop', [1320, 0.5, '@pluck-note', 0.5, '@wait']])
+        return { next, parts, metro }
+      }
       next++
-      const part = 'p-' + next
-      parts.push(part)
       const ptn = patterns[next]
-      const instrument = INSTS[next % INSTS.length]
-      const ops = sequence(ptn, next % 2 + 1, instrument)
-      const prog = [ part, '@spawn', ops ]
-      vm.run(prog)
-      const program = JSON.stringify(prog, null, 2)
-      if (parts.length > MAX_PARTS) {
+      let program = ''
+      if (ptn) {
+        const part = 'p-' + next
+        parts.push(part)
+        const instrument = INSTS[next % INSTS.length]
+        const ops = sequence(ptn, next % 2 + 1, instrument)
+        const prog = [ part, '@spawn', ops ]
+        vm.run(prog)
+        program = JSON.stringify(prog, null, 2)
+      }
+      if ((!ptn && parts.length) || parts.length > MAX_PARTS) {
         const toStop = parts[0]
         parts = parts.slice(1)
         vm.stop(toStop)
@@ -50,16 +67,21 @@ app({
     },
     stopAll () {
       vm.stopAll()
+      return model()
     }
   },
   view: (model, actions) => html`
     <div>
       <h1>Terry Riley In-C</h1>
-      <button onclick=${(e) => actions.trigger()}>trigger</button>
+      <button onclick=${(e) => actions.trigger()}>${model.parts.length ? 'next' : 'start'}</button>
       <button onclick=${(e) => actions.stopAll()}>stop</button>
-      <span>${model.next}/${total}</span>
       <div>
-        <span>vm: ${vm.procs.length} | ${vm.audio.bpm}bpm -- </span>
+        <span>${model.next}/${total}</span>
+        ${bpmToSecs(vm.time).toFixed(2)}
+        (rem: ${bpmToSecs((total - model.next) * model.advance)})
+      </div>
+      <div>VM -- time: ${model.time} procs: ${vm.procs.length} | ${vm.audio.bpm}bpm</div>
+      <div>
         <span>${model.parts.length + 1}: </span>
         ${model.parts.map(part => html`
           <span>${part} </span>
