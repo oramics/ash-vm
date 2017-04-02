@@ -1,15 +1,17 @@
 {
   "name": "examples",
-  "version": "1.0.0",
-  "description": "",
-  "main": "alternation.js",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AshVM examples",
+  "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
+  "author": "danigb",
+  "license": "MIT",
+  "devDependencies": {
+    "gibberish-dsp": "^2.5.0",
+    "tone": "^0.10.0",
     "hyperapp": "^0.7.1",
     "hyperx": "^2.3.0",
     "note-parser": "^2.0.0"

@@ -15,10 +15,9 @@
   "scripts": {
     "format": "prettier-standard-formatter lib/* test/*",
     "test": "eslint src && jest --coverage",
-    "dist": "npm run test && npm run dist && npm run docs",
-    "build": "rollup -cm -n AshVM -f umd -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
+    "prepublish": "npm run test && npm run dist && npm run docs",
+    "dist": "rollup -cm -n AshVM -f umd -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
     "watch": "rollup --watch -cm -n AshVM -f umd -i lib/index.js -o docs/dist/ash-vm.js",
-    "prepublish": "npm run dist",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
     "docs": "docco lib/* lib/**/* -o docs/literate"
   },
@@ -39,6 +38,10 @@
   "babel": {
     "presets": "es2015"
   },
+  "peerDependencies": {
+    "gibberish-dsp": "> 2.5.0",
+    "tone": "> 0.10.0"
+  },
   "devDependencies": {
     "babel-jest": "^19.0.0",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
@@ -50,7 +53,6 @@
     "eslint-plugin-node": "^4.2.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^2.1.1",
-    "gibberish-dsp": "^2.5.0",
     "husky": "^0.13.3",
     "jest": "^19.0.2",
     "lint-staged": "^3.4.0",
@@ -60,6 +62,7 @@
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-watch": "^3.2.2",
+    "tone": "^0.10.0",
     "wait-promise": "^0.4.1"
   },
   "lint-staged": {

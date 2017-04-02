@@ -202,7 +202,7 @@
   [
       "@loop", [
           ["@iter", [330, 440, 550, 660]],
-          ["@iter", [1, 0.7, 0.4]],
+          ["@iter", [1, 0.2, 0.1]],
           "@pluck-note",
           0.25, "@wait"
       ]
@@ -472,14 +472,13 @@
 
   </article>
   <script src="js/jquery.min.js"></script>
-  <script src="js/gibberish.min.js"></script>
   <script src="dist/ash-vm.js"></script>
   <script src="js/highlight.min.js"></script>
   <script src="js/hljs/javascript.min.js"></script>
 
 
   <script>
-  const vm = AshVM.initGibberish(Gibberish)
+  const vm = AshVM.initWebAudio({ bpm: 100 })
 
   $('.play').click(e => {
     const text = $(e.target).prev().text()

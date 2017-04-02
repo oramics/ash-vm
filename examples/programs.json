@@ -1,0 +1,43 @@
+{
+  "metronome": [
+    "@loop", ["@hat-note", 0.5, "@wait"]
+  ],
+  "scale": [
+    "@loop", ["@iter", [72, 74, 76, 77], "@mtof", "freq", "@let", "@pluck", 0.5, "@wait"]
+  ],
+  "hats": [
+    "@loop", [
+      "@iter", [0.01, 0.2, 0.01], "@hat-note",
+      "@iter", [1, 3], 8, "@div", "@wait"
+    ]
+  ],
+  "complex": [
+    "@loop", [
+      [[[4, "@randi"], 2, "@+"], 110, "@*"], "@set-freq",
+      "@get-freq", 0.6, "@pluck-note",
+      ["@get-freq", 1.5, "@mul"], 0.6, "@pluck-note",
+      0.25, "@wait"
+    ],
+    "@loop", [
+      ["@iter", [14, 15, 16, 17, 18], 88, "@mul"],
+      "@set-freq", 0.1, "@set-amp", "@pluck",
+      "@pick", [5, 7, 10], 32, "@div", "@wait"
+    ],
+    "@loop", [
+      ["@iter", [16, 6, 15, 5, 10, 4, 12], 44, "@mul"],
+      "@set-freq", 1, "@pick", [2, 3, 5, 6, 5, 6, 5], "@div", "@set-amp", "@pluck",
+      "@iter", [5, 1, 9, 1], 32, "@div", "@wait"
+    ]
+  ],
+  "modulate": [
+    "@loop", [
+      [[[4, "@randi"], 2, "@+"], 110, "@*"], "fq", "@set",
+      1, "@wait"
+    ],
+    "@loop", [
+      "fq", "@get", 0.6, "@pluck-note",
+      ["fq", "@get", 1.5, "@mul"], 0.6, "@pluck-note",
+      0.25, "@wait"
+    ]
+  ]
+}

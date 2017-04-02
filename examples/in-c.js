@@ -8,7 +8,7 @@ const { freq } = require('note-parser')
 const patterns = createPatterns()
 const total = Object.keys(patterns).length
 
-const vm = AshVM.init(Gibberish, {
+const vm = AshVM.initGibberish(Gibberish, {
   bpm: 180,
   onfork: ({ proc, program }) => console.log('FORK', proc.id, program),
   onended: ({ proc }) => console.log('ENDED', proc.id),
