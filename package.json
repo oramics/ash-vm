@@ -7,7 +7,7 @@
   "jsnext:main": "lib/index.js",
   "module": "lib/index.js",
   "license": "MIT",
-  "repository": "danigb/ash-vm",
+  "repository": "oramics/ash-vm",
   "files": [
     "lib",
     "dist"
@@ -15,8 +15,8 @@
   "scripts": {
     "format": "prettier-standard-formatter lib/* test/*",
     "test": "eslint src && jest --coverage",
-    "prepublish": "npm run test && npm run dist && npm run docs",
-    "dist": "rollup -cm -n AshVM -f umd -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
+    "no:prepublish": "npm run test && npm run dist && npm run docs",
+    "build": "rollup -cm -n AshVM -f umd -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
     "watch": "rollup --watch -cm -n AshVM -f umd -i lib/index.js -o docs/dist/ash-vm.js",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
     "docs": "docco lib/* lib/**/* -o docs/literate"
@@ -59,6 +59,7 @@
     "prettier-standard-formatter": "^0.222222222222222.333333333333333",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-filesize": "^1.2.1",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-watch": "^3.2.2",
@@ -70,6 +71,5 @@
       "prettier-standard-formatter",
       "git add"
     ]
-  },
-  "dependencies": {}
+  }
 }

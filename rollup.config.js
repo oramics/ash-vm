@@ -1,6 +1,7 @@
 import babel from "rollup-plugin-babel"
 import resolve from "rollup-plugin-node-resolve"
 import uglify from "rollup-plugin-uglify"
+import filesize from "rollup-plugin-filesize"
 
 export default {
   plugins: [
@@ -12,6 +13,7 @@ export default {
     resolve({
       jsnext: true
     }),
-    // uglify()
+    uglify(),
+    filesize(),
   ]
 }

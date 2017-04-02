@@ -1,33 +1,35 @@
 # Audio Scheduler VM
-[![Travis CI](https://img.shields.io/travis/danigb/ash-vm/master.svg)](https://travis-ci.org/danigb/ash-vm)
-[![Codecov](https://img.shields.io/codecov/c/github/danigb/ash-vm/master.svg)](https://codecov.io/gh/danigb/ash-vm)
+[![Travis CI](https://img.shields.io/travis/oramics/ash-vm/master.svg)](https://travis-ci.org/oramics/ash-vm)
+[![Codecov](https://img.shields.io/codecov/c/github/oramics/ash-vm/master.svg)](https://codecov.io/gh/oramics/ash-vm)
 [![CDNJS](https://img.shields.io/cdnjs/v/ash-vm.svg?colorB=ff69b4)](https://cdnjs.com/libraries/ash-vm)
 [![npm](https://img.shields.io/npm/v/ash-vm.svg?colorB=ff69b4)](https://www.npmjs.org/package/ash-vm)
 
 
-> `asm-vm` is a light-weight virtual machine that executes a very simple language, that captures some essential concepts for a musical live coding context, such as playing notes and looping patterns. It is intentionally limited to make it fairly easy to learn, yet also intentionally designed to make it possible to express a wide variety of ideas. It is not designed to be succinct -- it's supposed to be generated.
+> `asm-vm` is a light-weight virtual machine that executes a very simple language, that captures some essential concepts for a musical live coding context, such as playing notes and looping patterns. It is intentionally limited to make it fairly easy to learn, yet also intentionally designed to make it possible to express a wide variety of ideas.
 
-[Continue reading](https://danigb.github.io/ash-vm/)
+[Continue reading](https://oramics.github.io/ash-vm/)
 
 Idea and code by @grrrwaaa, extracted from:
 https://worldmaking.github.io/workshop_nime_2017/vm.html
 
 Currently it works with the aswesome [Gibberish](https://github.com/charlieroberts/Gibberish) by @charlieroberts
 
-Kudos for both!
+## Install
 
-## Usage
-
-Browser (8kb minified):
+**Browser**
 
 ```html
-<script src="https://danigb.github.io/ash-vm/js/gibberish.min.js"></script>
-<script src="https://danigb.github.io/ash-vm/dist/ash-vm.js"></script>
+<script src="https://oramics.github.io/ash-vm/js/gibberish.min.js"></script>
+<script src="https://oramics.github.io/ash-vm/dist/ash-vm.js"></script>
 <script>
 const vm = AshVM.init(Gibberish)
 vm.run(["@loop", [440, "freq", "@set", "@pluck", 0.5, "@wait"]])
 </script>
 ```
+
+**Node**
+
+Via npm: `npm i -S ash-vm` or with yarn: `yarn add ash-vm`
 
 ES6:
 
@@ -49,12 +51,6 @@ const vm = init(Gibberish)
 vm.run(["@loop", ["@kick", 0.5, "@wait", "@snare", 0.5, "@wait"]])
 ```
 
-## Install
-
-Via npm: `npm i -S ash-vm` or with yarn: `yarn add ash-vm`
-
-Not yet published.
-
 ## API
 
 #### `init(Gibberish)` → vm
@@ -67,7 +63,7 @@ const init = require("ash-vm").init
 const vm = init(Gibberish)
 ```
 
-#### `vm.run(program, sync = true)`
+#### `vm.run(program, sync = true)` → proc
 
 Run a program. If `sync` is true, the program will start in the next beat.
 
@@ -91,8 +87,8 @@ vm.run(["@loop", ["@bang!", 1, "@wait"]])
 
 ## Examples, docs and source code
 
-- An introduction to the language with lot of examples (by @grrrwaaa and @charlieroberts): https://danigb.github.io/ash-vm/
-- Annotated source code: https://danigb.github.io/ash-vm/literate/
+- An introduction to the language with lot of examples (by @grrrwaaa and @charlieroberts): https://oramics.github.io/ash-vm/
+- Annotated source code: https://oramics.github.io/ash-vm/literate/
 
 ## Language reference
 
