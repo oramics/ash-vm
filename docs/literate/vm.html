@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="driver.html">
+                  driver.js
+                </a>
+              
+                
                 <a class="source" href="gibberish.html">
                   gibberish.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="waa.html">
                   waa.js
+                </a>
+              
+                
+                <a class="source" href="context.html">
+                  context.js
                 </a>
               
                 
@@ -146,7 +156,7 @@ will change in the future.</p>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VM</span> </span>{
   <span class="hljs-keyword">constructor</span> (options = {}) {
-    <span class="hljs-keyword">this</span>.context = <span class="hljs-built_in">Object</span>.assign({}, options.initialContext)
+    <span class="hljs-keyword">this</span>.context = <span class="hljs-built_in">Object</span>.assign({}, options.context)
     <span class="hljs-keyword">this</span>.procs = [] <span class="hljs-comment">// the procs are inverse ordered by time</span>
     <span class="hljs-keyword">this</span>.procsByName = {} <span class="hljs-comment">// a map of names to procs</span>
     <span class="hljs-keyword">this</span>.time = <span class="hljs-number">0</span>
@@ -197,6 +207,24 @@ will change in the future.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
+              <p>Add to the initial context</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  addContext (context) {
+    <span class="hljs-built_in">Object</span>.assign(<span class="hljs-keyword">this</span>.context, context)
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.context
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
               <p>Add more commands</p>
 
             </div>
@@ -209,11 +237,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Create a new process</p>
 
@@ -225,11 +253,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>if has parent and no rate, try to use it”s rate</p>
 
@@ -240,11 +268,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>if has parent try to use it”s context</p>
 
@@ -255,11 +283,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>create the new process and insert into the process stack</p>
 
@@ -271,11 +299,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>if has name, register it</p>
 
@@ -289,11 +317,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>run the vm for the given amount of time (Infinity if not specified)</p>
 
@@ -310,11 +338,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>the proc has more operations, re-schedule</p>
 
@@ -339,11 +367,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>The stop function can stop a proccess by name or by object</p>
 
@@ -367,11 +395,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h2 id="vm-commands">VM commands</h2>
 
@@ -380,11 +408,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <table>
 <thead>
@@ -459,11 +487,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h2 id="internal-vm-functions">Internal VM functions</h2>
 
@@ -472,11 +500,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>remove a process process</p>
 
@@ -491,11 +519,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>if found, remove it</p>
 
@@ -508,11 +536,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>insert a process into a stack ordered by time
 (in fact, is inverse order because it”s a stack)</p>
@@ -525,11 +553,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>no need to sort: just push it</p>
 
@@ -541,11 +569,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>procs are sorted on insertion</p>
 
@@ -565,11 +593,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>get time of the next process</p>
 
@@ -583,11 +611,11 @@ will change in the future.</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Given a commands object, expand the aliases</p>
 

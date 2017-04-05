@@ -28,6 +28,8 @@ export class AudioDriver {
     vm.audio = this
     vm.addContext({ freq: 440, amp: 0.5 })
     vm.addCommands(this.commands)
+    // make `addInstruments` accessible
+    vm.addInstruments = this.addInstruments.bind(this)
   }
 }
 

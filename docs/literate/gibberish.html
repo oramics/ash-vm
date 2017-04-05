@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="driver.html">
+                  driver.js
+                </a>
+              
+                
                 <a class="source" href="gibberish.html">
                   gibberish.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="waa.html">
                   waa.js
+                </a>
+              
+                
+                <a class="source" href="context.html">
+                  context.js
                 </a>
               
                 
@@ -93,6 +103,8 @@
 
             </div>
             
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { AudioDriver } <span class="hljs-keyword">from</span> <span class="hljs-string">"./driver"</span></pre></div></div>
+            
         </li>
         
         
@@ -102,11 +114,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>The audio driver has two tasks:</p>
-<ol>
-<li>Control the time by calling <code>resume</code> on the VM</li>
-<li>Create and play instruments</li>
-</ol>
+              <p>This driver uses Gibberish both for scheduling and sounds</p>
 
             </div>
             
@@ -115,23 +123,17 @@
  * Create a VM plugin to add the audio driver
  * @return {Function} a VM plugin
  */</span>
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">vm, Gibberish, options</span>) </span>{
-  <span class="hljs-keyword">const</span> audio = <span class="hljs-keyword">new</span> AudioDriver(Gibberish, options)
-  createInstruments(audio.instruments, Gibberish)
-  vm.addCommands(createCommands(audio))
-  vm.audio = audio
-  audio.start(vm)
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">Gibberish, options = {}</span>) </span>{
+  <span class="hljs-keyword">if</span> (!Gibberish.context) Gibberish.init()
+  <span class="hljs-keyword">const</span> audio = <span class="hljs-keyword">new</span> GibberishDriver(Gibberish, options.bpm || <span class="hljs-number">120</span>)
+  audio.addInstruments(createInstruments(Gibberish))
   <span class="hljs-keyword">return</span> audio
 }
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AudioDriver</span> </span>{
-  <span class="hljs-keyword">constructor</span> (Gibberish, { bpm = <span class="hljs-number">120</span> } = {}) {
-    <span class="hljs-keyword">if</span> (!Gibberish.context) Gibberish.init()
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GibberishDriver</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AudioDriver</span> </span>{
+  <span class="hljs-keyword">constructor</span> (Gibberish, bpm) {
+    <span class="hljs-keyword">super</span>(bpm, Gibberish.context.sampleRate)
     <span class="hljs-keyword">this</span>.Gibberish = Gibberish
-    <span class="hljs-keyword">this</span>.bpm = bpm
-    <span class="hljs-keyword">this</span>.sampleRate = Gibberish.context.sampleRate
-    <span class="hljs-keyword">this</span>.instruments = {}
-    <span class="hljs-keyword">this</span>.commands = createCommands(<span class="hljs-keyword">this</span>)
   }</pre></div></div>
             
         </li>
@@ -148,7 +150,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>  start (vm) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.tick) {</pre></div></div>
+    <span class="hljs-keyword">super</span>.start(vm)</pre></div></div>
             
         </li>
         
@@ -163,7 +165,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">const</span> bpm2bpa = <span class="hljs-number">1</span> / (<span class="hljs-number">60</span> * <span class="hljs-keyword">this</span>.sampleRate)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">const</span> bpm2bpa = <span class="hljs-number">1</span> / (<span class="hljs-number">60</span> * <span class="hljs-keyword">this</span>.sampleRate)</pre></div></div>
             
         </li>
         
@@ -178,12 +180,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.tick = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> vm.resume(<span class="hljs-keyword">this</span>.bpm * bpm2bpa)
-      <span class="hljs-keyword">this</span>.Gibberish.sequencers.push({ <span class="hljs-attr">tick</span>: <span class="hljs-keyword">this</span>.tick })
-      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
-    } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
-    }
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.tick = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> vm.resume(<span class="hljs-keyword">this</span>.bpm * bpm2bpa)
+    <span class="hljs-keyword">this</span>.Gibberish.sequencers.push({ <span class="hljs-attr">tick</span>: <span class="hljs-keyword">this</span>.tick })
   }
 }</pre></div></div>
             
@@ -196,12 +194,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <h2 id="audio-commands">Audio commands</h2>
+              <h1 id="instruments">Instruments</h1>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">const</span> ERR_INST_MISSING = <span class="hljs-function"><span class="hljs-params">name</span> =&gt;</span> <span class="hljs-string">`Instrument "<span class="hljs-subst">${name}</span>" not found.`</span></pre></div></div>
             
         </li>
         
@@ -212,54 +207,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>@get-bpm</strong></td>
-<td>Get the global tempo value</td>
-<td><code>&quot;@pick&quot;, [1.25, 1.5, 0.75], &quot;@get-bpm&quot;, &quot;@*&quot;, &quot;@set-bpm&quot;</code></td>
-</tr>
-<tr>
-<td><strong>@set-bpm</strong></td>
-<td>Change the global tempo</td>
-<td><code>120, &quot;@set-bpm&quot;</code></td>
-</tr>
-<tr>
-<td><strong>@play</strong></td>
-<td>Trigger a note. It uses the context to select the appropiate voice and parameters</td>
-<td><code>&quot;@play&quot;</code></td>
-</tr>
-</tbody>
-</table>
+              <p>Create a trigger function for a percussion instrument</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> createCommands = <span class="hljs-function"><span class="hljs-params">audio</span> =&gt;</span> ({
-  <span class="hljs-string">"@play"</span>: <span class="hljs-function">(<span class="hljs-params">{ context, error }</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> instName = context.get(<span class="hljs-string">"voice"</span>)
-    <span class="hljs-keyword">const</span> instrument = audio.instruments[instName]
-    <span class="hljs-keyword">if</span> (instrument) {
-      instrument(context)
-    } <span class="hljs-keyword">else</span> {
-      error(ERR_INST_MISSING(instName))
-    }
-  },
-  <span class="hljs-string">"@set-bpm"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> bpm = <span class="hljs-built_in">parseFloat</span>(stack.pop(), <span class="hljs-number">10</span>)
-    <span class="hljs-keyword">if</span> (bpm &gt; <span class="hljs-number">0</span>) audio.bpm = bpm
-  },
-  <span class="hljs-string">"@scale-tempo"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> factor = <span class="hljs-built_in">parseFloat</span>(stack.pop(), <span class="hljs-number">10</span>)
-    <span class="hljs-keyword">if</span> (factor) audio.bpm = audio.bpm * factor
-  }
-})</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> perc = <span class="hljs-function">(<span class="hljs-params">inst, gain</span>) =&gt;</span> (ctx) =&gt; {
+  inst.amp = gain * ctx.get(<span class="hljs-string">"amp"</span>)
+  inst.note()
+}</pre></div></div>
             
         </li>
         
@@ -270,11 +225,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h1 id="instruments">Instruments</h1>
+              <p>Create a trigger function for a tuned percussion instrument</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createInstruments</span> (<span class="hljs-params">inst, Gibberish</span>) </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> pitched = <span class="hljs-function">(<span class="hljs-params">inst, gain</span>) =&gt;</span> (ctx) =&gt; {
+  inst.amp = gain * ctx.get(<span class="hljs-string">"amp"</span>)
+  inst.pitch = ctx.get(<span class="hljs-string">"freq"</span>)
+  inst.note()
+}</pre></div></div>
             
         </li>
         
@@ -285,16 +244,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p><strong>Kick</strong>
-<code>[0.5, &quot;amp&quot;, &quot;@let&quot;, &quot;kick&quot;, &quot;voice&quot;, &quot;@let&quot;, &quot;@play&quot;]</code></p>
+              <p>Create the basic instruments using Gibberish</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> kick = <span class="hljs-keyword">new</span> Gibberish.Kick({ <span class="hljs-attr">decay</span>: <span class="hljs-number">0.2</span> }).connect()
-  inst.kick = <span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> {
-    kick.amp = <span class="hljs-number">0.5</span> * ctx.get(<span class="hljs-string">"amp"</span>)
-    kick.note()
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createInstruments</span> (<span class="hljs-params">Gibberish</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -305,15 +259,24 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p><strong>Snare</strong></p>
+              <p>The actual instruments</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> snare = <span class="hljs-keyword">new</span> Gibberish.Snare({ <span class="hljs-attr">snappy</span>: <span class="hljs-number">1.5</span> }).connect()
-  inst.snare = <span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> {
-    snare.amp = <span class="hljs-number">0.25</span> * ctx.get(<span class="hljs-string">"amp"</span>)
-    snare.note()
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> kick = <span class="hljs-keyword">new</span> Gibberish.Kick({ <span class="hljs-attr">decay</span>: <span class="hljs-number">0.2</span> }).connect()
+  <span class="hljs-keyword">const</span> snare = <span class="hljs-keyword">new</span> Gibberish.Snare({ <span class="hljs-attr">snappy</span>: <span class="hljs-number">1.5</span> }).connect()
+  <span class="hljs-keyword">const</span> hat = <span class="hljs-keyword">new</span> Gibberish.Hat({ <span class="hljs-attr">amp</span>: <span class="hljs-number">1.5</span> }).connect()
+  <span class="hljs-keyword">const</span> conga = <span class="hljs-keyword">new</span> Gibberish.Conga({ <span class="hljs-attr">amp</span>: <span class="hljs-number">0.25</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">400</span> }).connect()
+  <span class="hljs-keyword">const</span> tom = <span class="hljs-keyword">new</span> Gibberish.Tom({ <span class="hljs-attr">amp</span>: <span class="hljs-number">0.25</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">400</span> }).connect()
+  <span class="hljs-keyword">const</span> pluck = <span class="hljs-keyword">new</span> Gibberish.PolyKarplusStrong({<span class="hljs-attr">maxVoices</span>: <span class="hljs-number">32</span>}).connect()
+  <span class="hljs-keyword">const</span> bass = <span class="hljs-keyword">new</span> Gibberish.MonoSynth({
+    <span class="hljs-attr">attack</span>: <span class="hljs-number">44</span>,
+    <span class="hljs-attr">decay</span>: Gibberish.Time.beats(<span class="hljs-number">0.25</span>),
+    <span class="hljs-attr">filterMult</span>: <span class="hljs-number">0.25</span>,
+    <span class="hljs-attr">octave2</span>: <span class="hljs-number">0</span>,
+    <span class="hljs-attr">octave3</span>: <span class="hljs-number">0</span>
+  }).connect()
+  <span class="hljs-keyword">const</span> sampleRate = Gibberish.sampleRate</pre></div></div>
             
         </li>
         
@@ -324,15 +287,20 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p><strong>HiHat</strong></p>
+              <p>The instrument trigger functions</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> hat = <span class="hljs-keyword">new</span> Gibberish.Hat({ <span class="hljs-attr">amp</span>: <span class="hljs-number">1.5</span> }).connect()
-  inst.hat = <span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> {
-    hat.amp = ctx.get(<span class="hljs-string">"amp"</span>)
-    hat.note()
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> {
+    <span class="hljs-attr">kick</span>: perc(kick, <span class="hljs-number">0.5</span>),
+    <span class="hljs-attr">snare</span>: perc(snare, <span class="hljs-number">0.25</span>),
+    <span class="hljs-attr">hat</span>: perc(hat, <span class="hljs-number">1</span>),
+    <span class="hljs-attr">conga</span>: pitched(conga, <span class="hljs-number">0.25</span>),
+    <span class="hljs-attr">tom</span>: pitched(tom, <span class="hljs-number">0.25</span>),
+    <span class="hljs-attr">pluck</span>: <span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> amp = ctx.get(<span class="hljs-string">"amp"</span>)
+      <span class="hljs-keyword">const</span> freq = ctx.get(<span class="hljs-string">"freq"</span>)
+      <span class="hljs-keyword">if</span> (freq &gt; <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -343,16 +311,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p><strong>Conga</strong></p>
+              <p>this is not in any way accurate, just a hack to make @set-dur do something semi-meaningful</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> conga = <span class="hljs-keyword">new</span> Gibberish.Conga({ <span class="hljs-attr">amp</span>: <span class="hljs-number">0.25</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">400</span> }).connect()
-  inst.conga = <span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> {
-    conga.amp = ctx.get(<span class="hljs-string">"amp"</span>) * <span class="hljs-number">0.25</span>
-    conga.pitch = ctx.get(<span class="hljs-string">"freq"</span>)
-    conga.note()
-  }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        pluck.damping = <span class="hljs-number">1</span> - (<span class="hljs-number">-6</span> / <span class="hljs-built_in">Math</span>.log(freq / sampleRate))</pre></div></div>
             
         </li>
         
@@ -363,93 +326,18 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p><strong>Tom</strong></p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> tom = <span class="hljs-keyword">new</span> Gibberish.Tom({ <span class="hljs-attr">amp</span>: <span class="hljs-number">0.25</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">400</span> }).connect()
-  inst.tom = <span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> {
-    tom.amp = ctx.get(<span class="hljs-string">"amp"</span>) * <span class="hljs-number">0.25</span>
-    tom.pitch = ctx.get(<span class="hljs-string">"freq"</span>)
-    tom.note()
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <p><strong>Pluck</strong> (strings)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> sampleRate = Gibberish.sampleRate
-  <span class="hljs-keyword">const</span> pluck = <span class="hljs-keyword">new</span> Gibberish.PolyKarplusStrong({<span class="hljs-attr">maxVoices</span>: <span class="hljs-number">32</span>}).connect()
-  inst.pluck = <span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> amp = ctx.get(<span class="hljs-string">"amp"</span>)
-    <span class="hljs-keyword">const</span> freq = ctx.get(<span class="hljs-string">"freq"</span>)
-    <span class="hljs-keyword">if</span> (freq &gt; <span class="hljs-number">0</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>this is not in any way accurate, just a hack to make @set-dur do something semi-meaningful</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      pluck.damping = <span class="hljs-number">1</span> - (<span class="hljs-number">-6</span> / <span class="hljs-built_in">Math</span>.log(freq / sampleRate))</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
-              </div>
               <p>pluck by default seem too quiet:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      pluck.note(freq, amp * amp * <span class="hljs-number">2</span>)
+            <div class="content"><div class='highlight'><pre>        pluck.note(freq, amp * amp * <span class="hljs-number">2</span>)
+      }
+    },
+    <span class="hljs-attr">bass</span>: <span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> velocity = ctx.get(<span class="hljs-string">"amp"</span>)
+      <span class="hljs-keyword">const</span> freq = ctx.get(<span class="hljs-string">"freq"</span>)
+      <span class="hljs-keyword">if</span> (freq &gt; <span class="hljs-number">0</span>) bass.note(freq, velocity)
     }
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p><strong>Bass</strong></p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> bass = <span class="hljs-keyword">new</span> Gibberish.MonoSynth({
-    <span class="hljs-attr">attack</span>: <span class="hljs-number">44</span>,
-    <span class="hljs-attr">decay</span>: Gibberish.Time.beats(<span class="hljs-number">0.25</span>),
-    <span class="hljs-attr">filterMult</span>: <span class="hljs-number">0.25</span>,
-    <span class="hljs-attr">octave2</span>: <span class="hljs-number">0</span>,
-    <span class="hljs-attr">octave3</span>: <span class="hljs-number">0</span>
-  }).connect()
-  inst.bass = <span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> {
-    <span class="hljs-keyword">const</span> velocity = ctx.get(<span class="hljs-string">"amp"</span>)
-    <span class="hljs-keyword">const</span> freq = ctx.get(<span class="hljs-string">"freq"</span>)
-    <span class="hljs-keyword">if</span> (freq &gt; <span class="hljs-number">0</span>) bass.note(freq, velocity)
   }
 }</pre></div></div>
             

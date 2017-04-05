@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Audio Scheduler Virtual Machine</title>
+  <title>context.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -91,6 +91,12 @@
     
     <ul class="sections">
         
+          <li id="title">
+              <div class="annotation">
+                  <h1>context.js</h1>
+              </div>
+          </li>
+        
         
         
         <li id="section-1">
@@ -99,17 +105,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h1 id="audio-scheduler-virtual-machine">Audio Scheduler Virtual Machine</h1>
+              <h2 id="context">Context</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { VM } <span class="hljs-keyword">from</span> <span class="hljs-string">"./vm"</span>
-<span class="hljs-keyword">import</span> gibberish <span class="hljs-keyword">from</span> <span class="hljs-string">"./audio/gibberish"</span>
-<span class="hljs-keyword">import</span> waa <span class="hljs-keyword">from</span> <span class="hljs-string">"./audio/waa"</span>
-<span class="hljs-keyword">import</span> stdlib <span class="hljs-keyword">from</span> <span class="hljs-string">"./ext/stdlib"</span>
-<span class="hljs-keyword">import</span> random <span class="hljs-keyword">from</span> <span class="hljs-string">"./ext/random"</span>
-<span class="hljs-keyword">import</span> debug <span class="hljs-keyword">from</span> <span class="hljs-string">"./ext/debug"</span>
-<span class="hljs-keyword">import</span> compatibility <span class="hljs-keyword">from</span> <span class="hljs-string">"./ext/compatibility"</span></pre></div></div>
             
         </li>
         
@@ -120,9 +118,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2 id="architecture-overview">Architecture Overview</h2>
+              <p>A context is a hierarchical structure to store values with scope</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Context</span> </span>{
+  <span class="hljs-keyword">constructor</span> (parent) {
+    <span class="hljs-keyword">if</span> (parent <span class="hljs-keyword">instanceof</span> Context) <span class="hljs-keyword">this</span>.parent = parent
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parent) <span class="hljs-keyword">this</span>.local = <span class="hljs-built_in">Object</span>.assign({}, parent)
+  }</pre></div></div>
             
         </li>
         
@@ -133,12 +137,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>The main purpose of the virtual machine is to run processes concurrently.
-It holds a <code>commands</code> object (that maps instruction names to functions)
-and schedules a collection of <code>processes</code>. Each <strong>process</strong> has an values <code>stack</code>
-and <code>operations</code> stack (to be executed).</p>
+              <p>Create a child</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  child (local) {
+    <span class="hljs-keyword">const</span> c = <span class="hljs-keyword">new</span> Context(<span class="hljs-keyword">this</span>)
+    c.local = <span class="hljs-built_in">Object</span>.assign({}, local)
+    <span class="hljs-keyword">return</span> c
+  }</pre></div></div>
             
         </li>
         
@@ -149,17 +156,17 @@ and <code>operations</code> stack (to be executed).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h2 id="api">API</h2>
+              <p>get a value from a context</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">initGibberish</span> (<span class="hljs-params">Gibberish, options</span>) </span>{
-  <span class="hljs-keyword">return</span> init(gibberish, Gibberish, options)
-}
-
-<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">initWebAudio</span> (<span class="hljs-params">context, options</span>) </span>{
-  <span class="hljs-keyword">return</span> init(waa, context, options)
-}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  get (id) {
+    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>
+    <span class="hljs-keyword">while</span> (target.value(id) === <span class="hljs-literal">undefined</span> &amp;&amp; target.parent) {
+      target = target.parent
+    }
+    <span class="hljs-keyword">return</span> target.value(id)
+  }</pre></div></div>
             
         </li>
         
@@ -170,12 +177,17 @@ and <code>operations</code> stack (to be executed).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>the init function creates a vm controlled by Gibberish</p>
+              <p>set a value from a context</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">driver, audio, options = {}</span>) </span>{
-  <span class="hljs-keyword">const</span> { plugins } = options</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  set (id, value) {
+    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>
+    <span class="hljs-keyword">while</span> (target.value(id) === <span class="hljs-literal">undefined</span> &amp;&amp; target.parent) {
+      target = target.parent
+    }
+    target.let(id, value)
+  }</pre></div></div>
             
         </li>
         
@@ -186,11 +198,13 @@ and <code>operations</code> stack (to be executed).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Create the virtual machine</p>
+              <p>get a value from the local scope of a context</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM(options)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  value (id) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.local ? <span class="hljs-keyword">this</span>.local[id] : <span class="hljs-literal">undefined</span>
+  }</pre></div></div>
             
         </li>
         
@@ -201,46 +215,14 @@ and <code>operations</code> stack (to be executed).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Install the audio driver</p>
+              <p>set a value into the local scope of a context</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  driver(audio, options).start(vm)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>Include all the commands</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  vm.addCommands(stdlib)
-  vm.addCommands(random(options))
-  vm.addCommands(debug(options))
-  vm.addCommands(compatibility(options))</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>Add the plugins if any</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (plugins) plugins.forEach(<span class="hljs-function"><span class="hljs-params">cmds</span> =&gt;</span> vm.addCommands(cmds))
-
-  <span class="hljs-keyword">return</span> vm
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">let</span> (id, value) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.local) <span class="hljs-keyword">this</span>.local = {}
+    <span class="hljs-keyword">this</span>.local[id] = value
+  }
 }</pre></div></div>
             
         </li>

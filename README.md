@@ -18,17 +18,6 @@ Currently it works with the aswesome [Gibberish](https://github.com/charlierober
 
 The current distribution is 13Kb minified and 4.5Kb minified and gzipped.
 
-**Browser**
-
-```html
-<script src="https://oramics.github.io/ash-vm/js/gibberish.min.js"></script>
-<script src="https://oramics.github.io/ash-vm/dist/ash-vm.js"></script>
-<script>
-const vm = AshVM.init(Gibberish)
-vm.run(["@loop", [440, "freq", "@set", "@pluck", 0.5, "@wait"]])
-</script>
-```
-
 **Node**
 
 Via npm: `npm i -S ash-vm` or with yarn: `yarn add ash-vm`
@@ -36,28 +25,71 @@ Via npm: `npm i -S ash-vm` or with yarn: `yarn add ash-vm`
 ES6:
 
 ```js
-import Gibberish from "gibberish-dsp"
-import { init } from "ash-vm"
-
-const vm = init(Gibberish)
-vm.run(["@loop", [440, "freq", "@set", "@pluck", 0.5, "@wait"]])
+import * as AshVM from "ash-vm"
 ```
 
 ES5:
 
 ```js
-const Gibberish = require("gibberish-dsp")
-const init = require("ash-vm").init
-
-const vm = init(Gibberish)
-vm.run(["@loop", ["@kick", 0.5, "@wait", "@snare", 0.5, "@wait"]])
+const AshVM = require("ash-vm")
 ```
+
+**Browser**
+
+You can use the [ash-vm.js](https://raw.githubusercontent.com/oramics/ash-vm/master/dist/ash-vm.js) file.
+Here's an example of use with Gibberish:
+
+```html
+<script src="https://oramics.github.io/ash-vm/js/gibberish.min.js"></script>
+<script src="https://oramics.github.io/ash-vm/dist/ash-vm.js"></script>
+<script>
+const vm = AshVM.initGibberish(Gibberish)
+vm.run(["@loop", [440, "freq", "@set", "@pluck", 0.5, "@wait"]])
+</script>
+```
+
+## Usage
+
+AshVM can be used with different audio libraries:
+
+#### Web Audio API
+
+You can use the Web Audio API directly, but you have to add your own sounds:
+
+```js
+// ES5
+const AshVM = require("ash-vm")
+// ES6
+import * as AshVM from "ash-vm"
+
+const vm = AshVM.initWebAudio(new AudioContext(), { bpm: 120 })
+// create your own voices
+vm.addVoices({
+  "bass": (ctx, when) => {
+    const freq = ctx.get("freq")
+    const amp = ctx.get("amp")
+    ...
+  }
+})
+```
+
+#### Gibberish
+
+AshVM is originally developed to use [Gibberish]. It comes with nice sounding instruments:
+
+```js
+import * as AshVM from "ash-vm"
+import * as Gibberish from "gibberish-dsp"
+const vm = AshVM.initGibberish(Gibberish, { bpm: 100 })
+```
+
 
 ## API
 
-#### `init(Gibberish)` → vm
+#### `initGibberish(Gibberish)` → vm
+#### `initWebAudio(audioContext)` → vm
 
-The init function receives an audio driver (currently only Gibberish) and returns a virtual machine:
+The `initXXX` function receives an audio driver and returns a virtual machine:
 
 ```js
 const Gibberish = require("gibberish-dsp")
@@ -85,6 +117,21 @@ vm.addCommands({
 })
 
 vm.run(["@loop", ["@bang!", 1, "@wait"]])
+```
+
+#### `vm.addInstruments(instruments)`
+
+You can extend the instruments by adding instruments. An instrument is a function that receives a Context and trigger a sound:
+
+```js
+const synth = Gibberish.Monosynth().connect()
+
+vm.addInstruments({
+  "synth": (ctx) => {
+    synth.freq = ctx.get("freq")
+    synth.note()
+  }
+})
 ```
 
 ## Examples, docs and source code
@@ -134,9 +181,9 @@ Every process has a context, a time and rate.
 
 | Name | Description | Example |
 |------|-------------|---------|
-| **@let** | Assign a value to the local context | `10,'repetitions',@let` |
-| **@set** | Assign a value to the global context | `10,'parts',@set` |
-| **@get** | Push the value of a variable into the stack | `'repetitions',@get` |
+| **@let** | Assign a value to the local context | `10,"repetitions",@let` |
+| **@set** | Assign a value to the global context | `10,"parts",@set` |
+| **@get** | Push the value of a variable into the stack | `"repetitions",@get` |
 
 #### Time and tempo
 
@@ -144,7 +191,7 @@ Every process has a context, a time and rate.
 |------|-------------|---------|
 | **@wait** | Wait an amount of time (in beats) | `1,@wait` |
 | **@sync** | Wait until next beat | `@sync` |
-| **@scale-rate** | Scale the time rate by a factor | `1.5, '@scale-rate'` |
+| **@scale-rate** | Scale the time rate by a factor | `1.5, "@scale-rate"` |
 | **@set-bpm** | Set the global tempo in beats per minute | `120, "@set-bpm"` |
 | **@scale-tempo** | Scale the global tempo by a factor | `0.75`, "@scale-tempo"
 
@@ -152,7 +199,7 @@ Every process has a context, a time and rate.
 
 | Name | Description | Example |
 |------|-------------|---------|
-| **@execute** | Execute an instruction | `10,'dup','@execute'` |
+| **@execute** | Execute an instruction | `10,"dup","@execute"` |
 | **@dup** | Duplicate item (so you can use it twice) | `10,@dup` |
 | **@repeat** | Repeat | `4, "@repeat", ["@kick", 0.5, "@wait"]` |
 | **@forever** | Repeat forever | `"@forever", ["@kick", 0.5, "@wait"]` |
@@ -162,7 +209,7 @@ Every process has a context, a time and rate.
 | Name | Description | Example |
 |------|-------------|---------|
 | **@iter** | Iterate a pattern | `[["@iter", [0.3, 1]], "amp", "@set"]` |
-| **@rotate** | Rotate a pattern | `3, '@rotate', [1, 2, 3, 4]` |
+| **@rotate** | Rotate a pattern | `3, "@rotate", [1, 2, 3, 4]` |
 
 #### Randomness
 
@@ -173,7 +220,7 @@ Every process has a context, a time and rate.
 | **@randi** | Generate a random integer between 0 and n | `[60, "@randi", "midi", "@set"]` |
 | **@pick** | Pick a random element from a list | `["@pick", [1, 2, 3, 4]]` |
 | **@chance** | Probabilistic execution | `probability, "@chance", executed-if-true, executed-if-false` |
-| **@shuffle** | Shuffle a list | `'@shuffle', [1, 2, 3]` |
+| **@shuffle** | Shuffle a list | `"@shuffle", [1, 2, 3]` |
 
 #### Playing sounds
 
@@ -190,11 +237,16 @@ Every process has a context, a time and rate.
 | **@print** | Print the last value of the stack | `10,"@print"` |
 | **@log** | Log the name with the last value of the stack | `"@random", "amp", "@log"` |
 
-## Develop
+## Contribute & development
 
 You need node and npm installed. [Yarn](https://yarnpkg.com/en/docs/install) recommended.
 
-1. Clone this repo
-2. Install dependencies: `npm i` or `yarn`
+1. Fork and clone this repository
+2. Install dependencies: `yarn` or `npm install`
 3. Run tests: `npm test`
-4. Contribute
+4. Make changes
+5. Create a pull request
+
+## License
+
+MIT License

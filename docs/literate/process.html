@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="driver.html">
+                  driver.js
+                </a>
+              
+                
                 <a class="source" href="gibberish.html">
                   gibberish.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="waa.html">
                   waa.js
+                </a>
+              
+                
+                <a class="source" href="context.html">
+                  context.js
                 </a>
               
                 
@@ -92,6 +102,8 @@
               <h1 id="process">Process</h1>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> Context <span class="hljs-keyword">from</span> <span class="hljs-string">"./context"</span></pre></div></div>
             
         </li>
         
@@ -464,135 +476,6 @@ we need add to the program operations in reverse order</p>
             
             <div class="content"><div class='highlight'><pre>  error (instr, msg, obj) {
     <span class="hljs-built_in">console</span>.error(instr, msg, obj, <span class="hljs-string">"id"</span>, <span class="hljs-keyword">this</span>.id, <span class="hljs-string">"time"</span>, <span class="hljs-keyword">this</span>.time)
-  }
-}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-25">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
-              </div>
-              <h2 id="context">Context</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-26">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
-              </div>
-              <p>A context is a hierarchical structure to store values with scope</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Context</span> </span>{
-  <span class="hljs-keyword">constructor</span> (parent) {
-    <span class="hljs-keyword">if</span> (parent <span class="hljs-keyword">instanceof</span> Context) <span class="hljs-keyword">this</span>.parent = parent
-    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parent) <span class="hljs-keyword">this</span>.local = <span class="hljs-built_in">Object</span>.assign({}, parent)
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-27">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <p>Create a child</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  child (local) {
-    <span class="hljs-keyword">const</span> c = <span class="hljs-keyword">new</span> Context(<span class="hljs-keyword">this</span>)
-    c.local = <span class="hljs-built_in">Object</span>.assign({}, local)
-    <span class="hljs-keyword">return</span> c
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <p>get a value from a context</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  get (id) {
-    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>
-    <span class="hljs-keyword">while</span> (target.value(id) === <span class="hljs-literal">undefined</span> &amp;&amp; target.parent) {
-      target = target.parent
-    }
-    <span class="hljs-keyword">return</span> target.value(id)
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              <p>set a value from a context</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  set (id, value) {
-    <span class="hljs-keyword">let</span> target = <span class="hljs-keyword">this</span>
-    <span class="hljs-keyword">while</span> (target.value(id) === <span class="hljs-literal">undefined</span> &amp;&amp; target.parent) {
-      target = target.parent
-    }
-    target.let(id, value)
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <p>get a value from the local scope of a context</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  value (id) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.local ? <span class="hljs-keyword">this</span>.local[id] : <span class="hljs-literal">undefined</span>
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-31">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
-              </div>
-              <p>set a value into the local scope of a context</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">let</span> (id, value) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.local) <span class="hljs-keyword">this</span>.local = {}
-    <span class="hljs-keyword">this</span>.local[id] = value
   }
 }</pre></div></div>
             

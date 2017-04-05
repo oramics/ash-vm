@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>waa.js</title>
+  <title>Web Audio API Audio Driver</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -20,6 +20,11 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="driver.html">
+                  driver.js
+                </a>
+              
+                
                 <a class="source" href="gibberish.html">
                   gibberish.js
                 </a>
@@ -27,6 +32,11 @@
                 
                 <a class="source" href="waa.html">
                   waa.js
+                </a>
+              
+                
+                <a class="source" href="context.html">
+                  context.js
                 </a>
               
                 
@@ -81,12 +91,6 @@
     
     <ul class="sections">
         
-          <li id="title">
-              <div class="annotation">
-                  <h1>waa.js</h1>
-              </div>
-          </li>
-        
         
         
         <li id="section-1">
@@ -95,52 +99,87 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <h1 id="web-audio-api-audio-driver">Web Audio API Audio Driver</h1>
+
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-comment">/* global AudioContext */</span>
+<span class="hljs-keyword">import</span> { AudioDriver, ERR_INST_MISSING } <span class="hljs-keyword">from</span> <span class="hljs-string">"./driver"</span>
+
 <span class="hljs-keyword">const</span> timeToBeats = <span class="hljs-function">(<span class="hljs-params">time, bpm</span>) =&gt;</span> time * bpm / <span class="hljs-number">60</span>
 <span class="hljs-keyword">const</span> beatsToTime = <span class="hljs-function">(<span class="hljs-params">beats, bpm</span>) =&gt;</span> beats * <span class="hljs-number">60</span> / bpm
 
-<span class="hljs-keyword">const</span> ERR_INSTRUMENT_NOT_FOUND = <span class="hljs-string">"Instrument not found: "</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">context, options = {}</span>) </span>{
+  context = context || <span class="hljs-keyword">new</span> AudioContext()
+  <span class="hljs-keyword">const</span> audio = <span class="hljs-keyword">new</span> WebAudioDriver(context, options.bpm || <span class="hljs-number">120</span>)
+  audio.addInstruments(createInstruments(context))
+  <span class="hljs-keyword">return</span> audio
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="audio-driver">Audio driver</h2>
 
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">waa</span> (<span class="hljs-params">options = {}</span>) </span>{
-  <span class="hljs-keyword">const</span> ac = options.context || <span class="hljs-keyword">new</span> AudioContext()
-  <span class="hljs-keyword">const</span> driver = {
-    <span class="hljs-attr">paused</span>: <span class="hljs-literal">false</span>,
-    <span class="hljs-attr">bpm</span>: options.bpm || <span class="hljs-number">120</span>,
-    <span class="hljs-attr">instruments</span>: {
-      <span class="hljs-attr">pluck</span>: <span class="hljs-function">(<span class="hljs-params">time, ctx</span>) =&gt;</span> synth(ac, time, ctx.get(<span class="hljs-string">"freq"</span>), ctx.get(<span class="hljs-string">"amp"</span>), <span class="hljs-number">0.5</span>),
-      <span class="hljs-attr">hat</span>: <span class="hljs-function">(<span class="hljs-params">time, ctx</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">4000</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.1</span>),
-      <span class="hljs-attr">kick</span>: <span class="hljs-function">(<span class="hljs-params">time, ctx</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">100</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0.2</span>),
-      <span class="hljs-attr">snare</span>: <span class="hljs-function">(<span class="hljs-params">time, ctx</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">476</span>, <span class="hljs-number">0.6</span>, <span class="hljs-number">0.2</span>),
-      <span class="hljs-attr">tom</span>: <span class="hljs-function">(<span class="hljs-params">time, ctx</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">200</span>, <span class="hljs-number">0.4</span>, <span class="hljs-number">0.4</span>),
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WebAudioDriver</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AudioDriver</span> </span>{
+  <span class="hljs-keyword">constructor</span> (audioContext, bpm) {
+    <span class="hljs-keyword">super</span>(bpm, audioContext.sampleRate)
+    <span class="hljs-keyword">this</span>.ac = audioContext</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>override the <strong>@play</strong> command to provide <code>when</code> paramter to trigger</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.commands[<span class="hljs-string">"@play"</span>] = <span class="hljs-function">(<span class="hljs-params">{ time, context, error }</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> when = beatsToTime(time, <span class="hljs-keyword">this</span>.bpm) + <span class="hljs-keyword">this</span>.zero
+      <span class="hljs-keyword">const</span> inst = context.get(<span class="hljs-string">"voice"</span>)
+      <span class="hljs-keyword">const</span> trigger = <span class="hljs-keyword">this</span>.instruments[inst]
+      <span class="hljs-keyword">if</span> (!trigger) error(<span class="hljs-string">"@play"</span>, ERR_INST_MISSING(inst))
+      <span class="hljs-keyword">else</span> trigger(context, when)
     }
   }
 
-  driver.stop = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> clearInterval(driver.seq)
-
-  <span class="hljs-keyword">const</span> step = <span class="hljs-number">0.1</span>
-  <span class="hljs-keyword">const</span> dur = timeToBeats(step, driver.bpm)
-  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">vm</span>) </span>{
-    <span class="hljs-keyword">const</span> zero = ac.currentTime
-    clock(ac, time =&gt; {
-      vm.resume(dur)
+  start (vm) {
+    <span class="hljs-keyword">super</span>.start(vm)
+    <span class="hljs-keyword">const</span> step = <span class="hljs-number">0.1</span>
+    <span class="hljs-keyword">this</span>.zero = <span class="hljs-keyword">this</span>.ac.currentTime
+    clock(<span class="hljs-keyword">this</span>.ac, (time) =&gt; {
+      vm.resume(timeToBeats(step, <span class="hljs-keyword">this</span>.bpm))
     }, step)
-    vm.audio = driver
-    <span class="hljs-keyword">return</span> {
-      <span class="hljs-string">"@play"</span>: <span class="hljs-function">(<span class="hljs-params">{ time, context, error }</span>) =&gt;</span> {
-        <span class="hljs-keyword">const</span> when = beatsToTime(time, driver.bpm) + zero
-        <span class="hljs-keyword">const</span> inst = context.get(<span class="hljs-string">"inst"</span>)
-        <span class="hljs-keyword">const</span> trigger = driver.instruments[inst]
-        <span class="hljs-keyword">if</span> (!trigger) error(<span class="hljs-string">"@play"</span>, ERR_INSTRUMENT_NOT_FOUND, inst)
-        <span class="hljs-keyword">else</span> trigger(when, context)
-      }
-    }
   }
-}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="scheduling">Scheduling</h2>
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clock</span> (<span class="hljs-params">ac, callback, time</span>) </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clock</span> (<span class="hljs-params">ac, callback, time</span>) </span>{
   <span class="hljs-keyword">const</span> lookAhead = time || <span class="hljs-number">0.1</span>
   <span class="hljs-keyword">const</span> updateInterval = lookAhead / <span class="hljs-number">3</span>
   <span class="hljs-keyword">let</span> next = ac.currentTime + lookAhead
@@ -157,13 +196,27 @@
         </li>
         
         
-        <li id="section-2">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>A minimalistic synth (mostly for testing)</p>
+              <h2 id="instruments">Instruments</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>The Web Audio API driver comes with a very simple sound generator
+(mostly for testing)</p>
 
             </div>
             
@@ -181,6 +234,29 @@
   osc.stop(time + decay + <span class="hljs-number">0.1</span>)
   <span class="hljs-keyword">return</span> osc
 }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Create instruments</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> createInstruments = <span class="hljs-function">(<span class="hljs-params">ac</span>) =&gt;</span> ({
+  <span class="hljs-attr">kick</span>: <span class="hljs-function">(<span class="hljs-params">ctx, time</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">100</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0.2</span>),
+  <span class="hljs-attr">snare</span>: <span class="hljs-function">(<span class="hljs-params">ctx, time</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">476</span>, <span class="hljs-number">0.6</span>, <span class="hljs-number">0.2</span>),
+  <span class="hljs-attr">hat</span>: <span class="hljs-function">(<span class="hljs-params">ctx, time</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">4000</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.1</span>),
+  <span class="hljs-attr">conga</span>: <span class="hljs-function">(<span class="hljs-params">ctx, time</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">4000</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.1</span>),
+  <span class="hljs-attr">tom</span>: <span class="hljs-function">(<span class="hljs-params">ctx, time</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">200</span>, <span class="hljs-number">0.4</span>, <span class="hljs-number">0.4</span>),
+  <span class="hljs-attr">pluck</span>: <span class="hljs-function">(<span class="hljs-params">ctx, time</span>) =&gt;</span> synth(ac, time, ctx.get(<span class="hljs-string">"freq"</span>), ctx.get(<span class="hljs-string">"amp"</span>), <span class="hljs-number">0.5</span>),
+  <span class="hljs-attr">bass</span>: <span class="hljs-function">(<span class="hljs-params">ctx, time</span>) =&gt;</span> synth(ac, time, <span class="hljs-number">0.5</span> * ctx.get(<span class="hljs-string">"freq"</span>), ctx.get(<span class="hljs-string">"amp"</span>), <span class="hljs-number">0.5</span>),
+})</pre></div></div>
             
         </li>
         
