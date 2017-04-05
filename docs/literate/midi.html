@@ -25,13 +25,8 @@
                 </a>
               
                 
-                <a class="source" href="builders.html">
-                  builders.js
-                </a>
-              
-                
-                <a class="source" href="commands.html">
-                  commands.js
+                <a class="source" href="waa.html">
+                  waa.js
                 </a>
               
                 
@@ -52,6 +47,11 @@
                 
                 <a class="source" href="random.html">
                   random.js
+                </a>
+              
+                
+                <a class="source" href="stdlib.html">
+                  stdlib.js
                 </a>
               
                 
@@ -125,7 +125,7 @@ not working yet</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@note-on'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@note-on"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
       <span class="hljs-keyword">const</span> chan = <span class="hljs-built_in">Number</span>(stack.pop())
       <span class="hljs-keyword">const</span> vel = <span class="hljs-built_in">Number</span>(stack.pop())
       <span class="hljs-keyword">const</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop())
@@ -145,7 +145,7 @@ not working yet</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@note-off'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@note-off"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
       <span class="hljs-keyword">const</span> chan = <span class="hljs-built_in">Number</span>(stack.pop())
       <span class="hljs-keyword">const</span> vel = <span class="hljs-built_in">Number</span>(stack.pop())
       <span class="hljs-keyword">const</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop())
@@ -165,7 +165,7 @@ not working yet</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@note'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@note"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
       <span class="hljs-keyword">const</span> { stack, operations } = proc
       <span class="hljs-keyword">const</span> dur = <span class="hljs-built_in">Number</span>(stack.pop())
       <span class="hljs-keyword">let</span> chan = <span class="hljs-built_in">Number</span>(stack.pop())
@@ -173,7 +173,7 @@ not working yet</p>
       <span class="hljs-keyword">let</span> pitch = <span class="hljs-built_in">Number</span>(stack.pop())
 
       sendMidi([<span class="hljs-number">0x90</span> + chan, pitch, vel], <span class="hljs-number">0</span>)
-      operations.push([<span class="hljs-string">'@fork'</span>, [dur, <span class="hljs-string">'@wait'</span>, pitch, <span class="hljs-number">0</span>, chan, <span class="hljs-string">'note-off'</span>]])
+      operations.push([<span class="hljs-string">"@fork"</span>, [dur, <span class="hljs-string">"@wait"</span>, pitch, <span class="hljs-number">0</span>, chan, <span class="hljs-string">"note-off"</span>]])
     },</pre></div></div>
             
         </li>
@@ -189,7 +189,7 @@ not working yet</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@cc'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@cc"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
       <span class="hljs-keyword">let</span> chan = <span class="hljs-built_in">Number</span>(stack.pop())
       <span class="hljs-keyword">let</span> value = <span class="hljs-built_in">Number</span>(stack.pop())
       <span class="hljs-keyword">const</span> controller = <span class="hljs-built_in">Number</span>(stack.pop())</pre></div></div>

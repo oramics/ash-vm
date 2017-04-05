@@ -25,13 +25,8 @@
                 </a>
               
                 
-                <a class="source" href="builders.html">
-                  builders.js
-                </a>
-              
-                
-                <a class="source" href="commands.html">
-                  commands.js
+                <a class="source" href="waa.html">
+                  waa.js
                 </a>
               
                 
@@ -52,6 +47,11 @@
                 
                 <a class="source" href="random.html">
                   random.js
+                </a>
+              
+                
+                <a class="source" href="stdlib.html">
+                  stdlib.js
                 </a>
               
                 
@@ -93,11 +93,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { VM } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vm'</span>
-<span class="hljs-keyword">import</span> gibberish <span class="hljs-keyword">from</span> <span class="hljs-string">'./audio/gibberish'</span>
-<span class="hljs-keyword">import</span> random <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/random'</span>
-<span class="hljs-keyword">import</span> debug <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/debug'</span>
-<span class="hljs-keyword">import</span> compatibility <span class="hljs-keyword">from</span> <span class="hljs-string">'./ext/compatibility'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { VM } <span class="hljs-keyword">from</span> <span class="hljs-string">"./vm"</span>
+<span class="hljs-keyword">import</span> gibberish <span class="hljs-keyword">from</span> <span class="hljs-string">"./audio/gibberish"</span>
+<span class="hljs-keyword">import</span> waa <span class="hljs-keyword">from</span> <span class="hljs-string">"./audio/waa"</span>
+<span class="hljs-keyword">import</span> stdlib <span class="hljs-keyword">from</span> <span class="hljs-string">"./ext/stdlib"</span>
+<span class="hljs-keyword">import</span> random <span class="hljs-keyword">from</span> <span class="hljs-string">"./ext/random"</span>
+<span class="hljs-keyword">import</span> debug <span class="hljs-keyword">from</span> <span class="hljs-string">"./ext/debug"</span>
+<span class="hljs-keyword">import</span> compatibility <span class="hljs-keyword">from</span> <span class="hljs-string">"./ext/compatibility"</span></pre></div></div>
             
         </li>
         
@@ -141,6 +143,14 @@ and <code>operations</code> stack (to be executed).</p>
 
             </div>
             
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">initGibberish</span> (<span class="hljs-params">Gibberish, options</span>) </span>{
+  <span class="hljs-keyword">return</span> init(gibberish, Gibberish, options)
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">initWebAudio</span> (<span class="hljs-params">context, options</span>) </span>{
+  <span class="hljs-keyword">return</span> init(waa, context, options)
+}</pre></div></div>
+            
         </li>
         
         
@@ -154,7 +164,7 @@ and <code>operations</code> stack (to be executed).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">Gibberish, options = {}</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params">driver, audio, options = {}</span>) </span>{
   <span class="hljs-keyword">const</span> { plugins } = options</pre></div></div>
             
         </li>
@@ -170,7 +180,7 @@ and <code>operations</code> stack (to be executed).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM({ <span class="hljs-attr">amp</span>: <span class="hljs-number">0.5</span>, <span class="hljs-attr">freq</span>: <span class="hljs-number">440</span> }, options)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> vm = <span class="hljs-keyword">new</span> VM(options)</pre></div></div>
             
         </li>
         
@@ -181,11 +191,11 @@ and <code>operations</code> stack (to be executed).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Init the audio driver and use its commands</p>
+              <p>Install the audio driver</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  vm.addCommands(gibberish(Gibberish, options))</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  driver(vm, audio, options)</pre></div></div>
             
         </li>
         
@@ -196,11 +206,12 @@ and <code>operations</code> stack (to be executed).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Include all the command extensions</p>
+              <p>Include all the commands</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  vm.addCommands(random(options))
+            <div class="content"><div class='highlight'><pre>  vm.addCommands(stdlib)
+  vm.addCommands(random(options))
   vm.addCommands(debug(options))
   vm.addCommands(compatibility(options))</pre></div></div>
             

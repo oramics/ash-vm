@@ -1,20 +1,20 @@
 // # Compatibility plugin
 
 import { isArray } from "../utils"
-import { ERR_EXPECT_PATTERN } from "../commands"
+import { ERR_EXPECT_PATTERN } from "../vm"
 
 // This plugin adds language compatibility to the previous version
 
 // Given an instrument name, returns a command that play that instrument
-const inst = name => ({ operations }) => {
-  operations.push([name, "inst", "@let", "@play"])
+const voice = name => ({ operations }) => {
+  operations.push([name, "voice", "@let", "@play"])
 }
-const instNote = (name, p1, p2) => ({ stack, operations }) => {
+const voiceNote = (name, p1, p2) => ({ stack, operations }) => {
   operations.push(p2
     ? [stack.pop(), p2, "@let", stack.pop(), p1, "@let",
-      name, "inst", "@let", "@play"]
+      name, "voice", "@let", "@play"]
     : [stack.pop(), p1, "@let",
-      name, "inst", "@let", "@play"])
+      name, "voice", "@let", "@play"])
 }
 
 export default function init () {
@@ -36,21 +36,21 @@ export default function init () {
     "@map": "@linear",
 
     // Instrument names
-    "@pluck": inst("pluck"),
-    "@pluck-note": instNote("pluck", "freq", "amp"),
-    "@bass": inst("bass"),
-    "@bass-note": instNote("bass", "freq", "amp"),
-    "@hat": inst("hat"),
-    "@hat-note": instNote("hat", "amp"),
-    "@kick": inst("kick"),
-    "@kick-note": instNote("kick", "amp"),
-    "@snare": inst("snare"),
-    "@snare-note": instNote("snare", "amp"),
-    "@conga": inst("conga"),
-    "@conga-note": instNote("conga", "amp"),
-    "@clave": inst("clave"),
-    "@clave-note": instNote("clave", "amp"),
-    "@tom": inst("tom"),
-    "@tom-note": instNote("tom", "amp"),
+    "@pluck": voice("pluck"),
+    "@pluck-note": voiceNote("pluck", "freq", "amp"),
+    "@bass": voice("bass"),
+    "@bass-note": voiceNote("bass", "freq", "amp"),
+    "@hat": voice("hat"),
+    "@hat-note": voiceNote("hat", "amp"),
+    "@kick": voice("kick"),
+    "@kick-note": voiceNote("kick", "amp"),
+    "@snare": voice("snare"),
+    "@snare-note": voiceNote("snare", "amp"),
+    "@conga": voice("conga"),
+    "@conga-note": voiceNote("conga", "amp"),
+    "@clave": voice("clave"),
+    "@clave-note": voiceNote("clave", "amp"),
+    "@tom": voice("tom"),
+    "@tom-note": voiceNote("tom", "amp"),
   }
 }

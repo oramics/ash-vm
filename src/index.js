@@ -1,10 +1,11 @@
 // # Audio Scheduler Virtual Machine
-import { VM } from './vm'
-import gibberish from './audio/gibberish'
-import waa from './audio/waa'
-import random from './ext/random'
-import debug from './ext/debug'
-import compatibility from './ext/compatibility'
+import { VM } from "./vm"
+import gibberish from "./audio/gibberish"
+import waa from "./audio/waa"
+import stdlib from "./ext/stdlib"
+import random from "./ext/random"
+import debug from "./ext/debug"
+import compatibility from "./ext/compatibility"
 
 // ## Architecture Overview
 
@@ -14,22 +15,24 @@ import compatibility from './ext/compatibility'
 // and `operations` stack (to be executed).
 
 // ## API
-export function initGibberish (Gibberish, options = {}) {
-  return init(gibberish(Gibberish, options), options)
+export function initGibberish (Gibberish, options) {
+  return init(gibberish, Gibberish, options)
 }
 
-export function initWebAudio (Tone, options = {}) {
-  return init(waa(Tone, options), options)
+export function initWebAudio (context, options) {
+  return init(waa, context, options)
 }
 
 // the init function creates a vm controlled by Gibberish
-export function init (driver, options = {}) {
+export function init (driver, audio, options = {}) {
   const { plugins } = options
   // Create the virtual machine
-  const vm = new VM({ amp: 0.5, freq: 440 }, options)
-  // Use the audio driver
-  vm.addCommands(driver)
-  // Include all the command extensions
+  const vm = new VM(options)
+  // Install the audio driver
+  driver(audio, options).start(vm)
+
+  // Include all the commands
+  vm.addCommands(stdlib)
   vm.addCommands(random(options))
   vm.addCommands(debug(options))
   vm.addCommands(compatibility(options))

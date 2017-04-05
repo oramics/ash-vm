@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Standard library</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="gibberish.html">
+                  gibberish.js
+                </a>
+              
+                
+                <a class="source" href="waa.html">
+                  waa.js
+                </a>
+              
+                
+                <a class="source" href="compatibility.html">
+                  compatibility.js
+                </a>
+              
+                
+                <a class="source" href="debug.html">
+                  debug.js
+                </a>
+              
+                
+                <a class="source" href="midi.html">
+                  midi.js
+                </a>
+              
+                
+                <a class="source" href="random.html">
+                  random.js
+                </a>
+              
+                
+                <a class="source" href="stdlib.html">
+                  stdlib.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
+                <a class="source" href="process.html">
+                  process.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="vm.html">
+                  vm.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1 id="standard-library">Standard library</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { isArray, isString, last } <span class="hljs-keyword">from</span> <span class="hljs-string">"../utils"</span>
+<span class="hljs-keyword">import</span> { ERR_EXPECT_PATTERN, ERR_EXPECT_STRING } <span class="hljs-keyword">from</span> <span class="hljs-string">"../vm"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>The standard library include basic (arithmetic, logic, etc.) commands</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p><strong>wrap</strong>
+A modulo operation that handles negative n more appropriately
+e.g. wrap(-1, 3) returns 2
+see <a href="http://en.wikipedia.org/wiki/Modulo_operation">http://en.wikipedia.org/wiki/Modulo_operation</a>
+see also <a href="http://jsperf.com/modulo-for-negative-numbers">http://jsperf.com/modulo-for-negative-numbers</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> wrap = <span class="hljs-function">(<span class="hljs-params">a, b</span>) =&gt;</span> (a % b + b) % b</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p><strong>op1</strong>
+A generic stack operation that pops one value and pushes on result</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> op1 = <span class="hljs-function"><span class="hljs-params">fn</span> =&gt;</span> ({ stack }) =&gt; {
+  stack.push(fn(stack.pop()))
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p><strong>op2</strong>
+A generic stack operation that pops two values and pushes one result</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> op2 = <span class="hljs-function"><span class="hljs-params">fn</span> =&gt;</span> ({ stack }) =&gt; {
+  stack.push(fn(stack.pop(), stack.pop()))
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2 id="commands">Commands</h2>
+<p>A commands object is a map from instrunction name to functions</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="arithmetic">Arithmetic</h3>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p><strong>@+</strong>, <strong>@add</strong>: Add two values
+<code>[1, 2, &quot;@+&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@+"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a + b),
+  <span class="hljs-string">"@add"</span>: <span class="hljs-string">"@+"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><strong>@-</strong>, <strong>@sub</strong>: Subtract two values
+<code>[2, 1, &quot;@-&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@-"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a - b),
+  <span class="hljs-string">"@sub"</span>: <span class="hljs-string">"@-"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><strong>@*</strong>, <strong>@mul</strong>: Multiply two values
+<code>[2, 4, &quot;@*&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@*"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a * b),
+  <span class="hljs-string">"@mul"</span>: <span class="hljs-string">"@*"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><strong>@/</strong>, <strong>@div</strong>: Divide two values
+<code>[4, 2, &quot;@/&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@/"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> b === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : a / b),
+  <span class="hljs-string">"@div"</span>: <span class="hljs-string">"@/"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><strong>@%</strong>, <strong>@wrap</strong>: Modulo for positive and negative numbers
+<code>[4, -2, &quot;@%&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@%"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> b === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : wrap(a, b)),
+  <span class="hljs-string">"@wrap"</span>: <span class="hljs-string">"@%"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><strong>@mod</strong>: Standard modulo operation
+<code>[4, 2, &quot;@mod&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@mod"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> b === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : a % b),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p><strong>@neg</strong>: The negative of a value
+<code>[4, &quot;@neg&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@neg"</span>: op1(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> -a),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h3 id="logic">Logic</h3>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p><strong>@cond</strong>: Conditional execution
+<code>[true, &quot;@cond&quot;, [&lt;success pattern&gt;], [&lt;fail pattern&gt;]]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@cond"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> test = stack.pop()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>this is the pattern to execute if the test passes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">const</span> success = operations.pop()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>the next pattern is the “else” part</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (test) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>remove the “else” part</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      operations.pop()
+      operations.push(success)
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p><strong>@&gt;</strong>: Greater than</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@&gt;"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &gt; b),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p><strong>@&gt;=</strong>: Greater or equal than</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@&gt;="</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &gt;= b),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p><strong>@&lt;</strong>: Less than</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@&lt;"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &lt; b),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p><strong>@&lt;=</strong>: Less or equal than</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@&lt;="</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &lt;= b),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p><strong>@==</strong>: Is equal</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@=="</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a === b),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p><strong>@!=</strong>: Is not equal</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@!="</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a !== b),
+  <span class="hljs-string">"@!"</span>: op1(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> !a),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p><strong>@!</strong>: Logic not</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@not"</span>: <span class="hljs-string">"@!"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p><strong>@&amp;&amp;</strong>, <strong>@and</strong>: Logic and</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@&amp;&amp;"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a &amp;&amp; b),
+  <span class="hljs-string">"@and"</span>: <span class="hljs-string">"@&amp;&amp;"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p><strong>@||</strong>, <strong>@or</strong>: Logic or</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@||"</span>: op2(<span class="hljs-function">(<span class="hljs-params">b, a</span>) =&gt;</span> a || b),
+  <span class="hljs-string">"@or"</span>: <span class="hljs-string">"@||"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <h3 id="processes">Processes</h3>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Operations related to interact with the current process</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p><strong>@let</strong>: Assign a value to the local context
+<code>440,&quot;freq&quot;,&quot;@let&quot;</code> |</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@let"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> context.let(stack.pop(), stack.pop()),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p><strong>@set</strong>: Assign a value to the global context</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@set"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> context.set(stack.pop(), stack.pop()),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p><strong>@get</strong>: Push the value of a variable into the stack</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@get"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> stack.push(context.get(stack.pop())),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p><strong>@wait</strong>: Wait an amount of time (in beats)
+<code>1,&quot;@wait&quot;</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@wait"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> proc.wait(<span class="hljs-built_in">Math</span>.abs(<span class="hljs-built_in">Number</span>(proc.stack.pop()))),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p><strong>@sync</strong>: Wait until next beat</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@sync"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> proc.wait(<span class="hljs-built_in">Math</span>.floor(proc.time) + <span class="hljs-number">1</span> - proc.time),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p><strong>@scale-rate</strong>: Change the current rate by a factor
+<code>1.5, &quot;@scale-rate&quot;</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@scale-rate"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+    <span class="hljs-keyword">const</span> factor = <span class="hljs-built_in">parseFloat</span>(proc.stack.pop(), <span class="hljs-number">10</span>)
+    <span class="hljs-keyword">if</span> (factor &gt; <span class="hljs-number">0</span>) proc.rate *= factor
+  },
+  <span class="hljs-string">"@with-rate"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> factor = <span class="hljs-built_in">parseFloat</span>(stack.pop(), <span class="hljs-number">10</span>)
+    <span class="hljs-keyword">const</span> pattern = operations.pop()
+    <span class="hljs-keyword">if</span> (!isArray(pattern)) error(<span class="hljs-string">"@with-rate"</span>, ERR_EXPECT_PATTERN, pattern)
+    operations.push([
+      factor,
+      <span class="hljs-string">"@scale-rate"</span>,
+      pattern,
+      <span class="hljs-number">1</span> / factor,
+      <span class="hljs-string">"@scale-rate"</span>
+    ])
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <h3 id="execute-and-repeat">Execute and repeat</h3>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p> <strong>@dup</strong>: Duplicate item (so you can use it twice)
+<code>10,&quot;@dup&quot;</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@dup"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(last(stack)),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p> <strong>@execute</strong>: Execute an instruction
+<code>10,&quot;dup&quot;,&quot;@execute&quot;</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@execute"</span>: <span class="hljs-function">(<span class="hljs-params">{ operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> instr = operations.pop()
+    <span class="hljs-keyword">if</span> (isString(instr)) operations.push(<span class="hljs-string">"@instr"</span>)
+    <span class="hljs-keyword">else</span> error(<span class="hljs-string">"@execute"</span>, ERR_EXPECT_STRING, instr)
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p> <strong>@</strong>: Alias of @execute
+<code>10,&quot;dup&quot;,&quot;@&quot;</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@"</span>: <span class="hljs-string">"@execute"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p> <strong>@repeat</strong>: Repeat
+<code>4, &quot;@repeat&quot;, [&quot;@kick&quot;, 0.5, &quot;@wait&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@repeat"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> repetitions = stack.pop()
+    <span class="hljs-keyword">const</span> pattern = last(operations)
+    <span class="hljs-keyword">if</span> (!isArray(pattern)) error(<span class="hljs-string">"@repeat"</span>, ERR_EXPECT_PATTERN, pattern)
+    <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">1</span>; i &lt; repetitions; i++) {
+        operations.push(pattern)
+      }
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p> <strong>@forever</strong>: Repeat forever
+<code>&quot;@forever&quot;, [&quot;@kick&quot;, 0.5, &quot;@wait&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@forever"</span>: <span class="hljs-function">(<span class="hljs-params">{ operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> pattern = last(operations)
+    <span class="hljs-keyword">if</span> (isArray(pattern) &amp;&amp; pattern.length) {
+      operations.push(<span class="hljs-string">"@forever"</span>)
+      operations.push(pattern)
+    } <span class="hljs-keyword">else</span> error(<span class="hljs-string">"@forever"</span>, ERR_EXPECT_PATTERN, pattern)
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <h3 id="iteration-and-lists">Iteration and lists</h3>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p> <strong>@iter</strong>: Iterate a pattern
+<code>[[&quot;@iter&quot;, [0.3, 1]], &quot;amp&quot;, &quot;@set&quot;]</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@iter"</span>: <span class="hljs-function">(<span class="hljs-params">{ operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> pattern = operations.pop()
+    <span class="hljs-keyword">if</span> (!isArray(pattern) || !pattern.length) {
+      error(<span class="hljs-string">"@iter"</span>, ERR_EXPECT_PATTERN, pattern)
+    } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>Rotates the pattern and plays the first item only each time
+remove “1st” item, schedule, then push to back:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">const</span> first = pattern.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
+      operations.push(first)
+      pattern.push(first)
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p> <strong>@rotate</strong>: Rotate a pattern</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@rotate"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations, error }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> pattern = operations.pop()
+    <span class="hljs-keyword">let</span> rot = stack.pop()
+    <span class="hljs-keyword">if</span> (isArray(pattern) &amp;&amp; pattern.length &gt; <span class="hljs-number">0</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>ensure rot is valid between -args.length to +args.length</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      rot = rot % pattern.length
+      <span class="hljs-keyword">var</span> copy = pattern.splice(<span class="hljs-number">0</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>rotate in-place</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      pattern.push.apply(pattern, copy.slice(rot))
+      pattern.push.apply(pattern, copy.slice(<span class="hljs-number">0</span>, rot))</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p>schedule a shallow copy:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      operations.push(copy)
+    } <span class="hljs-keyword">else</span> {
+      error(<span class="hljs-string">"@rotate"</span>, ERR_EXPECT_PATTERN, pattern)
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <h3 id="utilities">Utilities</h3>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p><strong>@mtof</strong>: midi to frequency
+[60, ‘@mtof’]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@mtof"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> midi = stack.pop()
+    <span class="hljs-keyword">const</span> freq = <span class="hljs-number">440</span> * <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, (+midi - <span class="hljs-number">69</span>) / <span class="hljs-number">12</span>)
+    stack.push(freq)
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p><strong>@linear</strong>: convert a value between two linear scales
+[value, fromLow, fromHi, toLow, toHi, “@linear”]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-string">"@linear"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> ohi = stack.pop()
+    <span class="hljs-keyword">const</span> olo = stack.pop()
+    <span class="hljs-keyword">const</span> ihi = stack.pop()
+    <span class="hljs-keyword">const</span> ilo = stack.pop()
+    <span class="hljs-keyword">const</span> v = stack.pop()
+
+    <span class="hljs-keyword">if</span> (ihi === ilo) {
+      stack.push(olo)
+    } <span class="hljs-keyword">else</span> {
+      stack.push(olo + (ohi - olo) * ((v - ilo) / (ihi - ilo)))
+    }
+  }
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 // ## Randomness
 import { isArray } from "../utils"
-import { ERR_EXPECT_PATTERN } from "../commands"
+import { ERR_EXPECT_PATTERN } from "../vm"
 const { floor } = Math
 
 // | Name | Description | Example |

@@ -4,8 +4,7 @@
   "private": true,
   "description": "AshVM examples",
   "main": "",
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [],
   "author": "danigb",
   "license": "MIT",
@@ -15,5 +14,8 @@
     "hyperapp": "^0.7.1",
     "hyperx": "^2.3.0",
     "note-parser": "^2.0.0"
+  },
+  "dependencies": {
+    "synth-kit": "0.0.2"
   }
 }

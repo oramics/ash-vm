@@ -25,13 +25,8 @@
                 </a>
               
                 
-                <a class="source" href="builders.html">
-                  builders.js
-                </a>
-              
-                
-                <a class="source" href="commands.html">
-                  commands.js
+                <a class="source" href="waa.html">
+                  waa.js
                 </a>
               
                 
@@ -52,6 +47,11 @@
                 
                 <a class="source" href="random.html">
                   random.js
+                </a>
+              
+                
+                <a class="source" href="stdlib.html">
+                  stdlib.js
                 </a>
               
                 
@@ -93,7 +93,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { peek } <span class="hljs-keyword">from</span> <span class="hljs-string">'../utils'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { peek } <span class="hljs-keyword">from</span> <span class="hljs-string">"../utils"</span></pre></div></div>
             
         </li>
         
@@ -128,24 +128,24 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">debug</span> (<span class="hljs-params">log</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">debug</span> (<span class="hljs-params">{ log } = {}</span>) </span>{
   log = log || <span class="hljs-built_in">console</span>.log.bind(<span class="hljs-built_in">console</span>)
 
   <span class="hljs-keyword">return</span> {
-    <span class="hljs-string">'@print'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+    <span class="hljs-string">"@print"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
       <span class="hljs-keyword">const</span> { stack } = proc
-      <span class="hljs-keyword">const</span> last = stack.length ? peek(stack) : <span class="hljs-string">'&lt;Empty Stack&gt;'</span>
-      log(<span class="hljs-string">'@print'</span>, last, <span class="hljs-string">'(id, time)'</span>, proc.id, proc.time)
+      <span class="hljs-keyword">const</span> last = stack.length ? peek(stack) : <span class="hljs-string">"&lt;Empty Stack&gt;"</span>
+      log(<span class="hljs-string">"@print"</span>, last, <span class="hljs-string">"(id, time)"</span>, proc.id, proc.time)
     },
-    <span class="hljs-string">'@log'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+    <span class="hljs-string">"@log"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
       <span class="hljs-keyword">const</span> { stack } = proc
       <span class="hljs-keyword">const</span> name = stack.pop()
-      <span class="hljs-keyword">const</span> last = stack.length ? peek(stack) : <span class="hljs-string">'&lt;Empty Stack&gt;'</span>
-      log(<span class="hljs-string">'@log'</span>, name, last, <span class="hljs-string">'(id, time)'</span>, proc.id, proc.time)
+      <span class="hljs-keyword">const</span> last = stack.length ? peek(stack) : <span class="hljs-string">"&lt;Empty Stack&gt;"</span>
+      log(<span class="hljs-string">"@log"</span>, name, last, <span class="hljs-string">"(id, time)"</span>, proc.id, proc.time)
     },
-    <span class="hljs-string">'@debug'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+    <span class="hljs-string">"@debug"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
       <span class="hljs-keyword">const</span> { stack } = proc
-      log(<span class="hljs-string">'@debug'</span>, stack, proc.id, proc.time)
+      log(<span class="hljs-string">"@debug"</span>, stack, proc.id, proc.time)
     }
   }
 }</pre></div></div>

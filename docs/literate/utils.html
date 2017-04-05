@@ -25,13 +25,8 @@
                 </a>
               
                 
-                <a class="source" href="builders.html">
-                  builders.js
-                </a>
-              
-                
-                <a class="source" href="commands.html">
-                  commands.js
+                <a class="source" href="waa.html">
+                  waa.js
                 </a>
               
                 
@@ -52,6 +47,11 @@
                 
                 <a class="source" href="random.html">
                   random.js
+                </a>
+              
+                
+                <a class="source" href="stdlib.html">
+                  stdlib.js
                 </a>
               
                 
@@ -137,7 +137,7 @@ see: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isString = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-keyword">typeof</span> x === <span class="hljs-string">'string'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isString = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-keyword">typeof</span> x === <span class="hljs-string">"string"</span></pre></div></div>
             
         </li>
         
@@ -152,7 +152,7 @@ see: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isFn = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-keyword">typeof</span> x === <span class="hljs-string">'function'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isFn = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-keyword">typeof</span> x === <span class="hljs-string">"function"</span></pre></div></div>
             
         </li>
         
@@ -167,7 +167,7 @@ see: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isDef = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-keyword">typeof</span> x !== <span class="hljs-string">'undefined'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isDef = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-keyword">typeof</span> x !== <span class="hljs-string">"undefined"</span></pre></div></div>
             
         </li>
         
@@ -198,24 +198,6 @@ see: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> peek = last</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>A modulo operation that handles negative n more appropriately
-e.g. wrap(-1, 3) returns 2
-see <a href="http://en.wikipedia.org/wiki/Modulo_operation">http://en.wikipedia.org/wiki/Modulo_operation</a>
-see also <a href="http://jsperf.com/modulo-for-negative-numbers">http://jsperf.com/modulo-for-negative-numbers</a></p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> wrap = <span class="hljs-function">(<span class="hljs-params">a, b</span>) =&gt;</span> (a % b + b) % b</pre></div></div>
             
         </li>
         

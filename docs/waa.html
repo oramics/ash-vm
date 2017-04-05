@@ -478,7 +478,7 @@
 
 
   <script>
-  const vm = AshVM.initWebAudio({ bpm: 100 })
+  const vm = AshVM.initWebAudio(new AudioContext(), { bpm: 100 })
 
   $('.play').click(e => {
     const text = $(e.target).prev().text()

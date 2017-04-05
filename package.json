@@ -4,22 +4,22 @@
   "version": "0.0.0",
   "private": true,
   "main": "dist/ash-vm.js",
-  "jsnext:main": "lib/index.js",
-  "module": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "module": "src/index.js",
   "license": "MIT",
   "repository": "oramics/ash-vm",
   "files": [
-    "lib",
+    "src",
     "dist"
   ],
   "scripts": {
-    "format": "prettier-standard-formatter lib/* test/*",
+    "format": "prettier-standard-formatter src/* test/*",
     "test": "eslint src && jest --coverage",
     "no:prepublish": "npm run test && npm run dist && npm run docs",
-    "build": "rollup -cm -n AshVM -f umd -i lib/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
-    "watch": "rollup --watch -cm -n AshVM -f umd -i lib/index.js -o docs/dist/ash-vm.js",
+    "build": "rollup -cm -n AshVM -f umd -i src/index.js -o dist/ash-vm.js && cp dist/* docs/dist/",
+    "watch": "rollup --watch -cm -n AshVM -f umd -i src/index.js -o docs/dist/ash-vm.js",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
-    "docs": "docco lib/* lib/**/* -o docs/literate"
+    "docs": "docco src/* src/**/* -o docs/literate"
   },
   "authors": [
     "@grrrwaaa",

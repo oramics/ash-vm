@@ -1,15 +1,23 @@
 // # Process
 
+// #### Utilities
 // defer a function
-function defer (fn, data) {
-  setTimeout(() => { fn(data) }, 0)
-}
-
+function defer (fn, data) { setTimeout(() => { fn(data) }, 0) }
+// test if the given operation is an instruction name
 const isCommand = o => typeof o === "string" && o[0] === "@"
+// test if the given operation is a program
 const isProgram = Array.isArray
+// Give unique ids to process
 let procId = 1
+
+// #### Error messages
+
+// The given instruction name is not in the commands object
 const ERR_INSTR_NOT_FOUND = "Instruction not recognized."
+// The max loop cycles tests
 const ERR_LIMIT_REACHED = "Limit reached. Probably an infinity loop."
+
+// ## Process
 
 // Processes are the principal computation unit. It departures from typical
 // processes in that it model the concept of time

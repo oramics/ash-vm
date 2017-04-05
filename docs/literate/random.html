@@ -25,13 +25,8 @@
                 </a>
               
                 
-                <a class="source" href="builders.html">
-                  builders.js
-                </a>
-              
-                
-                <a class="source" href="commands.html">
-                  commands.js
+                <a class="source" href="waa.html">
+                  waa.js
                 </a>
               
                 
@@ -52,6 +47,11 @@
                 
                 <a class="source" href="random.html">
                   random.js
+                </a>
+              
+                
+                <a class="source" href="stdlib.html">
+                  stdlib.js
                 </a>
               
                 
@@ -99,8 +99,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { isArray } <span class="hljs-keyword">from</span> <span class="hljs-string">'../utils'</span>
-<span class="hljs-keyword">import</span> { ERR_EXPECT_PATTERN } <span class="hljs-keyword">from</span> <span class="hljs-string">'../commands'</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { isArray } <span class="hljs-keyword">from</span> <span class="hljs-string">"../utils"</span>
+<span class="hljs-keyword">import</span> { ERR_EXPECT_PATTERN } <span class="hljs-keyword">from</span> <span class="hljs-string">"../vm"</span>
 <span class="hljs-keyword">const</span> { floor } = <span class="hljs-built_in">Math</span></pre></div></div>
             
         </li>
@@ -154,7 +154,7 @@
 <tr>
 <td><strong>@shuffle</strong></td>
 <td>Shuffle a list</td>
-<td><code>&#39;@shuffle&#39;, [1, 2, 3]</code></td>
+<td><code>&quot;@shuffle&quot;, [1, 2, 3]</code></td>
 </tr>
 <tr>
 <td><strong>@chance</strong></td>
@@ -166,7 +166,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">random</span> (<span class="hljs-params">random</span>) </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">random</span> (<span class="hljs-params">{ random } = {}</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -209,12 +209,12 @@
   }
 
   <span class="hljs-keyword">return</span> {
-    <span class="hljs-string">'@random'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd()),
-    <span class="hljs-string">'@rand'</span>: <span class="hljs-string">'@random'</span>,
-    <span class="hljs-string">'@srandom'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd() * <span class="hljs-number">2</span> - <span class="hljs-number">1</span>),
-    <span class="hljs-string">'@srand'</span>: <span class="hljs-string">'@srandom'</span>,
-    <span class="hljs-string">'@randi'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(irnd(stack.pop())),
-    <span class="hljs-string">'@pick'</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
+    <span class="hljs-string">"@random"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd()),
+    <span class="hljs-string">"@rand"</span>: <span class="hljs-string">"@random"</span>,
+    <span class="hljs-string">"@srandom"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(rnd() * <span class="hljs-number">2</span> - <span class="hljs-number">1</span>),
+    <span class="hljs-string">"@srand"</span>: <span class="hljs-string">"@srandom"</span>,
+    <span class="hljs-string">"@randi"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack }</span>) =&gt;</span> stack.push(irnd(stack.pop())),
+    <span class="hljs-string">"@pick"</span>: <span class="hljs-function"><span class="hljs-params">proc</span> =&gt;</span> {
       <span class="hljs-keyword">const</span> { operations, error } = proc
       <span class="hljs-keyword">const</span> pattern = operations.pop()
       <span class="hljs-keyword">if</span> (!isArray(pattern)) {
@@ -225,7 +225,7 @@
         operations.push(pattern[i])
       }
     },
-    <span class="hljs-string">'@chance'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations }</span>) =&gt;</span> {
+    <span class="hljs-string">"@chance"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations }</span>) =&gt;</span> {
       <span class="hljs-keyword">const</span> prob = stack.pop()
       <span class="hljs-keyword">const</span> pattern = operations.pop()
       <span class="hljs-keyword">if</span> (rnd() &lt; prob) {</pre></div></div>
@@ -261,9 +261,9 @@
             <div class="content"><div class='highlight'><pre>        operations.push(pattern)
       }
     },
-    <span class="hljs-string">'@shuffle'</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations, error }</span>) =&gt;</span> {
+    <span class="hljs-string">"@shuffle"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, operations, error }</span>) =&gt;</span> {
       <span class="hljs-keyword">const</span> pattern = operations.pop()
-      <span class="hljs-keyword">if</span> (!isArray(pattern)) error(<span class="hljs-string">'@shuffle'</span>, ERR_EXPECT_PATTERN, pattern)
+      <span class="hljs-keyword">if</span> (!isArray(pattern)) error(<span class="hljs-string">"@shuffle"</span>, ERR_EXPECT_PATTERN, pattern)
       <span class="hljs-keyword">else</span> operations.push(shuffle(pattern))
     }
   }

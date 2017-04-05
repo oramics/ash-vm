@@ -2,11 +2,10 @@
 
 import { isArray, isString, isFn } from "./utils"
 import { Process } from "./process"
-import stdlib, {
-  expandAliases,
-  ERR_EXPECT_STRING,
-  ERR_EXPECT_PATTERN
-} from "./commands"
+
+// **Error messages**
+export const ERR_EXPECT_PATTERN = "Expected a pattern, but found:"
+export const ERR_EXPECT_STRING = "Expected a string, but found:"
 
 const assign = Object.assign
 
@@ -17,13 +16,12 @@ const assign = Object.assign
 // TODO: probably is better to have functions and object instead of classes
 // will change in the future.
 export class VM {
-  constructor (initialContext, options = {}) {
-    this.context = initialContext
+  constructor (options = {}) {
+    this.context = Object.assign({}, options.context)
     this.procs = [] // the procs are inverse ordered by time
     this.procsByName = {} // a map of names to procs
     this.time = 0
     this.commands = createCommands(this)
-    this.addCommands(stdlib)
     this.onfork = options.onfork
     this.onstop = options.onstop
     this.onended = options.onended
@@ -34,6 +32,12 @@ export class VM {
     // if there are no processes, no need to sync
     if (sync && this.procs.length) program = ["@sync", program]
     return this.fork(null, this.context, program)
+  }
+
+  // Add to the initial context
+  addContext (context) {
+    Object.assign(this.context, context)
+    return this.context
   }
 
   // Add more commands
@@ -179,4 +183,13 @@ function insert (proc, procs) {
 function at (procs) {
   const len = procs.length
   return len ? procs[len - 1].time : Infinity
+}
+
+// Given a commands object, expand the aliases
+function expandAliases (commands) {
+  Object.keys(commands).forEach(name => {
+    const op = commands[name]
+    if (isString(op)) commands[name] = commands[op]
+  })
+  return commands
 }

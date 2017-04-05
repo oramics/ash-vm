@@ -16,6 +16,8 @@ Currently it works with the aswesome [Gibberish](https://github.com/charlierober
 
 ## Install
 
+The current distribution is 13Kb minified and 4.5Kb minified and gzipped.
+
 **Browser**
 
 ```html

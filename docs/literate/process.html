@@ -25,13 +25,8 @@
                 </a>
               
                 
-                <a class="source" href="builders.html">
-                  builders.js
-                </a>
-              
-                
-                <a class="source" href="commands.html">
-                  commands.js
+                <a class="source" href="waa.html">
+                  waa.js
                 </a>
               
                 
@@ -52,6 +47,11 @@
                 
                 <a class="source" href="random.html">
                   random.js
+                </a>
+              
+                
+                <a class="source" href="stdlib.html">
+                  stdlib.js
                 </a>
               
                 
@@ -102,19 +102,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>defer a function</p>
+              <h4 id="utilities">Utilities</h4>
+<p>defer a function</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">defer</span> (<span class="hljs-params">fn, data</span>) </span>{
-  setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> { fn(data) }, <span class="hljs-number">0</span>)
-}
-
-<span class="hljs-keyword">const</span> isCommand = <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> <span class="hljs-keyword">typeof</span> o === <span class="hljs-string">'string'</span> &amp;&amp; o[<span class="hljs-number">0</span>] === <span class="hljs-string">'@'</span>
-<span class="hljs-keyword">const</span> isProgram = <span class="hljs-built_in">Array</span>.isArray
-<span class="hljs-keyword">let</span> procId = <span class="hljs-number">1</span>
-<span class="hljs-keyword">const</span> ERR_INSTR_NOT_FOUND = <span class="hljs-string">'Instruction not recognized.'</span>
-<span class="hljs-keyword">const</span> ERR_LIMIT_REACHED = <span class="hljs-string">'Limit reached. Probably an infinity loop.'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">defer</span> (<span class="hljs-params">fn, data</span>) </span>{ setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> { fn(data) }, <span class="hljs-number">0</span>) }</pre></div></div>
             
         </li>
         
@@ -125,14 +118,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Processes are the principal computation unit. It departures from typical
-processes in that it model the concept of time</p>
+              <p>test if the given operation is an instruction name</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Process</span> </span>{
-  <span class="hljs-keyword">constructor</span> (program, context, time, rate) {
-    <span class="hljs-keyword">this</span>.id = <span class="hljs-string">'proc-'</span> + procId++</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> isCommand = <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> <span class="hljs-keyword">typeof</span> o === <span class="hljs-string">"string"</span> &amp;&amp; o[<span class="hljs-number">0</span>] === <span class="hljs-string">"@"</span></pre></div></div>
             
         </li>
         
@@ -143,11 +133,11 @@ processes in that it model the concept of time</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>a stack of values</p>
+              <p>test if the given operation is a program</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.stack = []</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> isProgram = <span class="hljs-built_in">Array</span>.isArray</pre></div></div>
             
         </li>
         
@@ -158,11 +148,11 @@ processes in that it model the concept of time</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>the operations are stored in a stack (in reverse order)</p>
+              <p>Give unique ids to process</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.operations = program ? [program] : []</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">let</span> procId = <span class="hljs-number">1</span></pre></div></div>
             
         </li>
         
@@ -173,11 +163,9 @@ processes in that it model the concept of time</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>the context is used to store variables with scope</p>
+              <h4 id="error-messages">Error messages</h4>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.context = <span class="hljs-keyword">new</span> Context(context)</pre></div></div>
             
         </li>
         
@@ -188,11 +176,11 @@ processes in that it model the concept of time</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>the current time</p>
+              <p>The given instruction name is not in the commands object</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.time = <span class="hljs-keyword">typeof</span> time === <span class="hljs-string">'number'</span> ? time : <span class="hljs-number">0</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> ERR_INSTR_NOT_FOUND = <span class="hljs-string">"Instruction not recognized."</span></pre></div></div>
             
         </li>
         
@@ -203,11 +191,11 @@ processes in that it model the concept of time</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>how fast time passes</p>
+              <p>The max loop cycles tests</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.rate = <span class="hljs-keyword">typeof</span> rate === <span class="hljs-string">'number'</span> ? rate : <span class="hljs-number">1</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> ERR_LIMIT_REACHED = <span class="hljs-string">"Limit reached. Probably an infinity loop."</span></pre></div></div>
             
         </li>
         
@@ -217,6 +205,112 @@ processes in that it model the concept of time</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h2 id="process">Process</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Processes are the principal computation unit. It departures from typical
+processes in that it model the concept of time</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Process</span> </span>{
+  <span class="hljs-keyword">constructor</span> (program, context, time, rate) {
+    <span class="hljs-keyword">this</span>.id = <span class="hljs-string">"proc-"</span> + procId++</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>a stack of values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.stack = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>the operations are stored in a stack (in reverse order)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.operations = program ? [program] : []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>the context is used to store variables with scope</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.context = <span class="hljs-keyword">new</span> Context(context)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>the current time</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.time = <span class="hljs-keyword">typeof</span> time === <span class="hljs-string">"number"</span> ? time : <span class="hljs-number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>how fast time passes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.rate = <span class="hljs-keyword">typeof</span> rate === <span class="hljs-string">"number"</span> ? rate : <span class="hljs-number">1</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>bind error to allow destructuring in commands</p>
 
@@ -228,11 +322,11 @@ processes in that it model the concept of time</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>wait an amount of time</p>
 
@@ -245,11 +339,11 @@ processes in that it model the concept of time</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>The process is agnostic about the commands to be use</p>
 
@@ -264,26 +358,26 @@ processes in that it model the concept of time</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>ignore</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> instr === <span class="hljs-string">'function'</span>) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> instr === <span class="hljs-string">"function"</span>) {</pre></div></div>
             
         </li>
         
         
-        <li id="section-13">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>it runs the functions but outside the loop</p>
 
@@ -295,13 +389,13 @@ processes in that it model the concept of time</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>if it’s program, and since the operations are stored into an stack,
+              <p>if it”s program, and since the operations are stored into an stack,
 we need add to the program operations in reverse order</p>
 
             </div>
@@ -311,20 +405,20 @@ we need add to the program operations in reverse order</p>
         }
       } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isCommand(instr)) {
         <span class="hljs-keyword">const</span> cmd = commands[instr]
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> cmd === <span class="hljs-string">'function'</span>) cmd(<span class="hljs-keyword">this</span>)
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">this</span>.error(<span class="hljs-string">'step &gt; '</span>, ERR_INSTR_NOT_FOUND, instr)
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> cmd === <span class="hljs-string">"function"</span>) cmd(<span class="hljs-keyword">this</span>)
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">this</span>.error(<span class="hljs-string">"step &gt; "</span>, ERR_INSTR_NOT_FOUND, instr)
       } <span class="hljs-keyword">else</span> {</pre></div></div>
             
         </li>
         
         
-        <li id="section-15">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>if it’s a value, push it into the stack</p>
+              <p>if it”s a value, push it into the stack</p>
 
             </div>
             
@@ -336,11 +430,11 @@ we need add to the program operations in reverse order</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>the <code>resume</code> function run all the operations until time is reached</p>
 
@@ -358,29 +452,29 @@ we need add to the program operations in reverse order</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>an utility function to write errors</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>  error (instr, msg, obj) {
-    <span class="hljs-built_in">console</span>.error(instr, msg, obj, <span class="hljs-string">'id'</span>, <span class="hljs-keyword">this</span>.id, <span class="hljs-string">'time'</span>, <span class="hljs-keyword">this</span>.time)
+    <span class="hljs-built_in">console</span>.error(instr, msg, obj, <span class="hljs-string">"id"</span>, <span class="hljs-keyword">this</span>.id, <span class="hljs-string">"time"</span>, <span class="hljs-keyword">this</span>.time)
   }
 }</pre></div></div>
             
         </li>
         
         
-        <li id="section-18">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h2 id="context">Context</h2>
 
@@ -389,11 +483,11 @@ we need add to the program operations in reverse order</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>A context is a hierarchical structure to store values with scope</p>
 
@@ -408,11 +502,11 @@ we need add to the program operations in reverse order</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Create a child</p>
 
@@ -427,11 +521,11 @@ we need add to the program operations in reverse order</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>get a value from a context</p>
 
@@ -448,11 +542,11 @@ we need add to the program operations in reverse order</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>set a value from a context</p>
 
@@ -469,11 +563,11 @@ we need add to the program operations in reverse order</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>get a value from the local scope of a context</p>
 
@@ -486,11 +580,11 @@ we need add to the program operations in reverse order</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>set a value into the local scope of a context</p>
 

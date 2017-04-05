@@ -25,13 +25,8 @@
                 </a>
               
                 
-                <a class="source" href="builders.html">
-                  builders.js
-                </a>
-              
-                
-                <a class="source" href="commands.html">
-                  commands.js
+                <a class="source" href="waa.html">
+                  waa.js
                 </a>
               
                 
@@ -52,6 +47,11 @@
                 
                 <a class="source" href="random.html">
                   random.js
+                </a>
+              
+                
+                <a class="source" href="stdlib.html">
+                  stdlib.js
                 </a>
               
                 
@@ -94,8 +94,8 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">import</span> { isArray } <span class="hljs-keyword">from</span> <span class="hljs-string">'../utils'</span>
-<span class="hljs-keyword">import</span> { ERR_EXPECT_PATTERN } <span class="hljs-keyword">from</span> <span class="hljs-string">'../commands'</span></pre></div></div>
+<span class="hljs-keyword">import</span> { isArray } <span class="hljs-keyword">from</span> <span class="hljs-string">"../utils"</span>
+<span class="hljs-keyword">import</span> { ERR_EXPECT_PATTERN } <span class="hljs-keyword">from</span> <span class="hljs-string">"../vm"</span></pre></div></div>
             
         </li>
         
@@ -123,14 +123,15 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> inst = <span class="hljs-function"><span class="hljs-params">name</span> =&gt;</span> ({ operations }) =&gt; {
-  operations.push([{ <span class="hljs-attr">inst</span>: name }, <span class="hljs-string">'@play-note'</span>])
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> voice = <span class="hljs-function"><span class="hljs-params">name</span> =&gt;</span> ({ operations }) =&gt; {
+  operations.push([name, <span class="hljs-string">"voice"</span>, <span class="hljs-string">"@let"</span>, <span class="hljs-string">"@play"</span>])
 }
-<span class="hljs-keyword">const</span> instNote = <span class="hljs-function">(<span class="hljs-params">name, p1, p2</span>) =&gt;</span> ({ stack, operations }) =&gt; {
-  <span class="hljs-keyword">const</span> props = { <span class="hljs-attr">inst</span>: name }
-  <span class="hljs-keyword">if</span> (p2) props[p2] = stack.pop()
-  props[p1] = stack.pop()
-  operations.push([props, <span class="hljs-string">'@play-note'</span>])
+<span class="hljs-keyword">const</span> voiceNote = <span class="hljs-function">(<span class="hljs-params">name, p1, p2</span>) =&gt;</span> ({ stack, operations }) =&gt; {
+  operations.push(p2
+    ? [stack.pop(), p2, <span class="hljs-string">"@let"</span>, stack.pop(), p1, <span class="hljs-string">"@let"</span>,
+      name, <span class="hljs-string">"voice"</span>, <span class="hljs-string">"@let"</span>, <span class="hljs-string">"@play"</span>]
+    : [stack.pop(), p1, <span class="hljs-string">"@let"</span>,
+      name, <span class="hljs-string">"voice"</span>, <span class="hljs-string">"@let"</span>, <span class="hljs-string">"@play"</span>])
 }
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span> (<span class="hljs-params"></span>) </span>{
@@ -145,16 +146,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>I think reverse is not very useful in this context
-because: [‘@iter’, [‘@reverse’, [1, 2, 3]]] doesn’t work, for example</p>
+              <p>get and set for freq and amp</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@reverse'</span>: <span class="hljs-function">(<span class="hljs-params">{ operations, error }</span>) =&gt;</span> {
-      <span class="hljs-keyword">const</span> pattern = operations.pop()
-      <span class="hljs-keyword">if</span> (!isArray(pattern)) error(<span class="hljs-string">'@reverse'</span>, ERR_EXPECT_PATTERN, pattern)
-      <span class="hljs-keyword">else</span> operations.push(pattern.slice().reverse())
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@set-freq"</span>: <span class="hljs-function">(<span class="hljs-params">{ context, stack }</span>) =&gt;</span> context.set(<span class="hljs-string">"freq"</span>, stack.pop()),
+    <span class="hljs-string">"@set-amp"</span>: <span class="hljs-function">(<span class="hljs-params">{ context, stack }</span>) =&gt;</span> context.set(<span class="hljs-string">"amp"</span>, stack.pop()),
+    <span class="hljs-string">"@get-freq"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> stack.push(context.get(<span class="hljs-string">"freq"</span>)),
+    <span class="hljs-string">"@get-amp"</span>: <span class="hljs-function">(<span class="hljs-params">{ stack, context }</span>) =&gt;</span> stack.push(context.get(<span class="hljs-string">"amp"</span>)),</pre></div></div>
             
         </li>
         
@@ -165,11 +164,16 @@ because: [‘@iter’, [‘@reverse’, [1, 2, 3]]] doesn’t work, for example<
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>I think @map is not a good name</p>
+              <p>I think reverse is not very useful in this context
+because: [“@iter”, [“@reverse”, [1, 2, 3]]] doesn”t work, for example</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@map'</span>: <span class="hljs-string">'@linear'</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@reverse"</span>: <span class="hljs-function">(<span class="hljs-params">{ operations, error }</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> pattern = operations.pop()
+      <span class="hljs-keyword">if</span> (!isArray(pattern)) error(<span class="hljs-string">"@reverse"</span>, ERR_EXPECT_PATTERN, pattern)
+      <span class="hljs-keyword">else</span> operations.push(pattern.slice().reverse())
+    },</pre></div></div>
             
         </li>
         
@@ -180,26 +184,41 @@ because: [‘@iter’, [‘@reverse’, [1, 2, 3]]] doesn’t work, for example<
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
+              <p>I think @map is not a good name</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@map"</span>: <span class="hljs-string">"@linear"</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
               <p>Instrument names</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'@pluck'</span>: inst(<span class="hljs-string">'pluck'</span>),
-    <span class="hljs-string">'@pluck-note'</span>: instNote(<span class="hljs-string">'pluck'</span>, <span class="hljs-string">'freq'</span>, <span class="hljs-string">'amp'</span>),
-    <span class="hljs-string">'@bass'</span>: inst(<span class="hljs-string">'bass'</span>),
-    <span class="hljs-string">'@bass-note'</span>: instNote(<span class="hljs-string">'bass'</span>, <span class="hljs-string">'freq'</span>, <span class="hljs-string">'amp'</span>),
-    <span class="hljs-string">'@hat'</span>: inst(<span class="hljs-string">'hat'</span>),
-    <span class="hljs-string">'@hat-note'</span>: instNote(<span class="hljs-string">'hat'</span>, <span class="hljs-string">'amp'</span>),
-    <span class="hljs-string">'@kick'</span>: inst(<span class="hljs-string">'kick'</span>),
-    <span class="hljs-string">'@kick-note'</span>: instNote(<span class="hljs-string">'kick'</span>, <span class="hljs-string">'amp'</span>),
-    <span class="hljs-string">'@snare'</span>: inst(<span class="hljs-string">'snare'</span>),
-    <span class="hljs-string">'@snare-note'</span>: instNote(<span class="hljs-string">'snare'</span>, <span class="hljs-string">'amp'</span>),
-    <span class="hljs-string">'@conga'</span>: inst(<span class="hljs-string">'conga'</span>),
-    <span class="hljs-string">'@conga-note'</span>: instNote(<span class="hljs-string">'conga'</span>, <span class="hljs-string">'amp'</span>),
-    <span class="hljs-string">'@clave'</span>: inst(<span class="hljs-string">'clave'</span>),
-    <span class="hljs-string">'@clave-note'</span>: instNote(<span class="hljs-string">'clave'</span>, <span class="hljs-string">'amp'</span>),
-    <span class="hljs-string">'@tom'</span>: inst(<span class="hljs-string">'tom'</span>),
-    <span class="hljs-string">'@tom-note'</span>: instNote(<span class="hljs-string">'tom'</span>, <span class="hljs-string">'amp'</span>)
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">"@pluck"</span>: voice(<span class="hljs-string">"pluck"</span>),
+    <span class="hljs-string">"@pluck-note"</span>: voiceNote(<span class="hljs-string">"pluck"</span>, <span class="hljs-string">"freq"</span>, <span class="hljs-string">"amp"</span>),
+    <span class="hljs-string">"@bass"</span>: voice(<span class="hljs-string">"bass"</span>),
+    <span class="hljs-string">"@bass-note"</span>: voiceNote(<span class="hljs-string">"bass"</span>, <span class="hljs-string">"freq"</span>, <span class="hljs-string">"amp"</span>),
+    <span class="hljs-string">"@hat"</span>: voice(<span class="hljs-string">"hat"</span>),
+    <span class="hljs-string">"@hat-note"</span>: voiceNote(<span class="hljs-string">"hat"</span>, <span class="hljs-string">"amp"</span>),
+    <span class="hljs-string">"@kick"</span>: voice(<span class="hljs-string">"kick"</span>),
+    <span class="hljs-string">"@kick-note"</span>: voiceNote(<span class="hljs-string">"kick"</span>, <span class="hljs-string">"amp"</span>),
+    <span class="hljs-string">"@snare"</span>: voice(<span class="hljs-string">"snare"</span>),
+    <span class="hljs-string">"@snare-note"</span>: voiceNote(<span class="hljs-string">"snare"</span>, <span class="hljs-string">"amp"</span>),
+    <span class="hljs-string">"@conga"</span>: voice(<span class="hljs-string">"conga"</span>),
+    <span class="hljs-string">"@conga-note"</span>: voiceNote(<span class="hljs-string">"conga"</span>, <span class="hljs-string">"amp"</span>),
+    <span class="hljs-string">"@clave"</span>: voice(<span class="hljs-string">"clave"</span>),
+    <span class="hljs-string">"@clave-note"</span>: voiceNote(<span class="hljs-string">"clave"</span>, <span class="hljs-string">"amp"</span>),
+    <span class="hljs-string">"@tom"</span>: voice(<span class="hljs-string">"tom"</span>),
+    <span class="hljs-string">"@tom-note"</span>: voiceNote(<span class="hljs-string">"tom"</span>, <span class="hljs-string">"amp"</span>),
   }
 }</pre></div></div>
             
