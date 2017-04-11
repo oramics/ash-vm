@@ -20,14 +20,14 @@ const ERR_LIMIT_REACHED = "Limit reached. Probably an infinity loop."
 
 // ## Process
 
-// Processes are the principal computation unit. It departures from typical
-// processes in that it model the concept of time
+// Processes are the principal computation unit. The main characteristic of
+// processes in this VM is that it models the concept of time
 export class Process {
   constructor (program, context, time, rate) {
     this.id = "proc-" + procId++
     // a stack of values
     this.stack = []
-    // the operations are stored in a stack (in reverse order)
+    // the operations are also stored in a stack (reverse order)
     this.operations = program ? [program] : []
     // the context is used to store variables with scope
     this.context = new Context(context)
@@ -35,7 +35,7 @@ export class Process {
     this.time = typeof time === "number" ? time : 0
     // how fast time passes
     this.rate = typeof rate === "number" ? rate : 1
-    // bind error to allow destructuring in commands
+    // bind error to this, to allow destructuring it in commands
     this.error = this.error.bind(this)
   }
 
@@ -53,7 +53,7 @@ export class Process {
         // ignore
       } else if (typeof instr === "function") {
         // it runs the functions but outside the loop
-        defer(instr, this.time)
+        defer(instr, this)
       } else if (isProgram(instr)) {
         // if it"s program, and since the operations are stored into an stack,
         // we need add to the program operations in reverse order

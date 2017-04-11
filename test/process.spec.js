@@ -1,12 +1,12 @@
 /* global describe it expect */
-const { Process } = require('../lib/process')
-const wait = require('wait-promise')
+const { Process } = require("../src/process")
+const wait = require("wait-promise")
 
-describe('Process', () => {
-  it('executes an instruction', () => {
-    const proc = new Process('@debug')
+describe("Process", () => {
+  it("executes an instruction", () => {
+    const proc = new Process("@debug")
     const commands = {
-      '@debug': proc => {
+      "@debug": proc => {
         proc.debug = true
       }
     }
@@ -14,7 +14,7 @@ describe('Process', () => {
     expect(proc.debug).toBe(true)
   })
 
-  it('accepts a function as operation', () => {
+  it("accepts a function as operation", () => {
     let fired = false
     const proc = new Process(() => { fired = true })
     proc.step({})
@@ -24,15 +24,15 @@ describe('Process', () => {
     })
   })
 
-  it('pushes values into the stack', () => {
+  it("pushes values into the stack", () => {
     const results = []
-    const proc = new Process([1, '@test', 'two', '@test'])
+    const proc = new Process([1, "@test", "two", "@test"])
     const commands = {
-      '@test': ({ stack }, op) => {
+      "@test": ({ stack }, op) => {
         results.push(stack.pop())
       }
     }
     expect(proc.resume(commands)).toBe(false)
-    expect(results).toEqual([1, 'two'])
+    expect(results).toEqual([1, "two"])
   })
 })
