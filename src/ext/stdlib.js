@@ -179,40 +179,6 @@ export default {
     } else error("@forever", ERR_EXPECT_PATTERN, pattern)
   },
 
-  // ### Iteration and lists
-
-  //  **@iter**: Iterate a pattern
-  // `[["@iter", [0.3, 1]], "amp", "@set"]`
-  "@iter": ({ operations, error }) => {
-    const pattern = operations.pop()
-    if (!isArray(pattern) || !pattern.length) {
-      error("@iter", ERR_EXPECT_PATTERN, pattern)
-    } else {
-      // Rotates the pattern and plays the first item only each time
-      // remove "1st" item, schedule, then push to back:
-      const first = pattern.splice(0, 1)
-      operations.push(first)
-      pattern.push(first)
-    }
-  },
-  //  **@rotate**: Rotate a pattern
-  "@rotate": ({ stack, operations, error }) => {
-    const pattern = operations.pop()
-    let rot = stack.pop()
-    if (isArray(pattern) && pattern.length > 0) {
-      // ensure rot is valid between -args.length to +args.length
-      rot = rot % pattern.length
-      var copy = pattern.splice(0)
-      // rotate in-place
-      pattern.push.apply(pattern, copy.slice(rot))
-      pattern.push.apply(pattern, copy.slice(0, rot))
-      // schedule a shallow copy:
-      operations.push(copy)
-    } else {
-      error("@rotate", ERR_EXPECT_PATTERN, pattern)
-    }
-  },
-
   // ### Utilities
 
   // **@mtof**: midi to frequency
