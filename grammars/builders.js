@@ -24,20 +24,26 @@ export const print = msg => [msg, "@print"]
 // Log a value (it prints the name and the value, but keeps the value into stack)
 export const log = name => [name, "@log"]
 
-// Reverse an array
-export const reverse = p => ["@reverse", p]
-
-// Schuffle an array
-export const shuffle = p => ["@shuffle", p]
-
-// Rotate an array n times
-export const rotate = (p, n) => [n !== undefined ? n : 1, "@rotate", p]
-
-// Pick a random value from a list
-export const pick = l => ["@pick", l]
+// Quote a pattern
+export const quote = (ptn, cmd) => {
+  const arr = ptn[0] === "@quote" ? ptn.slice() : ["@quote", ptn]
+  if (cmd) arr.push(cmd)
+  return arr
+}
 
 // Iterate a list
-export const iter = l => ["@iter", l]
+export const iter = ptn => quote(ptn, "@iter")
+// Reverse a list
+export const reverse = ptn => quote(ptn, "@reverse")
+
+// Schuffle a list
+export const shuffle = ptn => quote(ptn, "@shuffle")
+
+// Rotate a list n times
+export const rotate = (ptn, times) => quote(ptn, [times !== undefined ? times : 1, "@rotate"])
+
+// Pick a random value from a list
+export const pick = ptn => quote(ptn, "@pick")
 
 // Conditional
 export const cond = (f, pt, pf) => [f, "@cond", pt, pf]

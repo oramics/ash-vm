@@ -86,16 +86,21 @@ const vm = AshVM.initGibberish(Gibberish, { bpm: 100 })
 
 ## API
 
-#### `initGibberish(Gibberish)` → vm
-#### `initWebAudio(audioContext)` → vm
+#### `initGibberish(Gibberish, options?)` → vm
+#### `initWebAudio(audioContext, options?)` → vm
 
 The `initXXX` function receives an audio driver and returns a virtual machine:
 
 ```js
 const Gibberish = require("gibberish-dsp")
-const init = require("ash-vm").init
-const vm = init(Gibberish)
+const AshVM = require("ash-vm")
+const vm = AshVM.initGibberish(Gibberish, { bpm: 100 })
 ```
+
+It accepts an optional object with one or more of the following parameters:
+
+- `bpm`: the initial tempo. It uses `120` by default.
+- `random`: a random function. It uses `Math.random` by default.
 
 #### `vm.run(program, sync = true)` → proc
 

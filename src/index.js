@@ -4,6 +4,7 @@ import gibberish from "./audio/gibberish"
 import waa from "./audio/waa"
 import stdlib from "./cmds/stdlib"
 import random from "./cmds/random"
+import list from "./cmds/list"
 import debug from "./cmds/debug"
 import compatibility from "./cmds/compatibility"
 
@@ -33,6 +34,7 @@ export function init (driver, audio, options = {}) {
 
   // Include all the commands
   vm.addCommands(stdlib)
+  vm.addCommands(list)
   vm.addCommands(random(options))
   vm.addCommands(debug(options))
   vm.addCommands(compatibility(options))

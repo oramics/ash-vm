@@ -45,9 +45,11 @@
     Currently it supports:</p>
 
   <button class="button-primary" onclick="window.location.href='index.html'">Gibberish</button>
-  <button onclick="window.location.href='tonejs.html'">ToneJS</button>
   <button onclick="window.location.href='waa.html'">Web Audio API</button>
+  <!--
+  <button onclick="window.location.href='tonejs.html'">ToneJS</button>
   <button onclick="window.location.href='synthkit.html'">SynthKit</button>
+  -->
 
 
 <h2>Sounds</h2>
@@ -199,8 +201,8 @@
   <pre class="runnable"><code class="lang-javascript">
   [
       "@loop", [
-          ["@pick", [330, 440, 550, 660]],
-          ["@pick", [1, 0.7, 0.4]],
+          ["@quote", [330, 440, 550, 660], "@pick"],
+          ["@quote", [1, 0.7, 0.4], "@pick"],
           "@pluck-note",
           0.25, "@wait"
       ]
@@ -213,8 +215,8 @@
   <pre class="runnable"><code class="lang-javascript">
   [
       "@loop", [
-          ["@iter", [330, 440, 550, 660]],
-          ["@iter", [1, 0.7, 0.4]],
+          ["@quote", [330, 440, 550, 660], "@iter"],
+          ["@quote", [1, 0.7, 0.4], "@iter"],
           "@pluck-note",
           0.25, "@wait"
       ]
@@ -427,20 +429,20 @@
 
 <pre class="runnable"><code class="lang-javascript">[
     "@loop",[
-        "@iter",[0.01,0.2,0.01],"@hat-note",
-        "@iter",[1,3],8,"@div","@wait"
+        "@quote",[0.01,0.2,0.01],"@iter","@hat-note",
+        "@quote",[1,3],"@iter",8,"@div","@wait"
     ],
     "@loop",[
-        ["@iter",[14,15,16,17,18],44,"@mul"],"freq", "@set",
+        ["@quote",[14,15,16,17,18],"@iter",44,"@mul"],"freq", "@set",
         0.1,"amp","@set",
         "@pluck",
-        "@pick",[5,7],32,"@div","@wait"
+        "@quote",[5,7],"@pick",32,"@div","@wait"
     ],
     "@loop",[
-        ["@iter",[16,6,15,5,10,4,12],44,"@mul"],"freq", "@set",
-        1,"@pick",[2,3,5,6,5,6,5],"@div","amp", "@set",
+        ["@quote",[16,6,15,5,10,4,12],"@iter",44,"@mul"],"freq", "@set",
+        1,"@quote",[2,3,5,6,5,6,5],"@pick","@div","amp", "@set",
         "@pluck",
-        "@iter",[5,1,9,1],32,"@div","@wait"
+        "@quote",[5,1,9,1],"@iter",32,"@div","@wait"
     ]
 ]  </code></pre><button class="play button-primary">Play</button>
   <button class="button-secondary" onclick="vm.run(['@stop-all'], false)">Stop</button>
@@ -451,14 +453,14 @@
   <pre class="runnable"><code class="lang-javascript">[
     0.4,"amp","@set",
     "@loop",[
-      ["@iter",[120, 80, 60]],"@set-bpm",4,"@wait"
+      ["@quote",[120, 80, 60],"@iter"],"@set-bpm",4,"@wait"
     ],
     "@loop",[
-        ["@iter",[14,15,16,17,18],44,"@mul"],"freq","@set",
+        ["@quote",[14,15,16,17,18],"@iter",44,"@mul"],"freq","@set",
         "@pluck", 0.25, "@wait"
     ],0.125,"@wait",
     "@loop",[
-        ["@iter",[32,34,36,24,30],44,"@mul"],"freq","@set",
+        ["@quote",[32,34,36,24,30],"@iter",44,"@mul"],"freq","@set",
         "@pluck", 0.25, "@wait"
     ]
 ]</code></pre><button class="play button-primary">Play</button>
@@ -468,11 +470,11 @@
   <pre class="runnable"><code class="lang-javascript">[
     0.4,"amp","@set",
     "@loop", [
-      ["@iter",[14,15,16,17,18],44,"@mul"],"freq","@set",
+      ["@quote",[14,15,16,17,18],"@iter",44,"@mul"],"freq","@set",
       "@pluck", 0.25, "@wait"
     ],
     "@loop", [
-      ["@iter",[14,15,16,17,18],66,"@mul"],"freq","@set",
+      ["@quote",[14,15,16,17,18],"@iter",66,"@mul"],"freq","@set",
       "@pluck", 0.25, "@wait", 1.01, "@scale-rate"
     ]
 ]</code></pre><button class="play button-primary">Play</button>
@@ -491,7 +493,8 @@
 
 
   <script>
-  const vm = AshVM.initGibberish(Gibberish)
+  const vm = AshVM.initGibberish(Gibberish, { bpm: 100 })
+  console.log('Installed commands', Object.keys(vm.commands).sort())
 
   $('.play').click(e => {
     const text = $(e.target).prev().text()
