@@ -1,7 +1,7 @@
 /* global describe test expect */
 import initVM from "./testVM"
-import random from "../src/ext/random"
-import stdlib from "../src/ext/stdlib"
+import random from "../src/cmds/random"
+import stdlib from "../src/cmds/stdlib"
 
 const fakeRnd = (values) => {
   let i = 0
@@ -20,7 +20,7 @@ describe("Random commands", () => {
 
   test("@pick", () => {
     const vm = VM(0.1, 0.4, 0.8)
-    vm.run([3, "@repeat", ["@pick", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "@print"]])
+    vm.run([3, "@repeat", ["@quote", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "@pick", "@print"]])
     vm.resume(Infinity)
     expect(vm.printed).toEqual([1, 4, 8])
   })

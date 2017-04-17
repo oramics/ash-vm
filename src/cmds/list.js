@@ -9,15 +9,6 @@ const ERR_EXPECT_NUM = "A number was expected, but found:"
 
 // #### Commands
 export default {
-  // **@list**: Store a list into the stack to allow other operations
-  // use or change the list
-  // `["@list", [1, 2, 3]]`
-  "@list": ({ stack, operations, error }) => {
-    const list = operations.pop()
-    if (!isArray(list)) error("@list", ERR_EXPECT_LIST, list)
-    else stack.push(list)
-  },
-
   //  **@iter**: Iterate a list
   // `["@list", [1, 2, 3], "@iter", "amp", "@set"]`
   "@iter": ({ stack, operations, error }) => {

@@ -1,6 +1,6 @@
 /* global describe test expect */
 import initVM from "./testVM"
-import stdlib from "../src/ext/stdlib"
+import stdlib from "../src/cmds/stdlib"
 
 describe("Execute and repetition", () => {
   test("@dup", () => {

@@ -2,10 +2,10 @@
 import { VM } from "./vm"
 import gibberish from "./audio/gibberish"
 import waa from "./audio/waa"
-import stdlib from "./ext/stdlib"
-import random from "./ext/random"
-import debug from "./ext/debug"
-import compatibility from "./ext/compatibility"
+import stdlib from "./cmds/stdlib"
+import random from "./cmds/random"
+import debug from "./cmds/debug"
+import compatibility from "./cmds/compatibility"
 
 // ## Architecture Overview
 

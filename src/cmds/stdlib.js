@@ -26,6 +26,16 @@ const op2 = fn => ({ stack }) => {
 // ## Commands
 // A commands object is a map from instrunction name to functions
 export default {
+  // **@list**: Store a list into the stack to allow other operations
+  // use or change the list
+  // `["@list", [1, 2, 3]]`
+  "@quote": ({ stack, operations, error }) => {
+    const list = operations.pop()
+    if (!isArray(list)) error("@list", ERR_EXPECT_PATTERN, list)
+    else stack.push(list)
+  },
+  "@q": "@quote",
+
   // ### Arithmetic
 
   // **@+**, **@add**: Add two values
