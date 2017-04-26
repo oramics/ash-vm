@@ -1,0 +1,30 @@
+.App {
+  max-width: 720px;
+  margin: 40px auto;
+}
+
+.Editor {
+  display: none;
+}
+
+.Program {
+  border: 1px solid #333;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  background: #F1F1F1;
+  border: 1px solid #E1E1E1;
+  border-radius: 4px;
+}
+
+.Transport {
+  border-top: 1px solid #333;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+}
+
+.Transport div {
+  padding: 0.5em 1em;
+}

@@ -2,8 +2,6 @@
 import Context from "./context"
 
 // #### Utilities
-// defer a function
-function defer (fn, data) { setTimeout(() => { fn(data) }, 0) }
 // test if the given operation is an instruction name
 const isCommand = o => typeof o === "string" && o[0] === "@"
 // test if the given operation is a program
@@ -44,7 +42,7 @@ export class Process {
     this.time += this.rate * time
   }
 
-  // The process is agnostic about the commands to be use
+  // The process is agnostic about the commands to interpret
   step (commands) {
     const { operations } = this
     if (operations.length) {
@@ -52,8 +50,7 @@ export class Process {
       if (instr === null || instr === undefined) {
         // ignore
       } else if (typeof instr === "function") {
-        // it runs the functions but outside the loop
-        defer(instr, this)
+        instr(this)
       } else if (isProgram(instr)) {
         // if it"s program, and since the operations are stored into an stack,
         // we need add to the program operations in reverse order
@@ -61,7 +58,7 @@ export class Process {
           operations.push(instr[i])
         }
       } else if (isCommand(instr)) {
-        const cmd = commands[instr]
+        const cmd = commands.resolve(instr)
         if (typeof cmd === "function") cmd(this)
         else this.error("step > ", ERR_INSTR_NOT_FOUND, instr)
       } else {

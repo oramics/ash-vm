@@ -1,6 +1,6 @@
 // # Web Audio API Audio Driver
 /* global AudioContext */
-import { AudioDriver, ERR_INST_MISSING } from "./driver"
+import AudioDriver from "../audio-driver"
 
 const timeToBeats = (time, bpm) => time * bpm / 60
 const beatsToTime = (beats, bpm) => beats * 60 / bpm
@@ -23,7 +23,7 @@ class WebAudioDriver extends AudioDriver {
       const when = beatsToTime(time, this.bpm) + this.zero
       const inst = context.get("voice")
       const trigger = this.instruments[inst]
-      if (!trigger) error("@play", ERR_INST_MISSING(inst))
+      if (!trigger) error("@play", "missing", inst)
       else trigger(context, when)
     }
   }

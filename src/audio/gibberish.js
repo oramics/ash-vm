@@ -1,33 +1,26 @@
 // # Gibberish Audio Driver
-import { AudioDriver } from "./driver"
+import AudioDriver from "../audio-driver"
 
 // This driver uses Gibberish both for scheduling and sounds
 
-/**
- * Create a VM plugin to add the audio driver
- * @return {Function} a VM plugin
- */
-export default function init (Gibberish, options = {}) {
-  if (!Gibberish.context) Gibberish.init()
-  const audio = new GibberishDriver(Gibberish, options.bpm || 120)
-  audio.addInstruments(createInstruments(Gibberish))
-  return audio
-}
-
-class GibberishDriver extends AudioDriver {
-  constructor (Gibberish, bpm) {
+export default class GibberishDriver extends AudioDriver {
+  constructor (Gibberish, { bpm = 100 } = {}) {
+    if (!Gibberish.context) Gibberish.init()
     super(bpm, Gibberish.context.sampleRate)
     this.Gibberish = Gibberish
+    this.instruments = createInstruments(Gibberish)
   }
 
   // Start a VM
-  start (vm) {
-    super.start(vm)
+  start (scheduler) {
+    super.start(scheduler)
     // convert bmp to beats per audio sample
     const bpm2bpa = 1 / (60 * this.sampleRate)
     // tick is binded to this
-    this.tick = () => vm.resume(this.bpm * bpm2bpa)
-    this.Gibberish.sequencers.push({ tick: this.tick })
+    const tick = () => {
+      scheduler.resume(this.bpm * bpm2bpa)
+    }
+    this.Gibberish.sequencers.push({ tick })
   }
 }
 

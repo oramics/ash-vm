@@ -1,14 +1,12 @@
 /* global describe test expect */
 import initVM from "./testVM"
-import random from "../src/cmds/random"
-import stdlib from "../src/cmds/stdlib"
 
 const fakeRnd = (values) => {
   let i = 0
   return () => values[i++]
 }
 
-const VM = (...values) => initVM(stdlib, random({ random: fakeRnd(values) }))
+const VM = (...values) => initVM({ random: fakeRnd(values) })
 
 describe("Random commands", () => {
   test("@random", () => {
@@ -23,10 +21,5 @@ describe("Random commands", () => {
     vm.run([3, "@repeat", ["@quote", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "@pick", "@print"]])
     vm.resume(Infinity)
     expect(vm.printed).toEqual([1, 4, 8])
-  })
-
-  test("aliases", () => {
-    const vm = VM()
-    expect(vm.commands["@rand"]).toBe(vm.commands["@random"])
   })
 })
