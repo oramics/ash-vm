@@ -1,14 +1,12 @@
 # Audio Scheduler Virtual Machine
 
-For the purposes of this workshop we have designed a target language that captures some essential concepts for a musical live coding context, such as playing notes and looping patterns. It is intentionally limited to make it fairly easy to learn, yet also intentionally designed to make it possible to express a wide variety of ideas. It is *not* designed to be succinct -- that's the job of the user-facing language you create! The target language is a bit like the instruction sequences real compilers use, in that it is a list of commands. However ours can also have nested structures as lists of lists. A simple example is a pattern that plays a note every beat:
+A tutorial by Graham Wakefield & Charlie Roberts published originally [here](https://worldmaking.github.io/workshop_nime_2017/).
 
-**Click on any of the code samples below to hear them!**
+`Arvo` is a virtual machine that runs a simple language that captures some essential concepts for a musical live coding context, such as playing notes and looping patterns. It is intentionally limited to make it fairly easy to learn, yet also intentionally designed to make it possible to express a wide variety of ideas. It is *not* designed to be succinct -- that's the job of the user-facing language you create! The target language is a bit like the instruction sequences real compilers use, in that it is a list of commands. However ours can also have nested structures as lists of lists. A simple example is a pattern that plays a note every beat:
 
 ```javascript
 ["@loop", ["@pluck", [1, "@wait"]]]
 ```
-
-**Click on any of the code samples below to hear them!**
 
 ## Sounds
 

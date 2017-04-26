@@ -20,7 +20,7 @@ const ERR_LIMIT_REACHED = "Limit reached. Probably an infinity loop."
 
 // Processes are the principal computation unit. The main characteristic of
 // processes in this VM is that it models the concept of time
-export class Process {
+export default class Process {
   constructor (program, context, time, rate) {
     this.id = "proc-" + procId++
     // a stack of values

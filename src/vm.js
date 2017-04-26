@@ -22,9 +22,7 @@ export default class VM {
   addInstruments (instruments, params = []) {
     this.driver.addInstruments(instruments)
     const commands = Object.keys(instruments).reduce((commands, name) => {
-      commands["@" + name] = ({ context }) => {
-        instruments[name](context)
-      }
+      commands["@" + name] = ({ context }) => instruments[name](context)
       return instruments
     }, {})
     this.commands.add(commands)

@@ -1,13 +1,15 @@
 // # Scheduler
-import { Process } from "./process"
+import Process from "./process"
+import Events from "./events"
 
 // The purpose of the Scheduler is to run processes concurrently.
 export default class Scheduler {
-  constructor ({ events = {} } = {}) {
+  constructor (options = {}) {
     this.procs = [] // the procs are inverse ordered by time
     this.procsByName = {} // a map of names to procs
     this.time = 0
-    this.events = events
+    this.events = new Events()
+    if (options.events) this.events.register(options.events)
   }
 
   // Create a new process
@@ -22,8 +24,7 @@ export default class Scheduler {
     insert(proc, this.procs)
     // if has name, register it
     if (name) this.procsByName[name] = proc
-    const onfork = this.events.fork
-    if (onfork) onfork({ proc, time, name, parent, program, delay, rate })
+    this.events.emit("fork", proc)
     return proc
   }
 
@@ -38,8 +39,7 @@ export default class Scheduler {
           // the proc has more operations, re-schedule
           insert(proc, this.procs)
         } else {
-          const onended = this.events.ended
-          if (onended) onended({ proc, time: this.time })
+          this.events.emit("ended", { proc, time: this.time })
         }
       }
       this.time = nextTime
@@ -64,14 +64,13 @@ export default class Scheduler {
       name = null
     }
 
-    const onstop = this.events.stop
-    if (onstop) onstop({ name, proc })
+    this.events.emit("stop", { proc })
 
     remove(proc, this.procs)
   }
 }
 
-// ## Internal Scheduler functions
+// **~~private~~**
 
 // remove a process process
 function remove (proc, procs) {

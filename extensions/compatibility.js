@@ -4,22 +4,19 @@ const ERR_EXPECT_PATTERN = "Expected pattern, but found:"
 
 // This plugin adds language compatibility to the previous version
 
-const voiceNote = (name, p1, p2) => ({ stack, operations }) => {
-  operations.push(p2
-    ? [stack.pop(), p2, "@let", stack.pop(), p1, "@let",
-      name, "voice", "@let", "@play"]
-    : [stack.pop(), p1, "@let",
-      name, "voice", "@let", "@play"])
+function voiceNote (name, p1, p2) {
+  return function (proc) {
+    const stack = proc.stack
+    return proc.operations.push(p2
+      ? [stack.pop(), p2, "@let", stack.pop(), p1, "@let",
+        name, "voice", "@let", "@play"]
+      : [stack.pop(), p1, "@let",
+        name, "voice", "@let", "@play"])
+  }
 }
 
 function init () {
   return {
-    // get and set for freq and amp
-    "@set-freq": ({ context, stack }) => context.set("freq", stack.pop()),
-    "@set-amp": ({ context, stack }) => context.set("amp", stack.pop()),
-    "@get-freq": ({ stack, context }) => stack.push(context.get("freq")),
-    "@get-amp": ({ stack, context }) => stack.push(context.get("amp")),
-
     // I think reverse is not very useful in this context
     // because: ["@iter", ["@reverse", [1, 2, 3]]] doesn"t work, for example
     "@reverse": ({ operations, error }) => {

@@ -6,7 +6,7 @@ const split = (text) => text.replace(/\n```\n/g, '```\n\n').split(/\n\s*\n/)
 const markdown = (text) => split(text).map(p => {
   p = p.trim()
   const html = marked(p)
-  return p[0] === "`" ? toProgram(p, html) : html
+  return p.startsWith("```") ? toProgram(p, html) : html
 })
 
 const toProgram = (text, html) => {

@@ -12,7 +12,7 @@ const vm = initGibberish(Gibberish, {
     compatibility()
   ],
   events: {
-    fork: (p) => console.log("FORK!", p)
+    "*": (type, event) => console.log("EVENT!", type, event)
   }
 })
 
