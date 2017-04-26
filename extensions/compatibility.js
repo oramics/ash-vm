@@ -17,6 +17,21 @@ function voiceNote (name, p1, p2) {
 
 function init () {
   return {
+    "@quote": ({ error }) => error("@quote", "Quote not allowed in compatibility mode"),
+    "@q": "@quote",
+    "@iter": ({ operations, error }) => {
+      var patt = operations.pop()
+      if (isArray(patt) && patt.length) {
+        // rotates the pattern and plays the first item only each time
+        // remove '1st' item, schedule, then push to back:
+        var first = patt.splice(0, 1)
+        operations.push(first)
+        patt.push(first)
+      } else {
+        error("@iter", "COMPAT: rotate instruction requires a pattern (array)");
+      }
+    },
+
     // I think reverse is not very useful in this context
     // because: ["@iter", ["@reverse", [1, 2, 3]]] doesn"t work, for example
     "@reverse": ({ operations, error }) => {

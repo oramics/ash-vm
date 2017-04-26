@@ -11,21 +11,18 @@ export default class VM {
     this.scheduler = new Scheduler(options)
     this.commands = stdlib(this.driver, this.scheduler, options)
 
-    if (options.commands) this.addCommands(options.commands)
-    if (this.driver) {
-      this.addToContext(this.driver.defaultContext())
-      this.addInstruments(this.driver.getInstruments())
-      this.driver.start(this)
+    if (driver) {
+      this.addToContext(driver.defaultContext())
+      this.commands.add(createCommands(driver.getInstruments()))
+      driver.start(this)
     }
+    if (options.commands) this.addCommands(options.commands)
   }
 
-  addInstruments (instruments, params = []) {
+  addInstruments (instruments) {
+    console.log("ADDDDDIIII", instruments)
     this.driver.addInstruments(instruments)
-    const commands = Object.keys(instruments).reduce((commands, name) => {
-      commands["@" + name] = ({ context }) => instruments[name](context)
-      return instruments
-    }, {})
-    this.commands.add(commands)
+    this.commands.add(createCommands(instruments))
   }
 
   // Run a program
@@ -39,8 +36,7 @@ export default class VM {
   }
 
   resume (dur, limit) {
-    const { scheduler, commands } = this
-    return scheduler.resume(commands, dur, limit)
+    return this.scheduler.resume(this.commands, dur, limit)
   }
 
   addCommands (commands) {
@@ -53,4 +49,11 @@ export default class VM {
     Object.assign(this.context, context)
     return this.context
   }
+}
+
+function createCommands (instruments) {
+  return Object.keys(instruments).reduce((commands, name) => {
+    commands["@" + name] = ({ context }) => instruments[name](context)
+    return commands
+  }, {})
 }

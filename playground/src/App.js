@@ -15,6 +15,7 @@ const vm = initGibberish(Gibberish, {
     "*": (type, event) => console.log("EVENT!", type, event)
   }
 })
+console.log("Instruments", Object.keys(vm.driver.instruments))
 
 const toText = (encoded) => window.atob(encoded.slice(28))
 
