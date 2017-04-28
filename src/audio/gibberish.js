@@ -9,7 +9,6 @@ export default class GibberishDriver extends AudioDriver {
     super(bpm, Gibberish.context.sampleRate)
     this.Gibberish = Gibberish
     this.instruments = createInstruments(Gibberish)
-    console.log("MIERDA", this.instruments)
   }
 
   // Start a VM

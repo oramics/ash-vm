@@ -1,0 +1,19 @@
+
+.Tabs {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #ccc;
+  min-height: 45px;
+}
+
+.Tabs .newTab {
+  padding: 10px;
+}
+.Tabs .Tab {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  margin: 0 5px -1px 5px;
+}
+.Tabs .Tab.active {
+  border-bottom: 1px solid white;
+}

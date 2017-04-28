@@ -1,30 +1,21 @@
 .App {
-  max-width: 720px;
-  margin: 40px auto;
-}
-
-.Editor {
-  display: none;
-}
-
-.Program {
-  border: 1px solid #333;
-  padding: 0.5em;
-  margin-bottom: 0.5em;
-  background: #F1F1F1;
-  border: 1px solid #E1E1E1;
-  border-radius: 4px;
-}
-
-.Transport {
-  border-top: 1px solid #333;
-  background-color: white;
+  margin: 0; border: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
   display: flex;
-  justify-content: center;
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid red;
 }
 
-.Transport div {
-  padding: 0.5em 1em;
+.App .header {
+  flex: 0 0 auto;
+}
+.App .header h1 { 
+  margin: 0 0 0 5px; 
+}
+.App .Editors {
+  flex: 1 1 auto;
+  overflow: scroll;
 }

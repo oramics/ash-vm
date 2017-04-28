@@ -4,9 +4,19 @@
   "private": true,
   "homepage": "https://oramics.github.io/ash-vm",
   "dependencies": {
+    "classnames": "^2.2.5",
+    "codemirror": "^5.25.2",
     "commonmark": "^0.27.0",
+    "draft-js": "^0.10.0",
+    "draft-js-code": "^0.2.0",
+    "draft-js-import-markdown": "^0.2.1",
+    "draft-js-prism": "^1.0.3",
+    "draftjs-md-converter": "^0.1.2",
     "gibberish-dsp": "^2.5.0",
+    "immutable": "^3.8.1",
     "marked": "^0.3.6",
+    "prettier": "^1.2.2",
+    "prism": "^4.1.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4"
   },
@@ -20,6 +30,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "format": "prettier src/"
   }
 }

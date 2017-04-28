@@ -1,0 +1,22 @@
+.Editor.hidden {
+  display: none;
+}
+
+.Editor .DraftEditor-root {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.Editor h1 {
+  margin: 0.5em 0 1em 0;
+  font-size: 2em;
+}
+.Editor h2, .Editor h3, .Editor h4, .Editor h5 { margin: 0; }
+.Editor h4 { font-weight: bold; }
+
+.CodeWrapper {
+  background: #F1F1F1;
+  border: 1px solid #E1E1E1;
+  border-radius: 4px;
+  padding: 0.5em;
+}
